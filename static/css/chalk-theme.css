@@ -1724,3 +1724,1203 @@ hr {
   color: var(--chalk-line-soft);
   margin: 0 0 4px;
 }
+
+/* ----------------------------------------------------------------------
+ * GetCourse-style trainings/course/module/lesson layout (chalk edition).
+ * Used by the rebuilt learner_dashboard, course_preview, module_detail.
+ * ---------------------------------------------------------------------- */
+
+.gc-trainings-page,
+.gc-course-page {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 8px 0 48px;
+}
+
+.gc-breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: var(--chalk-font-hand);
+  font-size: 18px;
+  color: var(--chalk-line-soft);
+}
+
+.gc-breadcrumbs a {
+  color: var(--chalk-line);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--chalk-line-faint);
+  padding-bottom: 1px;
+}
+
+.gc-breadcrumbs a:hover {
+  color: var(--chalk-cream);
+  border-bottom-color: var(--chalk-line);
+}
+
+.gc-breadcrumbs span[aria-hidden] {
+  color: var(--chalk-line-faint);
+}
+
+/* Info bar: tariff / progress / payment / next-step CTA. */
+.gc-info-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  border: 1px dashed var(--chalk-line-soft);
+  border-radius: 14px;
+  background-color: rgba(255, 255, 255, 0.025);
+  padding: 0;
+  overflow: hidden;
+}
+
+.gc-info-strip-cell {
+  padding: 18px 22px;
+  border-right: 1px dashed var(--chalk-line-faint);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.gc-info-strip-cell:last-child {
+  border-right: none;
+}
+
+.gc-info-strip-cell span {
+  font-family: var(--chalk-font-hand);
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--chalk-line-soft);
+}
+
+.gc-info-strip-cell strong {
+  font-family: var(--chalk-font-display);
+  font-size: 28px;
+  line-height: 1.05;
+  color: var(--chalk-cream);
+  font-weight: 700;
+}
+
+.gc-info-strip-cell small {
+  font-family: var(--chalk-font-hand);
+  font-size: 14px;
+  color: var(--chalk-line-soft);
+}
+
+.gc-info-strip-cell-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+}
+
+.gc-info-strip-cell-cta .button-link {
+  width: 100%;
+  text-align: center;
+}
+
+@media (max-width: 960px) {
+  .gc-info-strip {
+    grid-template-columns: 1fr 1fr;
+  }
+  .gc-info-strip-cell {
+    border-right: none;
+    border-bottom: 1px dashed var(--chalk-line-faint);
+  }
+  .gc-info-strip-cell:nth-child(2n) {
+    border-right: none;
+  }
+}
+
+@media (max-width: 540px) {
+  .gc-info-strip {
+    grid-template-columns: 1fr;
+  }
+  .gc-info-strip-cell {
+    border-right: none;
+  }
+}
+
+/* Section bars: heading + side-note. */
+.gc-section-bar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 12px 0 18px;
+  border-bottom: 1px dashed var(--chalk-line-soft);
+  padding-bottom: 8px;
+}
+
+.gc-section-bar h2 {
+  font-family: var(--chalk-font-display);
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin: 0;
+  color: var(--chalk-cream);
+}
+
+.gc-section-bar span {
+  font-family: var(--chalk-font-hand);
+  font-size: 16px;
+  color: var(--chalk-line-soft);
+  letter-spacing: 0.04em;
+}
+
+.gc-trainings-heading {
+  font-family: var(--chalk-font-display);
+  font-size: 32px;
+  margin: 18px 0 12px;
+  font-weight: 700;
+  color: var(--chalk-cream);
+  border-bottom: 1px dashed var(--chalk-line-soft);
+  padding-bottom: 8px;
+}
+
+/* Trainings list (text-only cards, large clickable rows). */
+.gc-trainings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.gc-training-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 22px 24px;
+  border: 1px dashed var(--chalk-line);
+  border-radius: 14px;
+  background-color: rgba(255, 255, 255, 0.015);
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.gc-training-card:hover {
+  background-color: rgba(255, 255, 255, 0.045);
+  border-color: var(--chalk-yellow);
+}
+
+.gc-training-card.is-locked,
+.gc-training-card.is-empty {
+  border-style: dotted;
+  color: var(--chalk-line-soft);
+  cursor: default;
+}
+
+.gc-training-card.is-locked:hover,
+.gc-training-card.is-empty:hover {
+  background-color: rgba(255, 255, 255, 0.015);
+  border-color: var(--chalk-line-soft);
+}
+
+.gc-training-eyebrow {
+  font-family: var(--chalk-font-hand);
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--chalk-yellow);
+}
+
+.gc-training-card.is-locked .gc-training-eyebrow {
+  color: var(--chalk-line-soft);
+}
+
+.gc-training-card h3 {
+  font-family: var(--chalk-font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--chalk-cream);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.gc-training-card p {
+  font-family: var(--chalk-font-hand);
+  font-size: 17px;
+  color: var(--chalk-line-soft);
+  margin: 0;
+}
+
+.gc-training-card-action {
+  align-self: flex-start;
+  margin-top: 6px;
+  font-family: var(--chalk-font-hand);
+  color: var(--chalk-yellow);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--chalk-yellow);
+}
+
+/* Module grid (course preview, 2 cols of text-only cards). */
+.gc-module-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.gc-module-grid.is-single {
+  grid-template-columns: 1fr;
+}
+
+@media (max-width: 760px) {
+  .gc-module-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gc-module-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px 24px 24px;
+  border: 1px dashed var(--chalk-line);
+  border-radius: 14px;
+  background-color: rgba(255, 255, 255, 0.015);
+  text-decoration: none;
+  color: inherit;
+  min-height: 160px;
+  transition: background-color 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+
+.gc-module-card:hover {
+  background-color: rgba(255, 255, 255, 0.045);
+  border-color: var(--chalk-yellow);
+}
+
+.gc-module-card.is-locked {
+  border-style: dotted;
+  color: var(--chalk-line-soft);
+}
+
+.gc-module-card.is-locked:hover {
+  background-color: rgba(255, 255, 255, 0.025);
+  border-color: var(--chalk-line-soft);
+  transform: none;
+}
+
+.gc-module-card.is-complete {
+  border-color: var(--chalk-green);
+}
+
+.gc-module-eyebrow {
+  font-family: var(--chalk-font-hand);
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--chalk-yellow);
+}
+
+.gc-module-card.is-locked .gc-module-eyebrow {
+  color: var(--chalk-line-soft);
+}
+
+.gc-module-card.is-complete .gc-module-eyebrow {
+  color: var(--chalk-green);
+}
+
+.gc-module-card h3 {
+  font-family: var(--chalk-font-display);
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.1;
+  color: var(--chalk-cream);
+}
+
+.gc-module-meta {
+  font-family: var(--chalk-font-hand);
+  font-size: 16px;
+  color: var(--chalk-line-soft);
+  margin: 0;
+}
+
+.gc-module-lock {
+  font-family: var(--chalk-font-hand);
+  font-size: 15px;
+  color: var(--chalk-line-soft);
+  border-left: 2px dashed var(--chalk-line-faint);
+  padding-left: 10px;
+}
+
+.gc-module-cta {
+  margin-top: auto;
+  font-family: var(--chalk-font-hand);
+  font-size: 16px;
+  color: var(--chalk-yellow);
+  letter-spacing: 0.04em;
+  align-self: flex-start;
+}
+
+.gc-module-cta.is-locked {
+  color: var(--chalk-line-soft);
+}
+
+.gc-module-banner {
+  border: 1px dashed var(--chalk-line-soft);
+  border-radius: 12px;
+  padding: 16px 22px;
+  background-color: rgba(245, 163, 184, 0.06);
+  font-family: var(--chalk-font-hand);
+  font-size: 17px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--chalk-line);
+}
+
+.gc-module-banner.is-locked {
+  border-color: var(--chalk-pink);
+}
+
+/* Lesson grid (module detail, 3 cols of text-only cards). */
+.gc-lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 1080px) {
+  .gc-lesson-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .gc-lesson-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gc-lesson-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 20px 20px;
+  border: 1px dashed var(--chalk-line);
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.015);
+  text-decoration: none;
+  color: inherit;
+  min-height: 160px;
+}
+
+.gc-lesson-card:hover {
+  background-color: rgba(255, 255, 255, 0.045);
+  border-color: var(--chalk-yellow);
+}
+
+.gc-lesson-card.is-locked {
+  border-style: dotted;
+  color: var(--chalk-line-soft);
+}
+
+.gc-lesson-eyebrow {
+  font-family: var(--chalk-font-hand);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--chalk-yellow);
+}
+
+.gc-lesson-card.is-locked .gc-lesson-eyebrow {
+  color: var(--chalk-line-soft);
+}
+
+.gc-lesson-card h3 {
+  font-family: var(--chalk-font-display);
+  font-size: 22px;
+  margin: 0;
+  font-weight: 700;
+  color: var(--chalk-cream);
+  line-height: 1.15;
+}
+
+.gc-lesson-summary {
+  font-family: var(--chalk-font-hand);
+  font-size: 15px;
+  color: var(--chalk-line-soft);
+  margin: 0;
+}
+
+.gc-lesson-progress {
+  height: 4px;
+  border-radius: 4px;
+  background-color: rgba(245, 242, 235, 0.12);
+  overflow: hidden;
+  margin-top: auto;
+}
+
+.gc-lesson-progress span {
+  display: block;
+  height: 100%;
+  background-color: var(--chalk-yellow);
+}
+
+.gc-lesson-state {
+  font-family: var(--chalk-font-hand);
+  font-size: 13px;
+  margin: 0;
+}
+
+.gc-lesson-state.is-locked {
+  color: var(--chalk-pink);
+}
+
+.gc-lesson-state.is-open {
+  color: var(--chalk-line-soft);
+}
+
+.gc-lesson-cta {
+  font-family: var(--chalk-font-hand);
+  font-size: 15px;
+  color: var(--chalk-yellow);
+}
+
+.gc-lesson-cta.is-locked {
+  color: var(--chalk-line-soft);
+}
+
+/* Tariff cards (course preview tariffs section). */
+.gc-tariff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.gc-tariff-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px 24px 24px;
+  border: 1px dashed var(--chalk-line);
+  border-radius: 14px;
+  background-color: rgba(255, 255, 255, 0.018);
+}
+
+.gc-tariff-card.is-featured {
+  border-color: var(--chalk-yellow);
+  background-color: rgba(240, 217, 122, 0.06);
+}
+
+.gc-tariff-card.is-current {
+  border-color: var(--chalk-green);
+}
+
+.gc-tariff-card header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gc-tariff-eyebrow {
+  font-family: var(--chalk-font-hand);
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--chalk-line-soft);
+}
+
+.gc-tariff-card header strong {
+  font-family: var(--chalk-font-display);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--chalk-cream);
+}
+
+.gc-tariff-card p {
+  font-family: var(--chalk-font-hand);
+  font-size: 16px;
+  color: var(--chalk-line-soft);
+  margin: 0;
+}
+
+.gc-tariff-cta {
+  align-self: stretch;
+  background: transparent;
+  border: 1px dashed var(--chalk-yellow);
+  border-radius: 10px;
+  color: var(--chalk-cream);
+  padding: 10px 16px;
+  font-family: var(--chalk-font-hand);
+  font-size: 16px;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: background-color 120ms ease;
+}
+
+.gc-tariff-cta:hover {
+  background-color: rgba(240, 217, 122, 0.12);
+}
+
+/* Module completion form. */
+.gc-completion-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px 24px 24px;
+  border: 1px dashed var(--chalk-line);
+  border-radius: 14px;
+  background-color: rgba(255, 255, 255, 0.015);
+}
+
+.gc-completion-form h3 {
+  margin: 0;
+  font-family: var(--chalk-font-display);
+  font-size: 24px;
+  color: var(--chalk-cream);
+}
+
+.gc-completion-form p {
+  margin: 0;
+  font-family: var(--chalk-font-hand);
+  font-size: 16px;
+  color: var(--chalk-line-soft);
+}
+
+.gc-completion-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--chalk-font-hand);
+  color: var(--chalk-cream);
+  font-size: 16px;
+}
+
+.gc-completion-error {
+  color: var(--chalk-red) !important;
+}
+
+/* Workshop sub-elements. */
+.gc-checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.gc-checklist li {
+  border: 1px dashed var(--chalk-line-soft);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-family: var(--chalk-font-hand);
+  font-size: 16px;
+  color: var(--chalk-cream);
+}
+
+.gc-upsell {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px 24px;
+  border: 1px dashed var(--chalk-yellow);
+  border-radius: 14px;
+  background-color: rgba(240, 217, 122, 0.06);
+  font-family: var(--chalk-font-hand);
+  font-size: 17px;
+  color: var(--chalk-cream);
+}
+
+.gc-upsell a {
+  align-self: flex-start;
+}
+
+.gc-trainings-shell .topbar-badges,
+.gc-course-shell .topbar-badges,
+.gc-module-shell .topbar-badges {
+  gap: 8px;
+}
+
+/* GC-style lesson header (breadcrumb + X/Y · Доступен + Следующий урок). */
+.gc-lesson-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+  align-items: stretch;
+  padding: 18px 22px;
+  border: 1px dashed var(--chalk-line-soft);
+  border-radius: 14px;
+  background-color: rgba(255, 255, 255, 0.018);
+  margin-bottom: 20px;
+}
+
+@media (max-width: 880px) {
+  .gc-lesson-header {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gc-lesson-header-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.gc-lesson-header-copy h1 {
+  font-family: var(--chalk-font-display);
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--chalk-cream);
+  line-height: 1.05;
+}
+
+.gc-lesson-header-copy .gc-lesson-eyebrow {
+  font-family: var(--chalk-font-hand);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--chalk-line-soft);
+}
+
+.gc-lesson-header-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--chalk-font-hand);
+  font-size: 16px;
+  color: var(--chalk-line-soft);
+  margin: 0;
+}
+
+.gc-lesson-header-meta span[aria-hidden] {
+  color: var(--chalk-line-faint);
+}
+
+.gc-lesson-header-next {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-left: 1px dashed var(--chalk-line-faint);
+  padding-left: 22px;
+  justify-content: center;
+}
+
+@media (max-width: 880px) {
+  .gc-lesson-header-next {
+    border-left: none;
+    border-top: 1px dashed var(--chalk-line-faint);
+    padding-left: 0;
+    padding-top: 14px;
+  }
+}
+
+.gc-lesson-next-label {
+  font-family: var(--chalk-font-hand);
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--chalk-yellow);
+}
+
+.gc-lesson-next-link {
+  font-family: var(--chalk-font-display);
+  font-size: 22px;
+  color: var(--chalk-cream);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--chalk-line);
+  padding-bottom: 2px;
+  align-self: flex-start;
+}
+
+.gc-lesson-next-link:hover {
+  border-bottom-color: var(--chalk-yellow);
+  color: var(--chalk-yellow);
+}
+
+.gc-lesson-next-empty {
+  font-family: var(--chalk-font-hand);
+  font-size: 15px;
+  color: var(--chalk-line-soft);
+}
+
+/* ----------------------------------------------------------------------
+ * Light minimal landing page (separate from chalk learning area).
+ * Triggered by body.landing-light-body — overrides body bg + hides chalk
+ * shell decorations so the landing is bright, clean and contrasting.
+ * ---------------------------------------------------------------------- */
+
+body.landing-light-body {
+  background-color: #f7f5f0;
+  background-image: none;
+  font-family: "Inter", "Helvetica Neue", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #15171a;
+}
+
+body.landing-light-body .board-shell.landing-light-shell {
+  background: transparent;
+  background-image: none;
+  display: block;
+  padding: 0;
+  margin: 0;
+  min-height: 100vh;
+}
+
+body.landing-light-body .board-sidebar,
+body.landing-light-body .board-topbar,
+body.landing-light-body .mobile-nav,
+body.landing-light-body .message-stack {
+  display: none !important;
+}
+
+body.landing-light-body .board-main {
+  display: block;
+  padding: 0;
+  background: transparent;
+  width: 100%;
+  max-width: none;
+  border: none;
+}
+
+body.landing-light-body .content {
+  padding: 0;
+  margin: 0;
+}
+
+.landing-light {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  font-family: "Inter", "Helvetica Neue", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #15171a;
+}
+
+.landing-light h1,
+.landing-light h2,
+.landing-light h3 {
+  font-family: "Inter", "Helvetica Neue", system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #15171a;
+}
+
+.landing-light p {
+  margin: 0;
+  font-family: inherit;
+  font-size: 17px;
+  line-height: 1.55;
+  color: #4a4d52;
+}
+
+.landing-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 48px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e9e6dc;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.landing-brand {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #15171a;
+  text-decoration: none;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.landing-brand span {
+  font-weight: 500;
+  font-size: 15px;
+  color: #6a6e74;
+  letter-spacing: 0;
+}
+
+.landing-nav-links {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.landing-nav-links a {
+  color: #4a4d52;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.landing-nav-links a:hover {
+  color: #15171a;
+}
+
+.landing-nav-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.landing-button {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid #15171a;
+  background-color: #15171a;
+  color: #ffffff;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.landing-button:hover {
+  background-color: #2a2d33;
+  border-color: #2a2d33;
+}
+
+.landing-button.is-ghost {
+  background-color: transparent;
+  color: #15171a;
+  border-color: #d3cfc2;
+}
+
+.landing-button.is-ghost:hover {
+  border-color: #15171a;
+  background-color: transparent;
+}
+
+.landing-button.is-primary {
+  background-color: #c8a234;
+  border-color: #c8a234;
+  color: #15171a;
+}
+
+.landing-button.is-primary:hover {
+  background-color: #d4ae42;
+  border-color: #d4ae42;
+}
+
+.landing-hero {
+  padding: 72px 48px 56px;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.landing-hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 720px;
+}
+
+.landing-eyebrow {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6a6e74;
+}
+
+.landing-hero-copy h1 {
+  font-size: clamp(40px, 5vw, 60px);
+  line-height: 1.05;
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.landing-lead {
+  font-size: 19px;
+  color: #4a4d52;
+  max-width: 600px;
+}
+
+.landing-hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.landing-hero-stats {
+  display: flex;
+  gap: 32px;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+
+.landing-hero-stats div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.landing-hero-stats strong {
+  font-size: 30px;
+  font-weight: 800;
+  color: #15171a;
+}
+
+.landing-hero-stats span {
+  font-size: 14px;
+  color: #6a6e74;
+}
+
+.landing-section {
+  padding: 56px 48px;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.landing-section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+  max-width: 640px;
+}
+
+.landing-section-head h2 {
+  font-size: clamp(28px, 3.4vw, 40px);
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+}
+
+.landing-modules {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 760px) {
+  .landing-modules {
+    grid-template-columns: 1fr;
+  }
+}
+
+.landing-module-card {
+  background-color: #ffffff;
+  border: 1px solid #e9e6dc;
+  border-radius: 14px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.landing-module-card span {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #c8a234;
+}
+
+.landing-module-card h3 {
+  font-size: 22px;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.landing-module-card p {
+  font-size: 16px;
+  color: #4a4d52;
+}
+
+.landing-tariffs {
+  background-color: #ffffff;
+  border-top: 1px solid #e9e6dc;
+  border-bottom: 1px solid #e9e6dc;
+  max-width: none;
+  padding: 64px 48px;
+}
+
+.landing-tariffs > .landing-section-head,
+.landing-tariffs > .landing-tariff-grid {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.landing-tariff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.landing-tariff-card {
+  background-color: #f7f5f0;
+  border: 1px solid #e0dccd;
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.landing-tariff-card.is-featured {
+  background-color: #fff7df;
+  border-color: #c8a234;
+}
+
+.landing-tariff-card.is-free {
+  background-color: #f1efe7;
+  border-style: dashed;
+}
+
+.landing-tariff-card header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.landing-tariff-card header span {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6a6e74;
+}
+
+.landing-tariff-card header strong {
+  font-size: 32px;
+  font-weight: 800;
+  color: #15171a;
+  letter-spacing: -0.01em;
+}
+
+.landing-tariff-card p {
+  font-size: 15px;
+  color: #4a4d52;
+}
+
+.landing-tariff-features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.landing-tariff-features li {
+  font-size: 14px;
+  color: #4a4d52;
+  padding-left: 16px;
+  position: relative;
+}
+
+.landing-tariff-features li::before {
+  content: "·";
+  position: absolute;
+  left: 0;
+  top: -2px;
+  color: #c8a234;
+  font-weight: 800;
+  font-size: 22px;
+}
+
+.landing-tariff-card form {
+  margin-top: auto;
+}
+
+.landing-tariff-card form button {
+  width: 100%;
+  justify-content: center;
+}
+
+.landing-faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 760px) {
+  .landing-faq-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.landing-faq-grid article {
+  background-color: #ffffff;
+  border: 1px solid #e9e6dc;
+  border-radius: 12px;
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.landing-faq-grid h3 {
+  font-size: 18px;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.landing-faq-grid p {
+  font-size: 15px;
+  color: #4a4d52;
+}
+
+.landing-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 36px 48px;
+  border-top: 1px solid #e9e6dc;
+  background-color: #ffffff;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.landing-footer > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.landing-footer strong {
+  font-size: 15px;
+  color: #15171a;
+}
+
+.landing-footer span {
+  font-size: 13px;
+  color: #6a6e74;
+}
+
+.landing-footer-links {
+  display: flex;
+  gap: 18px;
+}
+
+.landing-footer-links a {
+  color: #4a4d52;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.landing-footer-links a:hover {
+  color: #15171a;
+}
+
+@media (max-width: 720px) {
+  .landing-nav { padding: 14px 20px; }
+  .landing-nav-links { display: none; }
+  .landing-hero { padding: 48px 20px 32px; }
+  .landing-section { padding: 40px 20px; }
+  .landing-tariffs { padding: 48px 20px; }
+  .landing-footer { padding: 28px 20px; }
+}

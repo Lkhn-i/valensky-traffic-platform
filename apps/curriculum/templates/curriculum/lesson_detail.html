@@ -71,6 +71,38 @@
 
 {% block content %}
   <section class="stage8-lesson-shell">
+    <nav class="gc-breadcrumbs" aria-label="Хлебные крошки">
+      <a href="{% url 'curriculum:learner_dashboard' %}">Список тренингов</a>
+      <span aria-hidden="true">›</span>
+      <a href="{% url 'curriculum:course_preview' course.slug %}">{{ course.title }}</a>
+      <span aria-hidden="true">›</span>
+      <a href="{% url 'curriculum:module_detail' lesson.module.id %}">Модуль {{ module_view.display_index }}</a>
+      <span aria-hidden="true">›</span>
+      <span>{{ lesson_code|default:'Урок' }}</span>
+    </nav>
+
+    <header class="gc-lesson-header">
+      <div class="gc-lesson-header-copy">
+        <span class="gc-lesson-eyebrow">{{ lesson.module.title }} · базовый уровень</span>
+        <h1>{{ lesson.title }}</h1>
+        <p class="gc-lesson-header-meta">
+          <span>{{ module_view.completed_count|default:0 }} из {{ module_view.total_count }} уроков</span>
+          <span aria-hidden="true">·</span>
+          <span>{% if progress.is_completed %}Завершён{% else %}{{ progress_status_label }}{% endif %}</span>
+        </p>
+      </div>
+      <aside class="gc-lesson-header-next">
+        <span class="gc-lesson-next-label">Следующий урок</span>
+        {% if next_module_lesson %}
+          <a class="gc-lesson-next-link" href="{% url 'curriculum:lesson_detail' next_module_lesson.id %}">{{ next_module_lesson.title }} →</a>
+        {% elif next_lesson and next_lesson.id != lesson.id %}
+          <a class="gc-lesson-next-link" href="{% url 'curriculum:lesson_detail' next_lesson.id %}">{{ next_lesson.title }} →</a>
+        {% else %}
+          <span class="gc-lesson-next-empty">Это последний урок модуля.</span>
+        {% endif %}
+      </aside>
+    </header>
+
     <div class="stage8-lesson-topline">
       <a class="stage8-back-link" href="{% url 'curriculum:module_detail' lesson.module.id %}">← К модулям</a>
       <div class="stage8-status-select" aria-label="Статус урока">{{ progress_status_label }}</div>
@@ -90,21 +122,11 @@
       </div>
     </div>
 
-    <div class="stage8-mobile-heading">
-      <a class="stage8-back-link" href="{% url 'curriculum:module_detail' lesson.module.id %}">← К модулям</a>
-      <h2>{{ lesson_code }} {{ lesson.summary }}</h2>
-      <div class="stage8-status-select" aria-label="Статус урока">{{ progress_status_label }}</div>
-    </div>
-
     <section class="stage8-player-grid">
       <article class="stage8-video-card panel" data-video-player data-playback-url="{% url 'curriculum:lesson_playback' lesson.id %}">
         <h3 class="sr-only">Плеер урока</h3>
         <div class="stage8-video-frame">
-          <div class="stage8-video-sketch" aria-hidden="true">
-            <span class="stage8-stick-person"></span>
-            <span class="stage8-video-arrow"></span>
-            <span class="stage8-target"></span>
-          </div>
+          <div class="stage8-video-sketch" aria-hidden="true"></div>
           <div class="stage8-video-title">
             <span>{{ lesson.summary }}</span>
           </div>
@@ -241,9 +263,6 @@
       </div>
 
       <section class="stage8-homework-panel panel stack" id="homework">
-        <div class="lesson-illustration" aria-hidden="true">
-          {% include "shared/svg/stickman_homework.html" %}
-        </div>
         <h3>Домашнее задание</h3>
         {% if homework_assignments %}
           {% for assignment in homework_assignments %}

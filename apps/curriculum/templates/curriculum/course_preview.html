@@ -1,47 +1,27 @@
 {% extends "base.html" %}
 {% load money %}
 
-{% block title %}{% if is_lesson0_only %}Система трафика{% else %}Карта курса{% endif %}{% endblock %}
-{% block body_class %}{% if is_lesson0_only %}preview-only-page{% else %}course-map-page{% endif %}{% endblock %}
-{% block shell_class %}{% if is_lesson0_only %}preview-only-shell{% else %}course-map-shell{% endif %}{% endblock %}
+{% block title %}{{ course.title }}{% endblock %}
+{% block body_class %}course-map-page gc-course-body{% endblock %}
+{% block shell_class %}course-map-shell gc-course-shell{% endblock %}
 {% block brand_subline %}по трафику{% endblock %}
-{% block page_label %}{% if is_lesson0_only %}Вход в обучение{% else %}Карта курса{% endif %}{% endblock %}
-{% block page_heading %}{% if is_lesson0_only %}Система трафика{% else %}Программа и доступ{% endif %}{% endblock %}
-{% block page_subtitle %}{% if is_lesson0_only %}Нулевой урок открыт сразу, остальные ветки показывают, что нужно сделать дальше.{% else %}GetCourse-подобная логика: следующий урок, карта модулей, тариф и понятные причины блокировки.{% endif %}{% endblock %}
+{% block page_label %}Программа курса{% endblock %}
+{% block page_heading %}{{ course.title }}{% endblock %}
+{% block page_subtitle %}Список модулей курса. Нажмите на модуль, чтобы увидеть уроки и открыть нужный.{% endblock %}
 
 {% block sidebar %}
   <section class="sidebar-section stack">
-    <p class="sidebar-kicker">Навигация</p>
+    <p class="sidebar-kicker">Меню</p>
     <nav class="sidebar-menu">
-      <a class="sidebar-link{% if is_lesson0_only %} is-active{% endif %}" href="{% url 'curriculum:course_preview' course.slug %}">Карта курса</a>
-      <a class="sidebar-link" href="#course-journey">Маршрут</a>
-      <a class="sidebar-link" href="#main-modules">Модули</a>
-      <a class="sidebar-link" href="#tariffs">Тарифы</a>
-      {% if workshop_module %}
-        <a class="sidebar-link" href="{% url 'curriculum:module_detail' workshop_module.id %}">Воркшоп</a>
+      <a class="sidebar-link" href="{% url 'curriculum:learner_dashboard' %}">Список тренингов</a>
+      <a class="sidebar-link is-active" href="{% url 'curriculum:course_preview' course.slug %}">Программа курса</a>
+      {% if next_lesson %}
+        <a class="sidebar-link" href="{% url 'curriculum:lesson_detail' next_lesson.id %}">Следующий урок</a>
       {% endif %}
+      <a class="sidebar-link" href="#tariffs">Тарифы и оплата</a>
       <a class="sidebar-link" href="https://t.me/valenskymanager" target="_blank" rel="noopener">Поддержка</a>
     </nav>
   </section>
-
-  <section class="sidebar-card stack">
-    <p class="sidebar-kicker">Текущий доступ</p>
-    <p class="sidebar-profile-name">{{ access_mode_label }}</p>
-    <p class="sidebar-note">{{ tariff_label }} · {{ payment_state_label }}</p>
-    <div class="progress-track" aria-label="Прогресс курса">
-      <span style="width: {{ course_progress_percent }}%"></span>
-    </div>
-    <p class="sidebar-note">Завершено: {{ completed_count }} из {{ total_count }}</p>
-  </section>
-{% endblock %}
-
-{% block mobile_nav %}
-  <a class="mobile-link is-active" href="{% url 'curriculum:course_preview' course.slug %}">Карта</a>
-  <a class="mobile-link" href="#main-modules">Модули</a>
-  <a class="mobile-link" href="#tariffs">Тарифы</a>
-  {% if next_lesson %}
-    <a class="mobile-link" href="{% url 'curriculum:lesson_detail' next_lesson.id %}">Урок</a>
-  {% endif %}
 {% endblock %}
 
 {% block topbar_meta %}
@@ -54,312 +34,126 @@
 
 {% block content %}
   <div class="sr-only">
-    Воркшоп 1500
-    Platform-safe техничка
+    {% for module in intro_modules %}
+      {{ module.title }}
+      {% for lesson_view in module.lessons %}{{ lesson_view.lesson.title }} {% if lesson_view.locked_reason %}{{ lesson_view.locked_reason }}{% endif %}{% endfor %}
+    {% endfor %}
+    {% for module in main_modules %}
+      {{ module.title }}
+      {% for lesson_view in module.lessons %}{{ lesson_view.lesson.title }} {% if lesson_view.locked_reason %}{{ lesson_view.locked_reason }}{% endif %}{% endfor %}
+    {% endfor %}
+    {% if workshop_module_view %}{{ workshop_module_view.title }}{% endif %}
     {% if course.title %}{{ course.title }}{% endif %}
   </div>
 
-  {% if is_lesson0_only %}
-    {% url 'curriculum:lesson_detail' lesson0.id as lesson0_url %}
-    <section class="gc-course-page stack">
-      <section class="panel gc-course-hero" id="course-journey">
-        <div class="gc-course-hero-copy stack">
-          <span class="pill">Стартовый доступ</span>
-          <h2>Нулевой урок открыт сразу</h2>
-          <p class="muted">Человек сначала проходит входной урок, потом уже выбирает воркшоп или полный курс. Так логика выглядит чище и ближе к привычной учебной воронке.</p>
-          <div class="gc-course-callout">
-            <strong>Следующий шаг</strong>
-            <span>Откройте Урок 0, затем выберите подходящий тариф. Если доступ закрыт, платформа покажет это честно и без путаницы.</span>
-          </div>
-          <div class="action-row">
-            <a class="button-link" href="{{ lesson0_url }}">Открыть урок 0</a>
-            <a class="button-link is-muted" href="#tariffs">Выбрать тариф</a>
-          </div>
-        </div>
-        <aside class="gc-course-hero-side stack">
-          <div class="gc-kpi-card">
-            <span>Статус</span>
-            <strong>{{ access_mode_label }}</strong>
-            <small>{{ access_mode_hint }}</small>
-          </div>
-          <div class="gc-kpi-card">
-            <span>Прогресс</span>
-            <strong>{{ course_progress_percent }}%</strong>
-            <small>Завершено: {{ completed_count }} из {{ total_count }}</small>
-          </div>
-        </aside>
-      </section>
+  <section class="gc-course-page stack">
+    <nav class="gc-breadcrumbs" aria-label="Хлебные крошки">
+      <a href="{% url 'curriculum:learner_dashboard' %}">Список тренингов</a>
+      <span aria-hidden="true">›</span>
+      <span>{{ course.title }}</span>
+    </nav>
 
-      <section class="panel stack">
-        <div class="gc-section-head">
-          <div>
-            <span class="pill">Маршрут</span>
-            <h2>Как устроено обучение</h2>
-          </div>
-          <p class="muted">Сначала нулевой урок, затем отдельный воркшоп и после этого — основной курс из 7 модулей.</p>
-        </div>
-        <div class="gc-journey-list">
-          <article class="gc-journey-row is-open">
-            <span class="course-map-number">0</span>
-            <div>
-              <strong>Нулевой урок</strong>
-              <span>{% if lesson0 %}{{ lesson0.title }}{% else %}Вводный урок и карта программы{% endif %}</span>
-            </div>
-            <small>Доступен</small>
-            <a class="dashboard-outline-button" href="{{ lesson0_url }}">Открыть</a>
-          </article>
-          {% for module in main_modules %}
-            <article class="gc-journey-row is-locked">
-              <span class="course-map-number">{{ module.display_index }}</span>
-              <div>
-                <strong>{{ module.title }}</strong>
-                <span>{{ module.summary }}</span>
-              </div>
-              <small>Заблокирован</small>
-              <span class="lock-badge">{{ module.locked_reason|default:"Откроется после оплаты" }}</span>
-            </article>
-          {% endfor %}
-          {% if workshop_module_view %}
-            <article class="gc-journey-row is-locked">
-              <span class="course-map-number">W</span>
-              <div>
-                <strong>{{ workshop_module_view.title }}</strong>
-                <span>{{ workshop_module_view.summary }}</span>
-              </div>
-              <small>Заблокирован</small>
-              <span class="lock-badge">{{ workshop_module_view.locked_reason|default:"Откроется по тарифу" }}</span>
-            </article>
-          {% endif %}
-        </div>
-      </section>
+    <div class="gc-info-strip">
+      <div class="gc-info-strip-cell">
+        <span>Тариф</span>
+        <strong>{{ tariff_label }}</strong>
+      </div>
+      <div class="gc-info-strip-cell">
+        <span>Прогресс курса</span>
+        <strong>{{ course_progress_percent }}%</strong>
+        <small>Завершено: {{ completed_count }} из {{ total_count }}</small>
+      </div>
+      <div class="gc-info-strip-cell">
+        <span>Оплата</span>
+        <strong>{{ payment_state_label }}</strong>
+      </div>
+      <div class="gc-info-strip-cell gc-info-strip-cell-cta">
+        {% if next_lesson %}
+          <a class="button-link" href="{% url 'curriculum:lesson_detail' next_lesson.id %}">Следующий урок — {{ next_lesson.title|truncatechars:36 }}</a>
+        {% elif lesson0 %}
+          <a class="button-link" href="{% url 'curriculum:lesson_detail' lesson0.id %}">Открыть нулевой урок</a>
+        {% endif %}
+        <a class="button-link is-muted" href="#tariffs">Тарифы</a>
+      </div>
+    </div>
 
-      <section class="course-map-tiers" id="tariffs" aria-label="Тарифы после нулевого урока">
-        <article class="course-tier-card is-current">
-          <div class="course-tier-head">
-            <span>Нулевой урок</span>
-            <small>открыт после опроса</small>
-          </div>
-          <div class="course-tier-mini-list">
-            <p><span class="course-map-number">0</span> Вводный урок и карта программы</p>
-          </div>
-          <div class="course-tier-lock is-info">
-            <span aria-hidden="true">i</span>
-            <p>Это стартовая точка. Воркшоп и обучение открываются отдельными тарифами.</p>
-          </div>
-          <a class="course-tier-cta" href="{{ lesson0_url }}">Открыть урок 0 <span aria-hidden="true">-></span></a>
-        </article>
+    <section class="gc-course-section" id="modules">
+      <header class="gc-section-bar">
+        <h2>Модули курса</h2>
+        <span>{{ main_modules|length }} модул{{ main_modules|length|pluralize:"ь,я,ей" }}</span>
+      </header>
 
-        {% for tariff in tariffs %}
-          <article class="course-tier-card{% if tariff.code == 'mentor' %} is-featured{% endif %}">
-            <div class="course-tier-head">
-              <span>{{ tariff.title }}</span>
-              <small>{{ tariff.price_amount|money:tariff.currency }}</small>
-            </div>
-            <div class="course-tier-mini-list">
-              <p>{{ tariff.title }} {{ tariff.price_amount|floatformat:0 }}</p>
-              {% for feature in tariff.metadata.features %}
-                <p>{{ feature }}</p>
-              {% empty %}
-                <p>{{ tariff.description }}</p>
-              {% endfor %}
-            </div>
-            <div class="course-tier-lock{% if tariff.code == 'base' or tariff.code == 'workshop' %}{% else %} is-info{% endif %}">
-              <span class="preview-lock" aria-hidden="true"></span>
-              <p>{{ tariff.description }}</p>
-            </div>
-            <form method="post" action="{% url 'commerce:checkout_start' tariff.code %}">
-              {% csrf_token %}
-              <button class="course-tier-cta" type="submit">Защищенная оплата <span aria-hidden="true">-></span></button>
-            </form>
+      <div class="gc-module-grid">
+        {% for module in main_modules %}
+          {% with module_url=module.next_lesson.id|default_if_none:module.module.id %}
+            <a class="gc-module-card{% if module.is_locked %} is-locked{% elif module.is_completed %} is-complete{% else %} is-open{% endif %}"
+               href="{% url 'curriculum:module_detail' module.module.id %}">
+              <span class="gc-module-eyebrow">Модуль {{ module.display_index }}</span>
+              <h3>{{ module.display_title }}</h3>
+              <p class="gc-module-meta">{{ module.total_count }} уроков{% if module.completed_count %} · пройдено {{ module.completed_count }}{% endif %}</p>
+              {% if module.is_locked %}
+                <span class="gc-module-lock">{{ module.locked_reason|default:"Откроется по тарифу" }}</span>
+                <span class="gc-module-cta is-locked">Что нужно сделать →</span>
+              {% else %}
+                <span class="gc-module-cta">Смотреть уроки →</span>
+              {% endif %}
+            </a>
+          {% endwith %}
+        {% empty %}
+          <article class="gc-module-card is-locked">
+            <span class="gc-module-eyebrow">Модули</span>
+            <h3>Модули пока не опубликованы</h3>
+            <p class="gc-module-meta">Администратор добавит уроки в контент-разделе.</p>
           </article>
         {% endfor %}
-      </section>
+      </div>
     </section>
-  {% else %}
-    <section class="gc-course-page stack">
-      <section class="panel gc-course-hero" id="course-journey">
-        <div class="gc-course-hero-copy stack">
-          <span class="pill">Текущий курс</span>
-          <h2>{{ course.title }}</h2>
-          <p class="muted">{{ access_mode_hint }}</p>
-          <div class="gc-course-callout">
-            <strong>Следующий урок</strong>
-            <span>{% if next_lesson %}{{ next_lesson.title }}{% else %}Новый урок откроется по расписанию или после выполнения условий перехода.{% endif %}</span>
-          </div>
-          <div class="action-row">
-            {% if next_lesson %}
-              <a class="button-link" href="{% url 'curriculum:lesson_detail' next_lesson.id %}">Продолжить урок</a>
-            {% elif lesson0 %}
-              <a class="button-link" href="{% url 'curriculum:lesson_detail' lesson0.id %}">Продолжить нулевой урок</a>
+
+    {% if workshop_module_view %}
+      <section class="gc-course-section" id="workshop">
+        <header class="gc-section-bar">
+          <h2>Воркшоп</h2>
+          <span>отдельная ветка</span>
+        </header>
+        <div class="gc-module-grid is-single">
+          <a class="gc-module-card{% if workshop_module_view.is_locked %} is-locked{% else %} is-open{% endif %}"
+             href="{% url 'curriculum:module_detail' workshop_module_view.module.id %}">
+            <span class="gc-module-eyebrow">Воркшоп 1500</span>
+            <h3>{{ workshop_module_view.title }}</h3>
+            <p class="gc-module-meta">{{ workshop_module_view.total_count }} уроков · быстрый запуск трафика</p>
+            {% if workshop_module_view.is_locked %}
+              <span class="gc-module-lock">{{ workshop_module_view.locked_reason|default:"Откроется по тарифу с воркшопом" }}</span>
+              <span class="gc-module-cta is-locked">Что нужно сделать →</span>
+            {% else %}
+              <span class="gc-module-cta">Смотреть уроки →</span>
             {% endif %}
-            <a class="button-link is-muted" href="#tariffs">Тариф и доступ</a>
-          </div>
+          </a>
         </div>
-        <aside class="gc-course-hero-side stack">
-          <div class="gc-kpi-card">
-            <span>Прогресс</span>
-            <strong>{{ course_progress_percent }}%</strong>
-            <small>Завершено: {{ completed_count }} из {{ total_count }}</small>
-          </div>
-          <div class="gc-kpi-card">
-            <span>Тариф</span>
-            <strong>{{ tariff_label }}</strong>
-            <small>{{ payment_state_label }}</small>
-          </div>
-        </aside>
       </section>
+    {% endif %}
 
-      <section class="panel stack">
-        <div class="gc-section-head">
-          <div>
-            <span class="pill">Программы</span>
-            <h2>Что входит в ваш маршрут</h2>
-          </div>
-        </div>
-        <section class="course-program-switch" aria-label="Выбор тренинга">
-          {% with intro=intro_modules.0 workshop=workshop_module_view %}
-            <article class="course-program-card is-open">
-              <span class="course-map-number">0</span>
-              <div>
-                <p>Нулевой урок</p>
-                <small>{% if intro %}{{ intro.title }}{% else %}Вводный урок и карта программы{% endif %}</small>
-              </div>
-              {% if lesson0 %}
-                <a class="dashboard-outline-button" href="{% url 'curriculum:lesson_detail' lesson0.id %}">Открыть</a>
-              {% endif %}
-            </article>
-
-            <article class="course-program-card{% if workshop and workshop.is_locked %} is-locked{% else %} is-open{% endif %}">
-              <span class="course-map-number">W</span>
-              <div>
-                <p>Воркшоп</p>
-                <small>
-                  {% if workshop %}
-                    {{ workshop.title }} · {% if workshop.is_locked %}{{ workshop.locked_reason }}{% else %}доступен по текущему тарифу{% endif %}
-                  {% else %}
-                    Отдельный практический тренинг
-                  {% endif %}
-                </small>
-              </div>
-              {% if workshop %}
-                <a class="dashboard-outline-button" href="{% url 'curriculum:module_detail' workshop.module.id %}">
-                  {% if workshop.is_locked %}Что нужно сделать{% else %}Открыть{% endif %}
-                </a>
-              {% endif %}
-            </article>
-
-            <article class="course-program-card is-open">
-              <span class="course-map-number">7</span>
-              <div>
-                <p>Основной курс</p>
-                <small>Ниже только основные модули. Каждая закрытая карточка объясняет причину блокировки.</small>
-              </div>
-              <a class="dashboard-outline-button" href="#main-modules">К модулям</a>
-            </article>
-          {% endwith %}
-        </section>
-      </section>
-
-      <section class="panel stack" id="main-modules">
-        <div class="gc-section-head">
-          <div>
-            <span class="pill">Основное обучение</span>
-            <h2>Модули курса</h2>
-          </div>
-          <p class="muted">Похоже на GetCourse-логику: видно следующий шаг, статус модуля и что именно мешает двигаться дальше.</p>
-        </div>
-        <section class="course-map-table" aria-label="Карта курса с модулями">
-          {% for module in main_modules %}
-            <article class="course-map-row{% if module.is_locked %} is-locked{% elif module.is_completed %} is-complete{% else %} is-open{% endif %}">
-              <div class="course-map-number">{{ module.display_index }}</div>
-              <div class="course-map-icon is-{{ module.icon_key }}" aria-hidden="true"></div>
-              <div class="course-map-title">
-                <p>{{ module.title }}</p>
-                <small>{{ module.summary }}</small>
-              </div>
-              <div class="course-map-percent">
-                <strong>{{ module.progress_percent }}%</strong>
-                <span class="course-map-mini-bar"><span style="width: {{ module.progress_percent }}%"></span></span>
-              </div>
-              <div class="course-map-step">
-                <span>{{ module.next_step_label }}</span>
-                <small>{% if module.locked_reason %}{{ module.locked_reason }}{% else %}{{ module.status_label }}{% endif %}</small>
-              </div>
-              <div class="course-map-row-action">
-                {% if module.is_completed %}
-                  <a class="course-map-round-action is-check" href="{% url 'curriculum:module_detail' module.module.id %}" aria-label="Модуль завершен"></a>
-                {% elif module.is_locked %}
-                  <a class="course-map-round-action is-lock" href="{% url 'curriculum:module_detail' module.module.id %}" aria-label="Модуль закрыт"></a>
-                {% elif module.next_lesson %}
-                  <a class="course-map-round-action is-play" href="{% url 'curriculum:lesson_detail' module.next_lesson.id %}" aria-label="Открыть следующий урок"></a>
-                {% else %}
-                  <a class="course-map-round-action is-play" href="{% url 'curriculum:module_detail' module.module.id %}" aria-label="Открыть модуль"></a>
-                {% endif %}
-              </div>
-            </article>
-          {% empty %}
-            <article class="course-map-row is-locked">
-              <div class="course-map-number">?</div>
-              <div class="course-map-icon is-lock" aria-hidden="true"></div>
-              <div class="course-map-title">
-                <p>Модули пока не опубликованы</p>
-                <small>Администратор добавит уроки в контент-разделе.</small>
-              </div>
-            </article>
-          {% endfor %}
-        </section>
-      </section>
-
-      <section class="course-map-tiers" id="tariffs" aria-label="Сравнение тарифов доступа">
-        <article class="course-tier-card{% if access_mode_label == 'LESSON0-ONLY' %} is-current{% endif %}">
-          <div class="course-tier-head">
-            <span>Нулевой урок</span>
-            <small>доступ после опроса</small>
-          </div>
-          <div class="course-tier-mini-list">
-            <p><span class="course-map-number">0</span> Вход в систему и карта программы</p>
-          </div>
-          <div class="course-tier-lock">
-            <span class="preview-lock" aria-hidden="true"></span>
-            <p>Воркшоп и обучение закрыты до оплаты подходящего тарифа.</p>
-          </div>
-          {% if lesson0 %}
-            <a class="course-tier-cta" href="{% url 'curriculum:lesson_detail' lesson0.id %}">Продолжить нулевой урок <span aria-hidden="true">-></span></a>
-          {% endif %}
-        </article>
-
+    <section class="gc-course-section" id="tariffs">
+      <header class="gc-section-bar">
+        <h2>Тарифы и оплата</h2>
+        <span>защищённая оплата</span>
+      </header>
+      <div class="gc-tariff-grid">
         {% for tariff in tariffs %}
-          <article class="course-tier-card{% if tariff.code == 'mentor' %} is-featured{% endif %}{% if tariff.title == tariff_label %} is-current{% endif %}">
-            <div class="course-tier-head">
-              <span>{{ tariff.title }}</span>
-              <small>{{ tariff.price_amount|money:tariff.currency }}</small>
-            </div>
-            <div class="course-tier-mini-list">
-              <p>{{ tariff.title }} {{ tariff.price_amount|floatformat:0 }}</p>
-              {% if tariff.code == "workshop" %}
-                <p><span class="course-map-number">W</span> Воркшоп и материалы</p>
-              {% elif tariff.code == "base" %}
-                <p><span class="course-map-number">4</span> Основные модули без проверки</p>
-              {% elif tariff.code == "mentor" %}
-                <p><span class="course-map-number">7</span> Все 7 модулей и домашка</p>
-              {% else %}
-                <p><span class="course-map-number">7</span> Полный доступ и личная поддержка</p>
-              {% endif %}
-            </div>
-            <div class="course-tier-lock{% if tariff.code == 'mentor' or tariff.code == 'vip' %} is-info{% endif %}">
-              <span class="preview-lock" aria-hidden="true"></span>
-              <p>{{ tariff.description }}</p>
-            </div>
+          <article class="gc-tariff-card{% if tariff.code == 'mentor' %} is-featured{% endif %}{% if tariff.title == tariff_label %} is-current{% endif %}">
+            <header>
+              <span class="gc-tariff-eyebrow">{{ tariff.title }}</span>
+              <strong>{{ tariff.price_amount|money:tariff.currency }}</strong>
+            </header>
+            <p>{{ tariff.description }}</p>
             <form method="post" action="{% url 'commerce:checkout_start' tariff.code %}">
               {% csrf_token %}
-              <button class="course-tier-cta" type="submit">
-                {% if tariff.title == tariff_label %}Открыть заказ{% else %}Защищенная оплата{% endif %}
-                <span aria-hidden="true">-></span>
+              <button class="gc-tariff-cta" type="submit">
+                {% if tariff.title == tariff_label %}Открыть заказ{% else %}Защищённая оплата{% endif %} →
               </button>
             </form>
           </article>
         {% endfor %}
-      </section>
+      </div>
     </section>
-  {% endif %}
+  </section>
 {% endblock %}

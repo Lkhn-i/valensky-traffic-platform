@@ -1,83 +1,24 @@
 {% extends "base.html" %}
 
 {% block title %}{% if module.slug == "workshop" %}Воркшоп: быстрый запуск трафика{% else %}{{ module_view.display_title }}{% endif %}{% endblock %}
-{% block body_class %}module-lessons-page{% if module.slug == "workshop" %} workshop-stage-page{% endif %}{% endblock %}
-{% block shell_class %}module-lessons-shell{% if module.slug == "workshop" %} workshop-stage-shell{% endif %}{% endblock %}
+{% block body_class %}module-lessons-page gc-module-body{% if module.slug == "workshop" %} workshop-stage-page{% endif %}{% endblock %}
+{% block shell_class %}module-lessons-shell gc-module-shell{% if module.slug == "workshop" %} workshop-stage-shell{% endif %}{% endblock %}
 {% block brand_subline %}по трафику{% endblock %}
-{% block page_label %}{% if module.slug == "workshop" %}Воркшоп{% else %}Модуль{% endif %}{% endblock %}
+{% block page_label %}{% if module.slug == "workshop" %}Воркшоп{% else %}Модуль {{ module_view.display_index }}{% endif %}{% endblock %}
 {% block page_heading %}{% if module.slug == "workshop" %}Воркшоп: быстрый запуск трафика{% else %}{{ module_view.display_title }}{% endif %}{% endblock %}
-{% block page_subtitle %}{% if module.slug == "workshop" %}Практический урок, чеклист готовности, материалы и запись без внешнего созвона.{% else %}Уроки модуля, причины блокировки, прогресс и завершение блока.{% endif %}{% endblock %}
+{% block page_subtitle %}{% if module.slug == "workshop" %}Практический урок, материалы и запись без внешнего созвона.{% else %}Уроки модуля, причины блокировки и завершение блока.{% endif %}{% endblock %}
 
 {% block sidebar %}
-  <section class="module-lessons-sidebar-nav">
-    <nav class="stage6-sidebar-menu" aria-label="Навигация по обучению">
-      <a class="stage6-sidebar-link" href="{% url 'curriculum:learner_dashboard' %}">
-        <span class="stage6-sidebar-icon is-home" aria-hidden="true"></span>
-        <span>Дашборд</span>
-      </a>
-      <a class="stage6-sidebar-link is-active" href="{% url 'curriculum:course_preview' course.slug %}">
-        <span class="stage6-sidebar-icon is-book" aria-hidden="true"></span>
-        <span>Курсы</span>
-      </a>
-      <a class="stage6-sidebar-link" href="#lessons">
-        <span class="stage6-sidebar-icon is-task" aria-hidden="true"></span>
-        <span>Задания</span>
-      </a>
-      <a class="stage6-sidebar-link" href="#messages">
-        <span class="stage6-sidebar-icon is-chat" aria-hidden="true"></span>
-        <span>Сообщения</span>
-        <span class="stage6-badge">3</span>
-      </a>
-      <a class="stage6-sidebar-link" href="#materials">
-        <span class="stage6-sidebar-icon is-folder" aria-hidden="true"></span>
-        <span>Материалы</span>
-      </a>
-      <a class="stage6-sidebar-link" href="#table">
-        <span class="stage6-sidebar-icon is-table" aria-hidden="true"></span>
-        <span>Таблица</span>
-      </a>
-      <a class="stage6-sidebar-link" href="#community">
-        <span class="stage6-sidebar-icon is-users" aria-hidden="true"></span>
-        <span>Сообщество</span>
-      </a>
-      <a class="stage6-sidebar-link" href="#support">
-        <span class="stage6-sidebar-icon is-help" aria-hidden="true"></span>
-        <span>Поддержка</span>
-      </a>
-      <a class="stage6-sidebar-link" href="#settings">
-        <span class="stage6-sidebar-icon is-gear" aria-hidden="true"></span>
-        <span>Настройки</span>
-      </a>
+  <section class="sidebar-section stack">
+    <p class="sidebar-kicker">Меню</p>
+    <nav class="sidebar-menu">
+      <a class="sidebar-link" href="{% url 'curriculum:learner_dashboard' %}">Список тренингов</a>
+      <a class="sidebar-link" href="{% url 'curriculum:course_preview' course.slug %}">Программа курса</a>
+      <a class="sidebar-link is-active" href="#lessons">Уроки модуля</a>
+      <a class="sidebar-link" href="#completion">Завершение модуля</a>
+      <a class="sidebar-link" href="https://t.me/valenskymanager" target="_blank" rel="noopener">Поддержка</a>
     </nav>
   </section>
-{% endblock %}
-
-{% block sidebar_footer %}
-  <section class="stage6-profile-card">
-    <div class="stage6-avatar" aria-hidden="true">
-      <span></span>
-    </div>
-    <div>
-      <p>{{ user.get_full_name|default:user.get_username }}</p>
-      <span>Ученик</span>
-    </div>
-  </section>
-  <section class="stage6-xp-card">
-    <div class="stage6-xp-copy">
-      <span>Уровень 2</span>
-      <span>325 / 1000 XP</span>
-    </div>
-    <div class="stage6-mini-progress" aria-label="XP">
-      <span style="width: 33%"></span>
-    </div>
-  </section>
-{% endblock %}
-
-{% block mobile_nav %}
-  <a class="mobile-link" href="{% url 'curriculum:learner_dashboard' %}">Дашборд</a>
-  <a class="mobile-link is-active" href="{% url 'curriculum:course_preview' course.slug %}">Курсы</a>
-  <a class="mobile-link" href="#lessons">Задания</a>
-  <a class="mobile-link" href="#materials">Материалы</a>
 {% endblock %}
 
 {% block topbar_meta %}
@@ -88,17 +29,6 @@
 {% endblock %}
 
 {% block content %}
-  <div class="stage6-mobile-header">
-    <button class="stage6-menu-button" type="button" aria-label="Открыть меню">
-      <span></span>
-      <span></span>
-    </button>
-    <a class="stage6-mobile-brand" href="{% url 'curriculum:learner_dashboard' %}">
-      Валенский<br><span>по трафику</span>
-    </a>
-    <a class="stage6-bell" href="#messages" aria-label="Уведомления"><span>3</span></a>
-  </div>
-
   {% if module.slug == "workshop" %}
     {% if workshop_lesson_view.decision.allowed %}
       {% url 'curriculum:lesson_detail' workshop_lesson_view.lesson.id as workshop_lesson_url %}
@@ -106,324 +36,227 @@
       {% url 'curriculum:course_preview' course.slug as workshop_lesson_url %}
     {% endif %}
 
-    <section class="stage7-workshop-layout" id="workshop">
-      <section class="stage7-course-zone" aria-label="Курс с веткой воркшопа">
-        <header class="stage7-course-head">
-          <div>
-            <p>Курс: система трафика</p>
-            <h2>Программа курса</h2>
-          </div>
-          <a class="stage7-outline-button" href="{% url 'curriculum:course_preview' course.slug %}">
-            Продолжить
-          </a>
-        </header>
+    <section class="gc-course-page stack" id="workshop">
+      <nav class="gc-breadcrumbs" aria-label="Хлебные крошки">
+        <a href="{% url 'curriculum:learner_dashboard' %}">Список тренингов</a>
+        <span aria-hidden="true">›</span>
+        <a href="{% url 'curriculum:course_preview' course.slug %}">{{ course.title }}</a>
+        <span aria-hidden="true">›</span>
+        <span>Воркшоп: быстрый запуск трафика</span>
+      </nav>
 
-        <div class="stage7-course-overview">
-          <article class="stage7-progress-card">
-            <span>Ваш прогресс</span>
-            <strong>{{ course_completed_count }} / {{ course_total_count }}</strong>
-            <p>уроков пройдено</p>
-            <div class="stage7-progress-line" aria-label="Прогресс курса">
-              <span style="width: {{ course_progress_percent }}%"></span>
-            </div>
-          </article>
-          <article class="stage7-next-card">
-            <span>Следующий урок</span>
-            {% if next_lesson %}
-              <p>{{ next_lesson.module.title }}</p>
-              <strong>{{ next_lesson.title }}</strong>
-            {% else %}
-              <p>{{ course.title }}</p>
-              <strong>Все доступные уроки завершены</strong>
-            {% endif %}
-          </article>
+      <div class="gc-info-strip">
+        <div class="gc-info-strip-cell">
+          <span>Формат</span>
+          <strong>LIVE урок</strong>
+          <small>Дата и время — 24 мая, 16:00 МСК</small>
         </div>
+        <div class="gc-info-strip-cell">
+          <span>Готов к занятию</span>
+          <strong>4 / 4 шагов</strong>
+          <small>Что сделать до воркшопа — ниже.</small>
+        </div>
+        <div class="gc-info-strip-cell">
+          <span>Запись</span>
+          <strong>SOON</strong>
+          <small>Откроется как обычный урок внутри платформы.</small>
+        </div>
+        <div class="gc-info-strip-cell gc-info-strip-cell-cta">
+          <a class="button-link" href="{{ workshop_lesson_url }}">Перейти к занятию →</a>
+          <a class="button-link is-muted" href="#calendar">Добавить в календарь</a>
+        </div>
+      </div>
 
-        <div class="stage7-course-grid">
-          <div class="stage7-program-panel">
-            <h3>Программа курса</h3>
-            <div class="stage7-program-list">
-              <article><span>1.</span><p>Фундамент</p><small>4 / 4</small></article>
-              <article><span>2.</span><p>Связка и оффер</p><small>3 / 6</small></article>
-              <article class="is-locked"><span>3.</span><p>Трафик и тесты</p><small>Доступ после: Модуль 2</small></article>
-              <article class="is-locked"><span>4.</span><p>Масштаб и оптимизация</p><small>Доступ после: Модуль 3</small></article>
-              <article class="is-locked"><span>5.</span><p>Аналитика и юнит-экономика</p><small>Доступ после: Модуль 4</small></article>
-              <article class="is-locked"><span>6.</span><p>Продвинутые связки</p><small>Доступ после: Модуль 5</small></article>
-            </div>
-          </div>
+      <section class="gc-course-section">
+        <header class="gc-section-bar">
+          <h2>Что сделать до воркшопа</h2>
+          <span>чек-лист</span>
+        </header>
+        <ul class="gc-checklist">
+          <li>Посмотреть вводный урок 12 мин</li>
+          <li>Скачать workbook и шаблоны</li>
+          <li>Изучить кейс и связку</li>
+          <li>Подготовить вопросы</li>
+        </ul>
+      </section>
 
-          <aside class="stage7-branch-stack" aria-label="Ветки обучения">
-            <article class="stage7-branch-card is-live">
-              <div>
-                <h3>Воркшоп</h3>
-                <p>Короткая интенсивная ветка</p>
-              </div>
-              <span>LIVE</span>
-              <a href="{{ workshop_lesson_url }}">Открыть <span aria-hidden="true">-></span></a>
-            </article>
-            <article class="stage7-branch-card">
-              <h3>Практика</h3>
-              <p>2 / 8 заданий</p>
-              <a href="#workshop-practice">Открыть <span aria-hidden="true">-></span></a>
-            </article>
-            <article class="stage7-branch-card">
-              <h3>Материалы</h3>
-              <p>Шаблоны, чек-листы, гайды</p>
-              <a href="#workshop-materials">Открыть <span aria-hidden="true">-></span></a>
-            </article>
-          </aside>
+      <section class="gc-course-section">
+        <header class="gc-section-bar">
+          <h2>Материалы</h2>
+          <span>шаблоны и презентация</span>
+        </header>
+        <div class="gc-module-grid">
+          <a class="gc-module-card is-open" href="{{ workshop_lesson_url }}">
+            <span class="gc-module-eyebrow">PDF</span>
+            <h3>Презентация воркшопа</h3>
+            <p class="gc-module-meta">4.2 МБ</p>
+            <span class="gc-module-cta">Открыть →</span>
+          </a>
+          <a class="gc-module-card is-open" href="{{ workshop_lesson_url }}">
+            <span class="gc-module-eyebrow">PDF</span>
+            <h3>Workbook</h3>
+            <p class="gc-module-meta">2.7 МБ</p>
+            <span class="gc-module-cta">Открыть →</span>
+          </a>
+          <a class="gc-module-card is-open" href="{{ workshop_lesson_url }}">
+            <span class="gc-module-eyebrow">PDF</span>
+            <h3>Чек-лист запуска</h3>
+            <p class="gc-module-meta">1.1 МБ</p>
+            <span class="gc-module-cta">Открыть →</span>
+          </a>
         </div>
       </section>
 
-      <section class="stage7-live-zone" aria-label="Экран воркшопа">
-        <header class="stage7-live-head">
-          <div>
-            <p>Воркшоп</p>
-            <h1>Воркшоп: быстрый запуск трафика</h1>
-          </div>
-          <span>LIVE</span>
+      <section class="gc-course-section">
+        <header class="gc-section-bar">
+          <h2>Запись</h2>
+          <span>после публикации</span>
         </header>
-
-        <section class="stage7-workshop-hero">
-          <div class="stage7-rocket" aria-hidden="true"></div>
-          <article class="stage7-status-card">
-            <span>Ваш статус</span>
-            <h2>Готов к занятию</h2>
-            <p>4 из 4 шагов выполнено</p>
-            <div class="stage7-step-bars" aria-label="Готовность к занятию">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </article>
-          <article class="stage7-time-card">
-            <span>Дата и время</span>
-            <p>24 мая, сб</p>
-            <p>16:00 МСК</p>
-            <small>Формат: LIVE урок</small>
-            <a href="#calendar">Добавить в календарь</a>
-          </article>
-          <article class="stage7-lesson-card">
-            <span>Перейти к занятию</span>
-            <a class="stage7-primary-button" href="{{ workshop_lesson_url }}">
-              Перейти к занятию <span aria-hidden="true">-></span>
-            </a>
-            {% if workshop_lesson_view.locked_reason %}
-              <small>{{ workshop_lesson_view.locked_reason }}</small>
-            {% else %}
-              <small>Откроется как обычный урок внутри платформы.</small>
-            {% endif %}
-          </article>
-        </section>
-
-        <section class="stage7-workshop-grid">
-          <article class="stage7-panel" id="workshop-practice">
-            <h3>Что сделать до воркшопа</h3>
-            <ul class="stage7-checklist">
-              <li>Посмотреть вводный урок 12 мин</li>
-              <li>Скачать workbook и шаблоны</li>
-              <li>Изучить кейс и связку</li>
-              <li>Подготовить вопросы</li>
-            </ul>
-            <p class="stage7-ready-note">Все готово!</p>
-          </article>
-
-          <article class="stage7-panel" id="workshop-materials">
-            <h3>Материалы</h3>
-            <div class="stage7-material-list">
-              <a href="{{ workshop_lesson_url }}">
-                <span>Презентация воркшопа</span>
-                <small>PDF, 4.2 МБ</small>
-              </a>
-              <a href="{{ workshop_lesson_url }}">
-                <span>Workbook</span>
-                <small>PDF, 2.7 МБ</small>
-              </a>
-              <a href="{{ workshop_lesson_url }}">
-                <span>Чек-лист запуска</span>
-                <small>PDF, 1.1 МБ</small>
-              </a>
-            </div>
-          </article>
-
-          <article class="stage7-panel stage7-recording-panel">
-            <div class="stage7-panel-title">
-              <h3>Запись</h3>
-              <span>SOON</span>
-            </div>
-            <div class="stage7-recording-preview" aria-hidden="true">
-              <span></span>
-            </div>
-            <a class="stage7-outline-button" href="{{ workshop_lesson_url }}">Открыть</a>
-            <p>Запись будет доступна после публикации урока.</p>
-          </article>
-        </section>
-
-        <section class="stage7-upsell">
-          <div class="stage7-crown" aria-hidden="true"></div>
-          <div>
-            <h3>Хочешь систему целиком?</h3>
-            <p>Полный курс даст тебе всю стратегию, связки и масштабирование.</p>
-          </div>
-          <a class="stage7-outline-button" href="{% url 'curriculum:course_preview' course.slug %}#tariffs">
-            Перейти к полному курсу <span aria-hidden="true">-></span>
+        <div class="gc-module-grid is-single">
+          <a class="gc-module-card is-locked" href="{{ workshop_lesson_url }}">
+            <span class="gc-module-eyebrow">Запись</span>
+            <h3>Запись будет доступна после публикации урока</h3>
+            <p class="gc-module-meta">SOON</p>
+            <span class="gc-module-cta">Открыть →</span>
           </a>
-        </section>
+        </div>
+      </section>
+
+      <section class="gc-course-section">
+        <header class="gc-section-bar">
+          <h2>Хочешь систему целиком?</h2>
+          <span>полный курс</span>
+        </header>
+        <div class="gc-upsell">
+          <p>Полный курс даст всю стратегию, связки и масштабирование — не только воркшоп.</p>
+          <a class="button-link" href="{% url 'curriculum:course_preview' course.slug %}#tariffs">Перейти к полному курсу →</a>
+        </div>
       </section>
     </section>
   {% else %}
-  <section class="stage6-layout">
-    <div class="stage6-main-column">
-      <div class="stage6-topline">
-        <nav class="stage6-breadcrumbs" aria-label="Хлебные крошки">
-          <a href="{% url 'curriculum:course_preview' course.slug %}">Курсы</a>
-          <span>›</span>
-          <a href="{% url 'curriculum:course_preview' course.slug %}">{{ course.title }}</a>
-          <span>›</span>
-          <span>Модуль {{ module_view.display_index }}</span>
-        </nav>
-        <article class="stage6-course-progress">
-          <div>
-            <span>Прогресс курса</span>
-            <strong>{{ course_progress_percent }}%</strong>
-          </div>
-          <div class="stage6-mini-progress" aria-label="Прогресс курса">
-            <span style="width: {{ course_progress_percent }}%"></span>
-          </div>
-        </article>
+    <section class="gc-course-page stack">
+      <nav class="gc-breadcrumbs" aria-label="Хлебные крошки">
+        <a href="{% url 'curriculum:learner_dashboard' %}">Список тренингов</a>
+        <span aria-hidden="true">›</span>
+        <a href="{% url 'curriculum:course_preview' course.slug %}">{{ course.title }}</a>
+        <span aria-hidden="true">›</span>
+        <span>Модуль {{ module_view.display_index }}</span>
+      </nav>
+
+      <div class="gc-info-strip">
+        <div class="gc-info-strip-cell">
+          <span>Уроков в модуле</span>
+          <strong>{{ module_view.total_count }}</strong>
+        </div>
+        <div class="gc-info-strip-cell">
+          <span>Выполнено</span>
+          <strong>{{ module_view.completed_count }} / {{ module_view.total_count }}</strong>
+          <small>Прогресс модуля</small>
+        </div>
+        <div class="gc-info-strip-cell">
+          <span>Домашек</span>
+          <strong>{{ module_view.homework_count }}</strong>
+        </div>
+        <div class="gc-info-strip-cell">
+          <span>Средний балл</span>
+          <strong>{{ module_view.average_score_label }}</strong>
+        </div>
       </div>
 
-      <section class="stage6-module-hero">
-        <div class="stage6-module-sketch is-{{ module_view.icon_key }}" aria-hidden="true">
-          <span class="stage6-stickman"></span>
-          <span class="stage6-sketch-mark"></span>
+      {% if module_view.locked_reason %}
+        <div class="gc-module-banner is-locked">
+          <strong>Модуль заблокирован.</strong>
+          <span>{{ module_view.locked_reason }}</span>
         </div>
-        <div class="stage6-module-copy">
-          <p>Модуль {{ module_view.display_index }}</p>
-          <h2>{{ module_view.display_title }}</h2>
-          <span class="stage6-status-chip is-{{ module_view.status_label|slugify }}">{{ module_view.status_label }}</span>
-          <p>{{ module_view.summary }}</p>
-          {% if module_view.locked_reason %}
-            <p class="stage6-module-warning">{{ module_view.locked_reason }}</p>
-          {% endif %}
-        </div>
-        <aside class="stage6-module-stats" aria-label="Статистика модуля">
-          <div>
-            <span>Уроков в модуле</span>
-            <strong>{{ module_view.total_count }}</strong>
-          </div>
-          <div>
-            <span>Выполнено</span>
-            <strong>{{ module_view.completed_count }} / {{ module_view.total_count }}</strong>
-          </div>
-          <div>
-            <span>Домашек</span>
-            <strong>{{ module_view.homework_count }}</strong>
-          </div>
-          <div>
-            <span>Средний балл</span>
-            <strong>{{ module_view.average_score_label }}</strong>
-          </div>
-        </aside>
-      </section>
+      {% endif %}
 
-      <section class="stage6-lessons-panel" id="lessons">
-        <div class="stage6-section-head">
-          <h3>Уроки модуля ({{ module_view.total_count }})</h3>
-        </div>
-        <div class="stage6-lesson-list">
+      <section class="gc-course-section" id="lessons">
+        <header class="gc-section-bar">
+          <h2>Уроки модуля ({{ module_view.total_count }})</h2>
+          <span>{{ module_view.display_title }}</span>
+        </header>
+
+        <div class="gc-lesson-grid">
           {% for lesson_view in module_view.lessons %}
-            <article class="stage6-lesson-row is-{{ lesson_view.ui_state }}">
-              <div class="stage6-lesson-thumb">
-                <span class="stage6-icon is-{{ lesson_view.icon_key }}" aria-hidden="true"></span>
-              </div>
-              <div class="stage6-lesson-number">{{ forloop.counter }}</div>
-              <div class="stage6-lesson-copy">
-                <div class="stage6-lesson-title-row">
-                  <h4>{{ lesson_view.lesson.title }}</h4>
-                  <span class="stage6-state-label is-{{ lesson_view.ui_state }}">{{ lesson_view.ui_state_label }}</span>
-                </div>
-                <p>{{ lesson_view.lesson.summary }}</p>
-                <div class="stage6-lesson-progress" aria-label="Прогресс урока">
+            {% if lesson_view.decision.allowed %}
+              <a class="gc-lesson-card is-{{ lesson_view.ui_state }}"
+                 href="{% url 'curriculum:lesson_detail' lesson_view.lesson.id %}">
+                <span class="gc-lesson-eyebrow">Урок {{ forloop.counter }}</span>
+                <h3>{{ lesson_view.lesson.title }}</h3>
+                {% if lesson_view.lesson.summary %}
+                  <p class="gc-lesson-summary">{{ lesson_view.lesson.summary|truncatechars:90 }}</p>
+                {% endif %}
+                <div class="gc-lesson-progress" aria-label="Прогресс урока">
                   <span style="width: {{ lesson_view.progress_percent }}%"></span>
                 </div>
+                <p class="gc-lesson-state is-open">{{ lesson_view.ui_state_label }}</p>
+                <span class="gc-lesson-cta">Смотреть урок →</span>
+              </a>
+            {% else %}
+              <article class="gc-lesson-card is-{{ lesson_view.ui_state }} is-locked">
+                <span class="gc-lesson-eyebrow">Урок {{ forloop.counter }}</span>
+                <h3>{{ lesson_view.lesson.title }}</h3>
+                {% if lesson_view.lesson.summary %}
+                  <p class="gc-lesson-summary">{{ lesson_view.lesson.summary|truncatechars:90 }}</p>
+                {% endif %}
                 {% if lesson_view.locked_reason %}
-                  <p class="stage6-lock-reason">{{ lesson_view.locked_reason }}</p>
-                {% else %}
-                  <p class="stage6-lock-reason is-open">{{ lesson_view.progress_percent }}% · {{ lesson_view.access_label }}</p>
+                  <p class="gc-lesson-state is-locked">{{ lesson_view.locked_reason }}</p>
                 {% endif %}
-              </div>
-              <div class="stage6-lesson-action-cell">
-                {% if lesson_view.decision.allowed %}
-                  <a class="stage6-lesson-action" href="{% url 'curriculum:lesson_detail' lesson_view.lesson.id %}">Смотреть урок</a>
-                {% elif lesson_view.ui_state == "time_locked" %}
-                  <span class="stage6-lock-icon is-clock" aria-label="Откроется по времени"></span>
-                {% elif lesson_view.ui_state == "homework_locked" %}
-                  <span class="stage6-lock-icon is-homework" aria-label="Закрыт из-за домашки"></span>
-                {% else %}
-                  <span class="stage6-lock-icon" aria-label="Закрыт"></span>
-                {% endif %}
-              </div>
-            </article>
+                <span class="gc-lesson-cta is-locked">{{ lesson_view.ui_state_label }}</span>
+              </article>
+            {% endif %}
           {% endfor %}
         </div>
       </section>
 
-      <section class="stage6-completion-panel" id="completion">
-        <div class="stage6-completion-note">
-          <span class="stage6-icon is-cup" aria-hidden="true"></span>
-          <p>Пройди все уроки и задания модуля и получи отметку в таблицу</p>
-        </div>
+      <section class="gc-course-section" id="completion">
+        <header class="gc-section-bar">
+          <h2>Завершение модуля</h2>
+          <span>после прохождения уроков</span>
+        </header>
 
         {% if module_view.can_accept_documents %}
-          <form class="stage6-document-form" method="post" action="{% url 'curriculum:module_complete' module.id %}">
+          <form class="gc-completion-form" method="post" action="{% url 'curriculum:module_complete' module.id %}">
             {% csrf_token %}
-            <div>
-              <h3>Юридическое подтверждение</h3>
-              <p>Перед закрытием модуля подтвердите, что ознакомились с материалами и понимаете порядок открытия следующих модулей.</p>
-            </div>
-            <label class="stage6-checkline">
+            <h3>Юридическое подтверждение</h3>
+            <p>Перед закрытием модуля подтвердите, что ознакомились с материалами и понимаете порядок открытия следующих модулей.</p>
+            <label class="gc-completion-line">
               <input type="checkbox" name="accept_documents">
               <span>Я ознакомился(ась) со всеми материалами модуля</span>
             </label>
-            <label class="stage6-checkline">
+            <label class="gc-completion-line">
               <input type="checkbox" name="accept_claims" checked disabled>
               <span>Претензий к материалу не имею</span>
             </label>
-            <label class="stage6-checkline">
+            <label class="gc-completion-line">
               <input type="checkbox" name="accept_schedule" checked disabled>
               <span>Понимаю расписание открытия следующего модуля</span>
             </label>
             {% if document_acceptance_error %}
-              <p class="auth-form-error">{{ document_acceptance_error }}</p>
+              <p class="gc-completion-error">{{ document_acceptance_error }}</p>
             {% endif %}
-            <button class="stage6-complete-button" type="submit">Завершить модуль</button>
+            <button class="button-link" type="submit">Завершить модуль</button>
           </form>
         {% elif module_view.documents_accepted %}
-          <div class="stage6-document-form is-readonly">
-            <h3>Модуль подтверждён</h3>
-            <p>Документы по модулю приняты. Следующий блок откроется автоматически по расписанию курса.</p>
-            <button class="stage6-complete-button is-disabled" type="button" disabled>Завершить модуль</button>
+          <div class="gc-completion-form is-readonly">
+            <p><strong>Модуль подтверждён.</strong> Документы по модулю приняты. Следующий блок откроется автоматически по расписанию курса.</p>
+            <button class="button-link is-muted" type="button" disabled>Завершить модуль</button>
           </div>
         {% elif module_view.documents_required %}
-          <div class="stage6-document-form is-readonly">
-            <h3>Завершение пока закрыто</h3>
-            <p>Выполните все условия модуля: уроки, задания и последовательность прохождения. После этого кнопка завершения станет активной.</p>
+          <div class="gc-completion-form is-readonly">
+            <p><strong>Завершение пока закрыто.</strong> Выполните все условия модуля: уроки, задания и последовательность прохождения. После этого кнопка завершения станет активной.</p>
             {% if document_acceptance_error %}
-              <p class="auth-form-error">{{ document_acceptance_error }}</p>
+              <p class="gc-completion-error">{{ document_acceptance_error }}</p>
             {% endif %}
-            <button class="stage6-complete-button is-disabled" type="button" disabled>Завершить модуль</button>
+            <button class="button-link is-muted" type="button" disabled>Завершить модуль</button>
           </div>
         {% else %}
-          <div class="stage6-document-form is-readonly">
-            <h3>Документы не требуются</h3>
-            <p>Для этого уровня доступа юридическое подтверждение перед следующим модулем не требуется.</p>
-            <button class="stage6-complete-button is-disabled" type="button" disabled>Завершить модуль</button>
+          <div class="gc-completion-form is-readonly">
+            <p><strong>Документы не требуются.</strong> Для этого уровня доступа юридическое подтверждение перед следующим модулем не требуется.</p>
+            <button class="button-link is-muted" type="button" disabled>Завершить модуль</button>
           </div>
         {% endif %}
       </section>
-    </div>
-  </section>
+    </section>
   {% endif %}
 {% endblock %}

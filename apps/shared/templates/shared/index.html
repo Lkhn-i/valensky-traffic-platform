@@ -2,143 +2,117 @@
 {% load money %}
 
 {% block title %}Валенский про трафик · учебная платформа{% endblock %}
-{% block shell_class %}public-shell{% endblock %}
-{% block brand_subline %}учебная платформа{% endblock %}
-{% block page_label %}Валенский про трафик{% endblock %}
-{% block page_heading %}Валенский про трафик{% endblock %}
-{% block page_subtitle %}Главная страница с тарифами, входом и понятной логикой доступа.{% endblock %}
+{% block body_class %}landing-light-body{% endblock %}
+{% block shell_class %}landing-light-shell{% endblock %}
 
 {% block sidebar %}{% endblock %}
 {% block sidebar_footer %}{% endblock %}
 {% block topbar_meta %}{% endblock %}
 {% block mobile_nav %}{% endblock %}
 
+{% block brand_subline %}{% endblock %}
+{% block page_label %}{% endblock %}
+{% block page_heading %}{% endblock %}
+{% block page_subtitle %}{% endblock %}
+
 {% block content %}
-  <section class="public-page public-page-v3">
-    <header class="public-nav public-nav-chalk">
-      <a class="public-brand" href="/">
-        <span>ВАЛЕНСКИЙ</span>
-      </a>
-      <nav class="public-nav-links" aria-label="Публичная навигация">
-        <a href="#flow">Как это работает</a>
+  <section class="landing-light">
+    <div class="sr-only">Учебная платформа</div>
+
+    <header class="landing-nav">
+      <a class="landing-brand" href="/">Валенский <span>про&nbsp;трафик</span></a>
+      <nav class="landing-nav-links" aria-label="Навигация лендинга">
+        <a href="#what">Чему учим</a>
         <a href="#tariffs">Тарифы</a>
-        <a href="https://t.me/Vanlsky1" target="_blank" rel="noopener">Telegram-канал</a>
-        <a href="https://t.me/valenskymanager" target="_blank" rel="noopener">Поддержка</a>
+        <a href="#faq">Вопросы</a>
       </nav>
-      <div class="public-nav-actions">
-        <a class="button-link is-muted" href="#tariffs">Смотреть тарифы</a>
-        <a class="public-login" href="{% url 'accounts:login' %}">Войти в платформу <span aria-hidden="true">→</span></a>
+      <div class="landing-nav-actions">
+        <a class="landing-button is-ghost" href="https://t.me/Vanlsky1" target="_blank" rel="noopener">Telegram</a>
+        <a class="landing-button" href="{% url 'accounts:login' %}">Войти →</a>
       </div>
-      <button class="public-menu-button" type="button" aria-label="Открыть меню">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
     </header>
 
-    <section class="panel public-entry-hero" id="flow">
-      <div class="public-entry-copy stack">
-        <span class="pill">Учебная платформа</span>
-        <h1>Обучение, которое ведёт человека от входа до результата</h1>
-        <p class="public-entry-lead">Сначала человек видит тарифы и понятный путь входа. После логина попадает в кабинет, где сразу видно: что открыто, что закрыто и какой следующий шаг.</p>
-        <div class="public-entry-points">
-          <article>
-            <strong>1. Главная</strong>
-            <span>Тарифы, Telegram, вход и защищённая оплата.</span>
-          </article>
-          <article>
-            <strong>2. Личный кабинет</strong>
-            <span>Нулевой урок, воркшоп, основной курс и понятные причины блокировок.</span>
-          </article>
-          <article>
-            <strong>3. Уроки и домашки</strong>
-            <span>Видео, материалы, сдача Д/З, прогресс и переход к следующему шагу.</span>
-          </article>
+    <section class="landing-hero" id="hero">
+      <div class="landing-hero-copy">
+        <span class="landing-eyebrow">Учебная платформа</span>
+        <h1>Трафик, который превращается в продажи</h1>
+        <p class="landing-lead">Системный курс по трафику, продажам и контенту: от первого касания до стабильного потока клиентов. Учебная платформа с уроками, домашками и поддержкой.</p>
+        <div class="landing-hero-actions">
+          <a class="landing-button is-primary" href="#tariffs">Выбрать тариф</a>
+          <a class="landing-button is-ghost" href="{% url 'public_preview' %}">Открыть нулевой урок</a>
         </div>
-        <div class="public-actions">
-          <a class="button-link" href="{% url 'accounts:login' %}">Зайти в аккаунт</a>
-          <a class="button-link is-muted" href="{% url 'public_preview' %}">Открыть нулевой урок</a>
-        </div>
-        <a class="telegram-card" href="https://t.me/Vanlsky1" target="_blank" rel="noopener">
-          <span class="telegram-mark" aria-hidden="true"></span>
-          <span>
-            <strong>Telegram-канал Валенского</strong>
-            <small>Коротко о продажах, трафике и мышлении.</small>
-          </span>
-          <span aria-hidden="true">→</span>
-        </a>
-      </div>
-
-      <aside class="public-entry-board" aria-hidden="true">
-        <div class="public-entry-doodle panel stack">
-          <p class="eyebrow">Схема платформы</p>
-          <div class="public-entry-path">
-            <div class="public-entry-step">
-              <span>Трафик</span>
-              <small>человек заходит на сайт</small>
-            </div>
-            <div class="public-entry-arrow">→</div>
-            <div class="public-entry-step">
-              <span>Вход</span>
-              <small>логин и пароль</small>
-            </div>
-            <div class="public-entry-arrow">→</div>
-            <div class="public-entry-step">
-              <span>Курс</span>
-              <small>уроки, модули, домашки</small>
-            </div>
+        <div class="landing-hero-stats">
+          <div>
+            <strong>4</strong>
+            <span>модуля</span>
           </div>
-          <div class="public-hero-stickmen" aria-hidden="true">
-            {% include "shared/svg/stickman_thinking.html" %}
-            {% include "shared/svg/stickman_lessons.html" %}
-            {% include "shared/svg/stickman_celebrate.html" %}
+          <div>
+            <strong>40+</strong>
+            <span>уроков</span>
+          </div>
+          <div>
+            <strong>1500₽</strong>
+            <span>входной воркшоп</span>
           </div>
         </div>
-      </aside>
-    </section>
-
-    <section class="panel public-flow-grid">
-      <article class="public-flow-card">
-        <span class="pill">Главная</span>
-        <h2>Человек сначала понимает предложение</h2>
-        <p>На первом экране должны быть тарифы, кнопка входа, ссылка в Telegram и понятная продажная логика: что человек получит после оплаты.</p>
-      </article>
-      <article class="public-flow-card">
-        <span class="pill">Логин</span>
-        <h2>Потом — единый вход</h2>
-        <p>После клика человек попадает на страницу входа. Один логин подходит студентам, менеджерам, админам и супер-админам.</p>
-      </article>
-      <article class="public-flow-card">
-        <span class="pill">Обучение</span>
-        <h2>После входа — только нужные действия</h2>
-        <p>Внутри кабинета сразу видно текущий доступ, следующий урок, домашку и что нужно сделать для открытия следующего шага.</p>
-      </article>
-    </section>
-
-    <section class="public-tariffs public-tariffs-v3" id="tariffs" aria-label="Оплата и тарифы">
-      <div class="public-tariffs-copy">
-        <p class="public-section-kicker">Тарифы</p>
-        <h2>Открывайте тот уровень, который нужен сейчас</h2>
-        <p>Кнопки оплаты привязаны к аккаунту: человек входит в платформу, открывает защищённый заказ и после подтверждения получает доступ именно в свой кабинет.</p>
       </div>
+    </section>
 
-      <div class="public-tariff-list">
-        <article class="public-tariff-card is-free">
-          <span class="pill">Старт</span>
-          <h3>Нулевой урок</h3>
-          <p>Бесплатно</p>
-          <small>Вводный урок, который показывает логику платформы и помогает начать после опроса.</small>
-          <a href="{% url 'public_preview' %}">Открыть после опроса</a>
+    <section class="landing-section" id="what">
+      <header class="landing-section-head">
+        <span class="landing-eyebrow">Что внутри</span>
+        <h2>Программа из 4 крупных модулей</h2>
+        <p>Каждый модуль — самостоятельный шаг по системе: от позиционирования и упаковки до запуска связок и масштабирования.</p>
+      </header>
+      <div class="landing-modules">
+        <article class="landing-module-card">
+          <span>Модуль 1</span>
+          <h3>Позиционирование, упаковка и платформы</h3>
+          <p>Найти точное обещание, упаковать аккаунт и оформить технические базы для безопасного запуска.</p>
+        </article>
+        <article class="landing-module-card">
+          <span>Модуль 2</span>
+          <h3>Контент-фабрика и Telegram</h3>
+          <p>Системно делать Reels и посты, превращать просмотры в подписчиков и заявки.</p>
+        </article>
+        <article class="landing-module-card">
+          <span>Модуль 3</span>
+          <h3>Монетизация и воронки</h3>
+          <p>Тариф, оффер, чек, продающие воронки и стабильный поток заявок и оплат.</p>
+        </article>
+        <article class="landing-module-card">
+          <span>Модуль 4</span>
+          <h3>Платный и органический рост</h3>
+          <p>Реклама, посевы, коллаборации, аналитика и масштабирование рабочих связок.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="landing-section landing-tariffs" id="tariffs">
+      <header class="landing-section-head">
+        <span class="landing-eyebrow">Тарифы</span>
+        <h2>Откройте тот уровень, который нужен сейчас</h2>
+        <p>Оплата защищённая. После подтверждения доступ автоматически появится в личном кабинете.</p>
+      </header>
+      <div class="landing-tariff-grid">
+        <article class="landing-tariff-card is-free">
+          <header>
+            <span>Старт</span>
+            <strong>0 ₽</strong>
+          </header>
+          <p>Нулевой урок: вводный шаг, который показывает логику платформы и помогает начать.</p>
+          <a class="landing-button is-ghost" href="{% url 'public_preview' %}">Открыть после опроса</a>
         </article>
 
         {% if landing_tariffs %}
           {% for tariff in landing_tariffs %}
-            <article class="public-tariff-card{% if tariff.code == 'mentor' %} is-featured{% endif %}">
-              <span class="pill">{{ tariff.code|upper }}</span>
-              <h3>{{ tariff.title }}</h3>
-              <p>{{ tariff.price_amount|money:tariff.currency }}</p>
-              <small>{{ tariff.description }}</small>
-              <ul class="public-tariff-features clean">
+            <article class="landing-tariff-card{% if tariff.code == 'mentor' %} is-featured{% endif %}">
+              <header>
+                <span>{{ tariff.title }}</span>
+                <strong>{{ tariff.price_amount|money:tariff.currency }}</strong>
+              </header>
+              <p>{{ tariff.description }}</p>
+              <ul class="landing-tariff-features">
                 {% for feature in tariff.metadata.features %}
                   <li>{{ feature }}</li>
                 {% empty %}
@@ -147,12 +121,49 @@
               </ul>
               <form method="post" action="{% url 'commerce:checkout_start' tariff.code %}">
                 {% csrf_token %}
-                <button type="submit">Защищённая оплата</button>
+                <button type="submit" class="landing-button is-primary">Защищённая оплата →</button>
               </form>
             </article>
           {% endfor %}
         {% endif %}
       </div>
     </section>
+
+    <section class="landing-section landing-faq" id="faq">
+      <header class="landing-section-head">
+        <span class="landing-eyebrow">Вопросы</span>
+        <h2>Часто спрашивают</h2>
+      </header>
+      <div class="landing-faq-grid">
+        <article>
+          <h3>Когда я получу доступ?</h3>
+          <p>Сразу после оплаты заказ помечается оплаченным, и доступ появляется в кабинете. Если что-то задерживается — пишите в поддержку.</p>
+        </article>
+        <article>
+          <h3>Можно начать без оплаты?</h3>
+          <p>Да. Откройте нулевой урок после короткого опроса — там объясняем логику курса и платформы.</p>
+        </article>
+        <article>
+          <h3>Что значит «защищённая оплата»?</h3>
+          <p>Заказ создаётся под ваш аккаунт. После подтверждения платежа доступ открывается автоматически только в вашем кабинете.</p>
+        </article>
+        <article>
+          <h3>Есть ли поддержка?</h3>
+          <p>Да, все вопросы по доступу и обучению — в Telegram-чате поддержки. Ссылка есть в меню платформы.</p>
+        </article>
+      </div>
+    </section>
+
+    <footer class="landing-footer">
+      <div>
+        <strong>Валенский про трафик</strong>
+        <span>Учебная платформа для системных запусков.</span>
+      </div>
+      <nav class="landing-footer-links" aria-label="Полезные ссылки">
+        <a href="https://t.me/Vanlsky1" target="_blank" rel="noopener">Telegram-канал</a>
+        <a href="https://t.me/valenskymanager" target="_blank" rel="noopener">Поддержка</a>
+        <a href="{% url 'accounts:login' %}">Вход</a>
+      </nav>
+    </footer>
   </section>
 {% endblock %}
