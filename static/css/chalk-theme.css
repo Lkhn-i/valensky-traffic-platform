@@ -2924,3 +2924,31 @@ body.landing-light-body .content {
   .landing-tariffs { padding: 48px 20px; }
   .landing-footer { padding: 28px 20px; }
 }
+
+/* Force Inter on landing page (override chalk-handwritten globals). */
+body.landing-light-body .landing-light h1,
+body.landing-light-body .landing-light h2,
+body.landing-light-body .landing-light h3,
+body.landing-light-body .landing-light h4,
+body.landing-light-body .landing-light p,
+body.landing-light-body .landing-light a,
+body.landing-light-body .landing-light strong,
+body.landing-light-body .landing-light span,
+body.landing-light-body .landing-light small,
+body.landing-light-body .landing-light button,
+  body.landing-light-body .landing-light li,
+body.landing-light-body .landing-brand,
+body.landing-light-body .landing-button {
+  font-family: "Inter", "Helvetica Neue", system-ui, -apple-system, "Segoe UI", sans-serif !important;
+}
+body.landing-light-body .landing-light h1,
+body.landing-light-body .landing-light h2,
+body.landing-light-body .landing-light h3 {
+  font-weight: 700 !important;
+  letter-spacing: -0.015em !important;
+  color: #15171a !important;
+}
+body.landing-light-body .landing-light .landing-hero-copy h1 {
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+}

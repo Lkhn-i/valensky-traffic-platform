@@ -4,9 +4,9 @@
 {% block body_class %}stage8-lesson-page{% endblock %}
 {% block shell_class %}stage8-lesson-shell-frame{% endblock %}
 {% block brand_subline %}по трафику{% endblock %}
-{% block page_label %}Урок{% endblock %}
-{% block page_heading %}{{ lesson_code }} {{ lesson.summary }}{% endblock %}
-{% block page_subtitle %}Видео, конспект, материалы, домашка, комментарии менеджера и переход к следующему уроку.{% endblock %}
+{% block page_label %}{% endblock %}
+{% block page_heading %}{% endblock %}
+{% block page_subtitle %}{% endblock %}
 
 {% block sidebar %}
   <section class="sidebar-section stack">
@@ -105,7 +105,6 @@
 
     <div class="stage8-lesson-topline">
       <a class="stage8-back-link" href="{% url 'curriculum:module_detail' lesson.module.id %}">← К модулям</a>
-      <div class="stage8-status-select" aria-label="Статус урока">{{ progress_status_label }}</div>
       <div class="stage8-inline-actions">
         {% if previous_module_lesson %}
           <a class="button-link is-muted" href="{% url 'curriculum:lesson_detail' previous_module_lesson.id %}">← Предыдущий</a>
@@ -119,6 +118,7 @@
         {% else %}
           <span class="button-link is-disabled">Следующий →</span>
         {% endif %}
+        <span class="stage8-status-select" aria-label="Статус урока">{{ progress_status_label }}</span>
       </div>
     </div>
 
