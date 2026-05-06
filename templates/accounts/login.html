@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}Вход в платформу{% endblock %}
+{% block body_class %}login-stage-body{% endblock %}
+{% block shell_class %}login-shell login-stage-shell{% endblock %}
+{% block brand_subline %}единый вход{% endblock %}
+{% block page_label %}Авторизация{% endblock %}
+{% block page_heading %}Вход в платформу{% endblock %}
+{% block page_subtitle %}Единый вход для всех пользователей платформы.{% endblock %}
+
+{% block sidebar %}{% endblock %}
+{% block sidebar_footer %}{% endblock %}
+{% block topbar_meta %}{% endblock %}
+{% block mobile_nav %}{% endblock %}
+
+{% block content %}
+  <section class="login-stage-page">
+    <header class="login-stage-header">
+      <a class="login-stage-brand" href="/">
+        <span>ВАЛЕНСКИЙ</span>
+      </a>
+      <span class="login-stage-lock">
+        <span class="login-lock-icon" aria-hidden="true"></span>
+        Единый вход в учебную платформу
+      </span>
+    </header>
+
+    <div class="login-stage-grid">
+      <article class="login-form-panel">
+        <h1 class="auth-title">Вход в платформу</h1>
+        <p class="login-stage-copy">Введите логин и пароль, чтобы открыть учебную платформу.</p>
+
+        {% if next %}
+          <p class="auth-form-next">После входа вернем вас на предыдущий защищенный экран.</p>
+        {% endif %}
+
+        {% if form.non_field_errors %}
+          <div class="auth-form-errors" role="alert">
+            {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form class="auth-form" method="post" novalidate>
+          {% csrf_token %}
+          {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+          {% endif %}
+
+          {% for field in form %}
+            <label class="auth-form-field login-stage-field" for="{{ field.id_for_label }}">
+              <span class="auth-form-label">
+                {% if field.name == "username" %}Логин или email{% else %}Пароль{% endif %}
+              </span>
+              {% if field.name == "password" %}
+                <span class="password-field-frame">
+                  {{ field }}
+                  <button class="password-eye-button" type="button" aria-label="Показать пароль" data-password-toggle>
+                    <span class="password-eye-icon" aria-hidden="true"></span>
+                  </button>
+                </span>
+              {% else %}
+                {{ field }}
+              {% endif %}
+              {% if field.errors %}
+                <span class="auth-form-error" role="alert">
+                  {% for error in field.errors %}
+                    {{ error }}{% if not forloop.last %}<br>{% endif %}
+                  {% endfor %}
+                </span>
+              {% endif %}
+            </label>
+          {% endfor %}
+
+          <div class="login-stage-options">
+            <label class="remember-row">
+              <input type="checkbox" name="remember_me">
+              <span>Запомнить меня</span>
+            </label>
+            <a href="https://t.me/valenskymanager" target="_blank" rel="noopener">Забыли пароль?</a>
+          </div>
+
+          <button class="button-link login-stage-submit" type="submit">Войти</button>
+        </form>
+      </article>
+
+      <aside class="login-access-panel" aria-label="Статус доступа">
+        <div class="login-access-inner">
+          <h2>Нет логина и пароля?</h2>
+          <div class="login-access-list">
+            <div class="login-access-item">
+              <span class="login-access-icon is-check" aria-hidden="true"></span>
+              <span>
+                <strong>Курс можно купить на сайте</strong>
+                <small>Выберите тариф, войдите в аккаунт и откройте защищённую оплату.</small>
+              </span>
+            </div>
+            <div class="login-access-item">
+              <span class="login-access-icon is-clock" aria-hidden="true"></span>
+              <span>
+                <strong>Поддержка в Telegram</strong>
+                <small>Менеджер поможет восстановить доступ или разобраться с оплатой.</small>
+              </span>
+            </div>
+            <div class="login-access-item">
+              <span class="login-access-icon is-mail" aria-hidden="true"></span>
+              <span>
+                <strong>Единый вход</strong>
+                <small>Один логин подходит студентам, менеджерам, админам и супер-админам.</small>
+              </span>
+            </div>
+            <div class="login-access-item">
+              <span class="login-access-icon is-doc" aria-hidden="true"></span>
+              <span>
+                <strong>Статус доступа</strong>
+                <small>После входа покажем, какие тренинги открыты, а что нужно докупить.</small>
+              </span>
+            </div>
+          </div>
+
+          <div class="login-help-card">
+            <h3>Нужен доступ?</h3>
+            <p>Посмотрите тарифы или напишите менеджеру, если уже оплатили, но не получили логин.</p>
+            <div class="login-help-actions">
+              <a class="button-link" href="/#tariffs">Смотреть тарифы</a>
+              <a class="button-link is-muted" href="https://t.me/valenskymanager" target="_blank" rel="noopener">
+                Написать в поддержку
+              </a>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <details class="login-mobile-status" open>
+        <summary>Статус доступа</summary>
+        <div class="login-access-list">
+          <div class="login-access-item">
+            <span class="login-access-icon is-check" aria-hidden="true"></span>
+            <span>
+              <strong>Курс можно купить на сайте</strong>
+              <small>Выберите тариф и откройте защищённую оплату после входа.</small>
+            </span>
+          </div>
+          <div class="login-access-item">
+            <span class="login-access-icon is-clock" aria-hidden="true"></span>
+            <span>
+              <strong>Поддержка в Telegram</strong>
+              <small>Нет логина и пароля? Напишите менеджеру.</small>
+            </span>
+          </div>
+          <div class="login-access-item">
+            <span class="login-access-icon is-mail" aria-hidden="true"></span>
+            <span>
+              <strong>Единый вход</strong>
+              <small>Для учеников, менеджеров, админов и супер-админов.</small>
+            </span>
+          </div>
+          <div class="login-access-item">
+            <span class="login-access-icon is-doc" aria-hidden="true"></span>
+            <span>
+              <strong>Статус доступа</strong>
+              <small>После входа видно, что открыто и что нужно оплатить.</small>
+            </span>
+          </div>
+        </div>
+        <div class="login-help-actions">
+          <a class="button-link" href="/#tariffs">Смотреть тарифы</a>
+          <a class="button-link is-muted" href="https://t.me/valenskymanager" target="_blank" rel="noopener">
+            Написать в поддержку
+          </a>
+        </div>
+      </details>
+    </div>
+
+    <footer class="login-stage-footer">
+      <span>© ВАЛЕНСКИЙ, 2026</span>
+      <span>
+        <a href="#privacy">Политика конфиденциальности</a>
+        <a href="#terms">Условия использования</a>
+      </span>
+    </footer>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    document.querySelectorAll("[data-password-toggle]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const input = button.parentElement.querySelector("input");
+        const isHidden = input.type === "password";
+        input.type = isHidden ? "text" : "password";
+        button.setAttribute("aria-label", isHidden ? "Скрыть пароль" : "Показать пароль");
+        button.classList.toggle("is-visible", isHidden);
+      });
+    });
+  </script>
+{% endblock %}

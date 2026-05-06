@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Материалы урока{% endblock %}
+{% block brand_subline %}по трафику{% endblock %}
+{% block page_label %}Материалы{% endblock %}
+{% block page_heading %}Документы урока {{ lesson.position }}{% endblock %}
+{% block page_subtitle %}Файлы урока, доступные загрузки и материалы под замком для полного доступа к курсу.{% endblock %}
+
+{% block sidebar %}
+  <section class="sidebar-section stack">
+    <p class="sidebar-kicker">Прогресс</p>
+    <div class="progress-track" aria-label="Прогресс курса">
+      <span style="width: 24%"></span>
+    </div>
+    <p class="sidebar-note">Курс 24% · Модуль {{ lesson.module.position }} 60%</p>
+  </section>
+  <section class="sidebar-section stack">
+    <p class="sidebar-kicker">Навигация</p>
+    <nav class="sidebar-menu">
+      <a class="sidebar-link" href="{% url 'curriculum:learner_dashboard' %}">Дашборд</a>
+      <a class="sidebar-link" href="{% url 'curriculum:course_preview' course.slug %}">Программа курса</a>
+      <a class="sidebar-link" href="{% url 'curriculum:module_detail' lesson.module.id %}">Модуль {{ lesson.module.position }}</a>
+      {% for lesson_view in module_view.lessons %}
+        <a class="sidebar-link{% if lesson_view.lesson.id == lesson.id %} is-active{% endif %}" href="{% url 'curriculum:lesson_detail' lesson_view.lesson.id %}">
+          Урок {{ forloop.counter }}
+        </a>
+      {% endfor %}
+      <a class="sidebar-link is-active" href="{% url 'curriculum:lesson_materials' lesson.id %}">Библиотека материалов</a>
+      <a class="sidebar-link" href="#chat">Чат и поддержка</a>
+    </nav>
+  </section>
+  <section class="sidebar-card stack">
+    <p class="sidebar-kicker">Полный доступ к курсу</p>
+    <p class="sidebar-note">Откройте все уроки, воркшопы и материалы.</p>
+    <a class="button-link" href="{% url 'curriculum:course_preview' course.slug %}#materials">Открыть доступ</a>
+  </section>
+{% endblock %}
+
+{% block mobile_nav %}
+  <a class="mobile-link" href="{% url 'curriculum:learner_dashboard' %}">Дашборд</a>
+  <a class="mobile-link" href="{% url 'curriculum:course_preview' course.slug %}">Курс</a>
+  <a class="mobile-link" href="{% url 'curriculum:lesson_detail' lesson.id %}">Урок</a>
+  <a class="mobile-link is-active" href="{% url 'curriculum:lesson_materials' lesson.id %}">Файлы</a>
+{% endblock %}
+
+{% block topbar_meta %}
+  <div class="topbar-badges">
+    <span class="status-pill is-accent">Модуль {{ lesson.module.position }}</span>
+    <span class="status-pill">{{ progress_status_label }}</span>
+  </div>
+  <a class="button-link" href="{% url 'curriculum:lesson_detail' lesson.id %}">Продолжить урок</a>
+{% endblock %}
+
+{% block content %}
+  <section class="panel stack materials-page">
+    <div class="module-head">
+      <div class="stack">
+        <p class="eyebrow">{{ lesson.module.title }}</p>
+        <h2>Документы урока {{ lesson.position }}</h2>
+        <p class="lesson-title">{{ lesson.summary }}</p>
+        <p class="muted">Здесь собраны все файлы, которые относятся к уроку. Часть материалов доступна только с полным доступом к курсу.</p>
+      </div>
+      <a class="button-link is-muted" href="#workshops">Связанные воркшопы</a>
+    </div>
+
+    <div class="resource-table">
+      <div class="resource-table-head">
+        <span>Файл</span>
+        <span>Тип</span>
+        <span>Привязка</span>
+        <span>Статус доступа</span>
+        <span></span>
+      </div>
+      {% for block in download_blocks %}
+        <article class="resource-table-row">
+          <div>
+            <p class="lesson-title">{{ block.title }}</p>
+            <p class="muted">{{ block.body }}</p>
+          </div>
+          <span>PDF</span>
+          <span>Урок {{ lesson.position }}</span>
+          <span class="status-pill is-success">Доступен</span>
+          {% if block.payload.resource_slug %}
+            {% url 'resources:protected_lesson_resource' lesson.id block.payload.resource_slug as material_url %}
+            <a class="lesson-action" href="{{ material_url }}">Скачать</a>
+          {% else %}
+            <span class="lock-badge">Закрыт</span>
+          {% endif %}
+        </article>
+      {% empty %}
+        <article class="resource-table-row">
+          <div>
+            <p class="lesson-title">Конспект_урока_{{ lesson.position }}.pdf</p>
+            <p class="muted">PDF · 2.4 MB</p>
+          </div>
+          <span>PDF</span>
+          <span>Урок {{ lesson.position }}</span>
+          <span class="status-pill is-success">Доступен</span>
+          <span class="lock-badge is-open">Скоро</span>
+        </article>
+      {% endfor %}
+      <article class="resource-table-row is-locked">
+        <div>
+          <p class="lesson-title">Шаблон_анализа_оффера.xlsx</p>
+          <p class="muted">XLSX · 320 KB</p>
+        </div>
+        <span>XLSX</span>
+        <span>Урок {{ lesson.position }}</span>
+        <span class="status-pill is-accent">Только полный доступ</span>
+        <span class="lock-badge">Замок</span>
+      </article>
+      <article class="resource-table-row is-locked">
+        <div>
+          <p class="lesson-title">Разбор_реальных_связок.mp4</p>
+          <p class="muted">Видео · 52:08</p>
+        </div>
+        <span>Видео</span>
+        <span>Урок {{ lesson.position }}</span>
+        <span class="status-pill is-accent">Только полный доступ</span>
+        <span class="lock-badge">Замок</span>
+      </article>
+      <article class="resource-table-row is-locked">
+        <div>
+          <p class="lesson-title">Доп_материалы_и_кейсы.zip</p>
+          <p class="muted">ZIP · 78 MB</p>
+        </div>
+        <span>ZIP</span>
+        <span>Урок {{ lesson.position }}</span>
+        <span class="status-pill is-accent">Только полный доступ</span>
+        <span class="lock-badge">Замок</span>
+      </article>
+    </div>
+  </section>
+
+  <section class="panel locked-material-cta">
+    <div class="chalk-lock" aria-hidden="true"></div>
+    <div class="stack">
+      <h3>Некоторые материалы закрыты</h3>
+      <p class="muted">Эти файлы доступны только с полным доступом к курсу, потому что содержат углубленные стратегии, кейсы и связки.</p>
+      <a class="button-link" href="{% url 'curriculum:course_preview' course.slug %}#materials">Открыть полный доступ</a>
+    </div>
+  </section>
+{% endblock %}

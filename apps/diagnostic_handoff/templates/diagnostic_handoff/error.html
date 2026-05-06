@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Вход недоступен{% endblock %}
+
+{% block content %}
+  <section class="panel stack">
+    <span class="pill">Вход из диагностики</span>
+    <h2>Ссылка больше не открывает обучение</h2>
+    {% if status == "missing" %}
+      <p class="muted">Мы не нашли активный вход из диагностики для этой ссылки.</p>
+    {% elif status == "expired" %}
+      <p class="muted">Срок действия входа закончился. Нужно получить новую ссылку после диагностики.</p>
+    {% elif status == "replayed" %}
+      <p class="muted">Эта ссылка уже была использована и не может создать новую сессию.</p>
+    {% else %}
+      <p class="muted">Вход из диагностики сейчас недоступен.</p>
+    {% endif %}
+  </section>
+{% endblock %}

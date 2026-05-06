@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% load money %}
+
+{% block title %}Доступ и тариф{% endblock %}
+{% block brand_subline %}по трафику{% endblock %}
+{% block page_label %}Доступ и тариф{% endblock %}
+{% block page_heading %}Доступ и тариф{% endblock %}
+{% block page_subtitle %}Статус заказа, выбранный формат доступа и будущий переход к оплате без подключенной платежки.{% endblock %}
+
+{% block sidebar %}
+  <section class="sidebar-section stack">
+    <p class="sidebar-kicker">Навигация</p>
+    <nav class="sidebar-menu">
+      <a class="sidebar-link" href="{% url 'curriculum:learner_dashboard' %}">Дашборд</a>
+      <a class="sidebar-link" href="{{ order.return_path }}">Модули</a>
+      <a class="sidebar-link" href="{{ order.return_path }}">Уроки</a>
+      <a class="sidebar-link" href="#homework">Домашки</a>
+      <a class="sidebar-link" href="#documents">Документы</a>
+      <a class="sidebar-link" href="#chat">Чат</a>
+      <a class="sidebar-link is-active" href="{% url 'commerce:checkout_order' order.public_id %}">Доступ и тариф</a>
+      <a class="sidebar-link" href="#support">Поддержка</a>
+    </nav>
+  </section>
+  <section class="sidebar-card stack">
+    <p class="sidebar-kicker">Заказ {{ order.number }}</p>
+    <p class="sidebar-profile-name">{{ order.tariff.title }}</p>
+    <p class="sidebar-note">{{ status_label }} · {{ order.amount|money:order.currency }}</p>
+    <span class="status-pill is-warning">Не оплачен</span>
+  </section>
+{% endblock %}
+
+{% block mobile_nav %}
+  <a class="mobile-link" href="{% url 'curriculum:learner_dashboard' %}">Дашборд</a>
+  <a class="mobile-link" href="{{ order.return_path }}">Модули</a>
+  <a class="mobile-link" href="{{ order.return_path }}">Уроки</a>
+  <a class="mobile-link" href="#chat">Чат</a>
+  <a class="mobile-link is-active" href="{% url 'commerce:checkout_order' order.public_id %}">Тариф</a>
+{% endblock %}
+
+{% block topbar_meta %}
+  <div class="checkout-status compact">
+    <div>
+      <p class="summary-label">Статус заказа</p>
+      <p class="lesson-title">{{ status_label }}</p>
+      <p class="muted">Доступ: {{ order.tariff.code }}</p>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <section class="panel stack tariff-matrix">
+    <div class="module-head">
+      <div class="stack">
+        <span class="pill">Заказ {{ order.number }}</span>
+        <h2>Доступ и тариф</h2>
+        <p class="muted">Выберите формат доступа. Доступ открывается после подтверждения оплаты.</p>
+      </div>
+      <div class="checkout-status">
+        <div>
+          <p class="summary-label">Статус заказа</p>
+          <p class="lesson-title">{{ status_label }}</p>
+          <p class="muted">Провайдер: {{ provider_name }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tariff-table">
+      <article class="tariff-column">
+        <p class="summary-label">Текущий вход</p>
+        <h4>LESSON0-ONLY</h4>
+        <p class="muted">Входной уровень</p>
+        <ul class="clean">
+          <li>Только lesson0</li>
+          <li>Домашние задания недоступны</li>
+          <li>Базовые материалы</li>
+          <li>Бессрочный доступ к lesson0</li>
+          <li>Бесплатно</li>
+        </ul>
+        <span class="status-pill">Выбор</span>
+      </article>
+
+      <article class="tariff-column{% if order.tariff.code == 'workshop' %} is-featured{% endif %}">
+        <p class="summary-label">WORKSHOP</p>
+        <h4>Воркшоп</h4>
+        <p class="muted">Практический формат</p>
+        <ul class="clean">
+          <li>Все модули без lesson0</li>
+          <li>Домашние задания недоступны</li>
+          <li>Рабочие материалы</li>
+          <li>Доступ 6 месяцев</li>
+          <li>14 900 ₽</li>
+        </ul>
+        <span class="status-pill{% if order.tariff.code == 'workshop' %} is-accent{% endif %}">
+          {% if order.tariff.code == "workshop" %}Выбран{% else %}Выбрать{% endif %}
+        </span>
+      </article>
+
+      <article class="tariff-column{% if order.tariff.code == 'base' %} is-featured{% endif %}">
+        <p class="summary-label">FULL COURSE</p>
+        <h4>Полный курс</h4>
+        <p class="muted">Полный курс</p>
+        <ul class="clean">
+          <li>Все модули включая lesson0</li>
+          <li>Домашние задания доступны без проверки</li>
+          <li>Все документы курса</li>
+          <li>Доступ 12 месяцев</li>
+          <li>29 900 ₽</li>
+        </ul>
+        <span class="status-pill{% if order.tariff.code == 'base' %} is-accent{% endif %}">
+          {% if order.tariff.code == "base" %}Выбран{% else %}Выбрать{% endif %}
+        </span>
+      </article>
+
+      <article class="tariff-column{% if order.tariff.code == 'mentor' or order.tariff.code == 'vip' %} is-featured{% endif %}">
+        <p class="summary-label">FULL WITH HOMEWORK</p>
+        <h4>Полный курс с домашками</h4>
+        <p class="muted">{{ order.tariff.title }}</p>
+        <ul class="clean">
+          <li>Все модули включая lesson0</li>
+          <li>Домашние задания с проверкой</li>
+          <li>Личная проверка от кураторов</li>
+          <li>Все документы курса + шаблоны</li>
+          <li>{{ order.amount|money:order.currency }}</li>
+        </ul>
+        <span class="status-pill is-accent">Выбран</span>
+      </article>
+    </div>
+
+    <div class="checkout-status">
+      <div>
+        <p class="lesson-title">Оплата курса пока не запущена</p>
+        <p class="muted">
+          Robokassa остается будущим платежным провайдером. Реальная оплата пока не подключена. Эта страница фиксирует заказ
+          и показывает его параметры без реальной оплаты и без внешних запросов.
+        </p>
+      </div>
+      <a class="button-link" href="{{ order.return_path }}">Вернуться к программе курса</a>
+    </div>
+  </section>
+{% endblock %}

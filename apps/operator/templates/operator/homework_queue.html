@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}Домашки · Операторская{% endblock %}
+{% block brand_subline %}очередь домашних работ{% endblock %}
+{% block page_label %}Домашние работы{% endblock %}
+{% block page_heading %}Очередь проверок{% endblock %}
+{% block page_subtitle %}Проверка ДЗ менеджером: поиск, фильтры, таблица отправок и inline review form на одном экране.{% endblock %}
+
+{% block sidebar %}
+  <section class="sidebar-section stack">
+    <p class="sidebar-kicker">Разделы</p>
+    <nav class="sidebar-menu">
+      <a class="sidebar-link" href="{% url 'operator:dashboard' %}">Панель</a>
+      <a class="sidebar-link" href="{% url 'operator:learners' %}">Ученики</a>
+      <a class="sidebar-link" href="{% url 'operator:content' %}">Контент</a>
+      <a class="sidebar-link is-active" href="{% url 'operator:homework_queue' %}">Домашки</a>
+      <a class="sidebar-link" href="{% url 'operator:orders' %}">Заказы</a>
+      <a class="sidebar-link" href="{% url 'operator:audit' %}">Аудит</a>
+    </nav>
+  </section>
+
+  <section class="sidebar-card stack">
+    <p class="sidebar-kicker">Очередь</p>
+    <p class="sidebar-profile-name">{{ queue.pending_count }}</p>
+    <p class="sidebar-note">Работ ждут проверки менеджером в текущий момент.</p>
+    <span class="status-pill is-warning">Проверить сегодня</span>
+  </section>
+{% endblock %}
+
+{% block mobile_nav %}
+  <a class="mobile-link" href="{% url 'operator:dashboard' %}">Панель</a>
+  <a class="mobile-link" href="{% url 'operator:learners' %}">Ученики</a>
+  <a class="mobile-link is-active" href="{% url 'operator:homework_queue' %}">Д/З</a>
+  <a class="mobile-link" href="{% url 'operator:orders' %}">Заказы</a>
+  <a class="mobile-link" href="{% url 'operator:audit' %}">Логи</a>
+{% endblock %}
+
+{% block topbar_meta %}
+  <div class="topbar-badges">
+    <span class="status-pill is-warning">{{ queue.pending_count }} в очереди</span>
+    <span class="status-pill is-accent">{{ queue.items|length }} карточек</span>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <section class="panel stack">
+    <span class="pill">Проверка домашних заданий</span>
+    <div class="module-head">
+      <div>
+        <h2>Очередь проверок</h2>
+        <p class="muted">Очередь проверки домашних заданий</p>
+        <p class="muted">На экране видны автор, контакты и превью ответа. Проверка остаётся в существующем review flow без выхода из операторской.</p>
+      </div>
+      <div class="action-row">
+        <a class="button-link is-muted" href="{% url 'operator:dashboard' %}">Панель</a>
+        <a class="button-link is-muted" href="{% url 'operator:learners' %}">Ученики</a>
+      </div>
+    </div>
+    <form class="operator-filter" method="get">
+      <input class="operator-input" name="q" placeholder="Поиск по имени или уроку...">
+      <select class="operator-input" name="module">
+        <option value="">Все модули</option>
+      </select>
+      <select class="operator-input" name="lesson">
+        <option value="">Все уроки</option>
+      </select>
+      <select class="operator-input" name="status">
+        <option value="">Все статусы</option>
+        <option value="submitted">На проверке</option>
+        <option value="returned">Требует доработки</option>
+        <option value="reviewed">Проверено</option>
+      </select>
+      <select class="operator-input" name="attempt">
+        <option value="">Все попытки</option>
+      </select>
+      <button class="button-link is-muted" type="submit">Сбросить фильтры</button>
+    </form>
+    <div class="summary-grid">
+      <article class="summary-card">
+        <p class="summary-label">Ожидают решения</p>
+        <p class="summary-value">{{ queue.pending_count }}</p>
+        <p class="summary-note">Активные отправки на проверке.</p>
+      </article>
+      <article class="summary-card">
+        <p class="summary-label">Карточек на экране</p>
+        <p class="summary-value">{{ queue.items|length }}</p>
+        <p class="summary-note">Строки, доступные для review_homework.</p>
+      </article>
+      <article class="summary-card">
+        <p class="summary-label">Последняя отправка</p>
+        <p class="summary-value">
+          {% if queue.items.0.submitted_at %}
+            {{ queue.items.0.submitted_at|date:"H:i" }}
+          {% else %}
+            --
+          {% endif %}
+        </p>
+        <p class="summary-note">
+          {% if queue.items.0.submitted_at %}
+            {{ queue.items.0.submitted_at|date:"d.m.Y" }}
+          {% else %}
+            В очереди пока нет отправок.
+          {% endif %}
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Студент</th>
+            <th>Домашка</th>
+            <th>Ответ</th>
+            <th>Попытка</th>
+            <th>Отправлено</th>
+            <th>Статус</th>
+            <th>Действие</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in queue.items %}
+            <tr id="submission-{{ item.submission_id }}">
+              <td>
+                <strong>{{ item.author_display_name|default:item.author_identifier }}</strong><br>
+                {% if item.author_contacts %}
+                  <span class="muted">Логин: {{ item.author_contacts.login }}</span><br>
+                {% endif %}
+                {% if item.author_contacts and item.author_identifier and item.author_identifier != item.author_contacts.login %}
+                  <span class="muted">Источник: {{ item.author_identifier }}</span><br>
+                {% elif not item.author_contacts and item.author_identifier %}
+                  <span class="muted">Источник: {{ item.author_identifier }}</span><br>
+                {% endif %}
+                {% if item.author_contacts %}
+                  {% if item.author_contacts.email %}
+                    <span class="muted">{{ item.author_contacts.email }}</span><br>
+                  {% endif %}
+                  {% if item.author_contacts.phone %}
+                    <span class="muted">{{ item.author_contacts.phone }}</span><br>
+                  {% endif %}
+                  {% if item.author_contacts.telegram_username %}
+                    <span class="muted">
+                      Telegram:
+                      {% if item.author_contacts.telegram_link %}
+                        <a href="{{ item.author_contacts.telegram_link }}" target="_blank" rel="noopener">@{{ item.author_contacts.telegram_username }}</a>
+                      {% else %}
+                        @{{ item.author_contacts.telegram_username }}
+                      {% endif %}
+                    </span>
+                  {% elif item.author_contacts.telegram_id %}
+                    <span class="muted">Telegram ID: {{ item.author_contacts.telegram_id }}</span>
+                  {% endif %}
+                {% endif %}
+              </td>
+              <td>
+                <strong>{{ item.assignment_title }}</strong><br>
+                <span class="muted">{{ item.assignment_slug }}</span>
+              </td>
+              <td>
+                {% if item.answer_preview %}
+                  <div class="chalk-note">
+                    <p class="muted">{{ item.answer_preview }}</p>
+                  </div>
+                {% else %}
+                  <span class="muted">Текстового превью нет. Откройте форму проверки и посмотрите payload в админке при необходимости.</span>
+                {% endif %}
+              </td>
+              <td>{{ item.attempt_number }}</td>
+              <td>
+                {% if item.submitted_at %}
+                  {{ item.submitted_at|date:"d.m.Y, H:i" }}
+                {% else %}
+                  --
+                {% endif %}
+              </td>
+              <td>
+                {% if item.submission_state == "submitted" %}
+                  <span class="status-pill is-warning">На проверке</span>
+                {% elif item.submission_state == "returned" %}
+                  <span class="status-pill is-danger">Требует доработки</span>
+                {% elif item.submission_state == "reviewed" %}
+                  <span class="status-pill is-success">Проверено</span>
+                {% else %}
+                  <span class="status-pill">{{ item.submission_state }}</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="action-row">
+                  <a class="button-link" href="#review-{{ item.submission_id }}">Проверить</a>
+                  {% if item.author_user_id %}
+                    <a class="button-link is-muted" href="{% url 'operator:learner_detail' item.author_user_id %}">Профиль</a>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            <tr id="review-{{ item.submission_id }}">
+              <td colspan="7">
+                <div class="chalk-note">
+                  <p class="lesson-title">{{ item.assignment_title }} · попытка {{ item.attempt_number }}</p>
+                  <p class="muted">{{ item.author_display_name|default:item.author_identifier }}</p>
+                </div>
+                <form class="operator-review-form" method="post" action="{% url 'operator:review_homework' item.submission_id %}">
+                  {% csrf_token %}
+                  <select class="operator-input" name="decision">
+                    <option value="approved">Принять</option>
+                    <option value="changes_requested">Вернуть на доработку</option>
+                    <option value="rejected">Отклонить</option>
+                  </select>
+                  <input class="operator-input" name="score" placeholder="Оценка 0-100">
+                  <textarea class="operator-input" name="feedback" rows="3" placeholder="Комментарий менеджера"></textarea>
+                  <button class="button-link" type="submit">Сохранить проверку</button>
+                </form>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="7">Очередь пустая. Новые отправленные домашки появятся здесь.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

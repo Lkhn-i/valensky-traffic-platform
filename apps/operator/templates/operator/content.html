@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+
+{% block title %}Контент · Операторская{% endblock %}
+{% block brand_subline %}контент курса{% endblock %}
+{% block page_label %}Публикация контента{% endblock %}
+{% block page_heading %}Управление контентом курса{% endblock %}
+{% block page_subtitle %}Дерево курсов, модулей и уроков с readiness-проверкой, статусами и операторскими публикационными действиями.{% endblock %}
+
+{% block sidebar %}
+  <section class="sidebar-section stack">
+    <p class="sidebar-kicker">Разделы</p>
+    <nav class="sidebar-menu">
+      <a class="sidebar-link" href="{% url 'operator:dashboard' %}">Панель</a>
+      <a class="sidebar-link" href="{% url 'operator:learners' %}">Ученики</a>
+      <a class="sidebar-link is-active" href="{% url 'operator:content' %}">Контент</a>
+      <a class="sidebar-link" href="{% url 'operator:homework_queue' %}">Домашки</a>
+      <a class="sidebar-link" href="{% url 'operator:orders' %}">Заказы</a>
+      <a class="sidebar-link" href="{% url 'operator:audit' %}">Аудит</a>
+    </nav>
+  </section>
+
+  <section class="sidebar-card stack">
+    <p class="sidebar-kicker">Каталог</p>
+    <p class="sidebar-profile-name">{{ courses|length }}</p>
+    <p class="sidebar-note">Курсов в операторском дереве публикации и readiness-проверки.</p>
+    <span class="status-pill is-accent">Контент</span>
+  </section>
+{% endblock %}
+
+{% block mobile_nav %}
+  <a class="mobile-link" href="{% url 'operator:dashboard' %}">Панель</a>
+  <a class="mobile-link" href="{% url 'operator:learners' %}">Ученики</a>
+  <a class="mobile-link" href="{% url 'operator:homework_queue' %}">Д/З</a>
+  <a class="mobile-link" href="{% url 'operator:orders' %}">Заказы</a>
+  <a class="mobile-link is-active" href="{% url 'operator:content' %}">Контент</a>
+{% endblock %}
+
+{% block topbar_meta %}
+  <div class="topbar-badges">
+    <span class="status-pill is-accent">{{ courses|length }} курсов</span>
+    <span class="status-pill">PUBLISHED / DRAFT / LOCKED</span>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <section class="panel stack">
+    <span class="pill">Управление контентом</span>
+    <div class="module-head">
+      <div>
+        <h2>Управление контентом курса</h2>
+        <p class="muted">Операторский экран с деревом курса, статусами публикации, фильтрами и быстрыми переходами в аудит.</p>
+      </div>
+      <div class="action-row">
+        <a class="button-link is-muted" href="{% url 'operator:dashboard' %}">Панель</a>
+        <a class="button-link" href="{% url 'operator:audit' %}">Журнал действий</a>
+      </div>
+    </div>
+    <form class="operator-filter" method="get">
+      <button class="button-link" type="submit">Все</button>
+      <button class="button-link is-muted" type="submit">Уроки</button>
+      <button class="button-link is-muted" type="submit">Видео</button>
+      <button class="button-link is-muted" type="submit">Документы</button>
+      <button class="button-link is-muted" type="submit">Домашки</button>
+      <button class="button-link is-muted" type="submit">Тесты</button>
+      <button class="button-link is-muted" type="submit">Воркшопы</button>
+      <select class="operator-input" name="status">
+        <option value="">Все статусы</option>
+        <option value="published">PUBLISHED</option>
+        <option value="draft">DRAFT</option>
+        <option value="archived">LOCKED</option>
+      </select>
+      <input class="operator-input" name="q" placeholder="Поиск по названию или slug">
+      <button class="button-link is-muted" type="submit">Найти</button>
+    </form>
+  </section>
+
+  <section class="hero-grid">
+    <div class="stack">
+      {% for course in courses %}
+        <section class="panel stack module-card">
+          <div class="module-head">
+            <div>
+              <span class="pill">Курс</span>
+              <h3>{{ course.title }}</h3>
+              <p class="muted">{{ course.slug }} · обновлен {{ course.updated_at|date:"d.m.Y" }}</p>
+              {% if course.readiness.issues %}
+                <div class="readiness-list">
+                  {% for issue in course.readiness.issues %}
+                    <p class="readiness-item is-{{ issue.level }}">
+                      {% if issue.level == "error" %}Ошибка{% else %}Предупреждение{% endif %}: {{ issue.message }}
+                    </p>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+            <div class="action-row">
+              <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="entity_type" value="course">
+                <input type="hidden" name="entity_id" value="{{ course.id }}">
+                <input type="hidden" name="status" value="published">
+                <button class="button-link" type="submit" {% if not course.readiness.can_publish %}disabled{% endif %}>Опубликовать</button>
+              </form>
+              <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="entity_type" value="course">
+                <input type="hidden" name="entity_id" value="{{ course.id }}">
+                <input type="hidden" name="status" value="draft">
+                <button class="button-link is-muted" type="submit">Черновик</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Структура курса</th>
+                  <th>Тип</th>
+                  <th>Статус</th>
+                  <th>Готовность</th>
+                  <th>Обновлен</th>
+                  <th>Действия</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>{{ course.title }}</strong><br>
+                    <span class="muted">{{ course.slug }}</span>
+                  </td>
+                  <td>Курс</td>
+                  <td>
+                    {% if course.publication_status == "published" %}
+                      <span class="status-pill is-accent">PUBLISHED</span>
+                    {% elif course.publication_status == "draft" %}
+                      <span class="status-pill">DRAFT</span>
+                    {% else %}
+                      <span class="status-pill is-warning">LOCKED</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if course.publication_status == "published" %}
+                      100%
+                    {% elif course.readiness.can_publish %}
+                      88%
+                    {% elif course.readiness.issues|length == 1 %}
+                      64%
+                    {% elif course.readiness.issues|length == 2 %}
+                      42%
+                    {% else %}
+                      20%
+                    {% endif %}
+                  </td>
+                  <td>{{ course.updated_at|date:"d.m.Y H:i" }}</td>
+                  <td>Верхний уровень</td>
+                </tr>
+                {% for module in course.modules.all %}
+                  <tr>
+                    <td>
+                      <strong>{{ module.title }}</strong><br>
+                      <span class="muted">{{ module.slug }}</span>
+                      {% if module.readiness.issues %}
+                        {% for issue in module.readiness.issues %}
+                          <p class="readiness-item is-{{ issue.level }}">
+                            {% if issue.level == "error" %}Ошибка{% else %}Предупреждение{% endif %}: {{ issue.message }}
+                          </p>
+                        {% endfor %}
+                      {% endif %}
+                    </td>
+                    <td>Модуль</td>
+                    <td>
+                      {% if module.publication_status == "published" %}
+                        <span class="status-pill is-accent">PUBLISHED</span>
+                      {% elif module.publication_status == "draft" %}
+                        <span class="status-pill">DRAFT</span>
+                      {% else %}
+                        <span class="status-pill is-warning">LOCKED</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if module.publication_status == "published" %}
+                        100%
+                      {% elif module.readiness.can_publish %}
+                        86%
+                      {% elif module.readiness.issues|length == 1 %}
+                        60%
+                      {% elif module.readiness.issues|length == 2 %}
+                        36%
+                      {% else %}
+                        0%
+                      {% endif %}
+                    </td>
+                    <td>{{ module.updated_at|date:"d.m.Y H:i" }}</td>
+                    <td>
+                      <div class="action-row">
+                        <form method="post">
+                          {% csrf_token %}
+                          <input type="hidden" name="entity_type" value="module">
+                          <input type="hidden" name="entity_id" value="{{ module.id }}">
+                          <input type="hidden" name="status" value="published">
+                          <button class="button-link" type="submit" {% if not module.readiness.can_publish %}disabled{% endif %}>Опубликовать</button>
+                        </form>
+                        <form method="post">
+                          {% csrf_token %}
+                          <input type="hidden" name="entity_type" value="module">
+                          <input type="hidden" name="entity_id" value="{{ module.id }}">
+                          <input type="hidden" name="status" value="draft">
+                          <button class="button-link is-muted" type="submit">Черновик</button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                  {% for lesson in module.lessons.all %}
+                    <tr>
+                      <td>
+                        <strong>{{ lesson.title }}</strong><br>
+                        <span class="muted">{{ lesson.slug }}</span>
+                        {% if lesson.readiness.issues %}
+                          {% for issue in lesson.readiness.issues %}
+                            <p class="readiness-item is-{{ issue.level }}">
+                              {% if issue.level == "error" %}Ошибка{% else %}Предупреждение{% endif %}: {{ issue.message }}
+                            </p>
+                          {% endfor %}
+                        {% endif %}
+                      </td>
+                      <td>Урок</td>
+                      <td>
+                        {% if lesson.publication_status == "published" %}
+                          <span class="status-pill is-accent">PUBLISHED</span>
+                        {% elif lesson.publication_status == "draft" %}
+                          <span class="status-pill">DRAFT</span>
+                        {% else %}
+                          <span class="status-pill is-warning">LOCKED</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                        {% if lesson.publication_status == "published" %}
+                          100%
+                        {% elif lesson.readiness.can_publish %}
+                          84%
+                        {% elif lesson.readiness.issues|length == 1 %}
+                          58%
+                        {% elif lesson.readiness.issues|length == 2 %}
+                          34%
+                        {% else %}
+                          0%
+                        {% endif %}
+                      </td>
+                      <td>{{ lesson.updated_at|date:"d.m.Y H:i" }}</td>
+                      <td>
+                        <div class="action-row">
+                          <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="entity_type" value="lesson">
+                            <input type="hidden" name="entity_id" value="{{ lesson.id }}">
+                            <input type="hidden" name="status" value="published">
+                            <button class="button-link" type="submit" {% if not lesson.readiness.can_publish %}disabled{% endif %}>Опубликовать</button>
+                          </form>
+                          <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="entity_type" value="lesson">
+                            <input type="hidden" name="entity_id" value="{{ lesson.id }}">
+                            <input type="hidden" name="status" value="draft">
+                            <button class="button-link is-muted" type="submit">Черновик</button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  {% empty %}
+                    <tr>
+                      <td colspan="6">В модуле пока нет уроков.</td>
+                    </tr>
+                  {% endfor %}
+                {% empty %}
+                  <tr>
+                    <td colspan="6">В курсе пока нет модулей.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      {% empty %}
+        <section class="panel stack empty-state">
+          <h3>Курсов пока нет</h3>
+          <p class="muted">Создайте структуру через команду наполнения или панель администрирования.</p>
+        </section>
+      {% endfor %}
+    </div>
+
+    <div class="stack">
+      <article class="panel stack">
+        <span class="pill">Общая сводка</span>
+        <div class="summary-grid">
+          <article class="summary-card">
+            <p class="summary-label">Курсы</p>
+            <p class="summary-value">{{ courses|length }}</p>
+            <p class="summary-note">Верхнеуровневые объекты в дереве публикации.</p>
+          </article>
+          <article class="summary-card">
+            <p class="summary-label">Режим</p>
+            <p class="summary-value">Readiness</p>
+            <p class="summary-note">Ошибки и предупреждения показаны прямо в таблице.</p>
+          </article>
+        </div>
+      </article>
+
+      <article class="panel stack">
+        <span class="pill">Быстрые действия</span>
+        <div class="dense-list">
+          <div class="dense-item">
+            <p class="lesson-title">Создать структуру курса</p>
+            <p class="muted">Ссылки ведут в существующие Django admin add views. Никакого отдельного upload pipeline здесь нет.</p>
+            <div class="action-row">
+              <a class="button-link" href="{% url 'admin:curriculum_course_add' %}">Курс</a>
+              <a class="button-link" href="{% url 'admin:curriculum_module_add' %}">Модуль</a>
+              <a class="button-link" href="{% url 'admin:curriculum_lesson_add' %}">Урок</a>
+              <a class="button-link" href="{% url 'admin:curriculum_lessonblock_add' %}">Блок урока</a>
+            </div>
+          </div>
+          <div class="dense-item">
+            <p class="lesson-title">Выложить медиа и материалы</p>
+            <p class="muted">Для файла, ссылки и защищённого ресурса используйте штатные модели админки.</p>
+            <div class="action-row">
+              <a class="button-link" href="{% url 'admin:media_library_mediaasset_add' %}">Медиафайл</a>
+              <a class="button-link is-muted" href="{% url 'admin:media_library_lessonmediaattachment_add' %}">Привязка к уроку</a>
+              <a class="button-link is-muted" href="{% url 'admin:resources_resource_add' %}">Материал</a>
+            </div>
+          </div>
+          <div class="dense-item">
+            <p class="lesson-title">Добавить домашку</p>
+            <p class="muted">Новая домашняя работа создаётся в существующем `HomeworkAssignment` admin flow.</p>
+            <div class="action-row">
+              <a class="button-link" href="{% url 'admin:homework_homeworkassignment_add' %}">Домашка</a>
+              <a class="button-link is-muted" href="{% url 'operator:homework_queue' %}">Очередь проверки</a>
+            </div>
+          </div>
+        </div>
+        <div class="action-row">
+          <a class="button-link" href="{% url 'operator:audit' %}">Открыть аудит</a>
+          <a class="button-link is-muted" href="{% url 'operator:dashboard' %}">Вернуться на панель</a>
+        </div>
+      </article>
+
+      <article class="panel stack">
+        <span class="pill">Подсказка</span>
+        <div class="chalk-note">
+          <p class="lesson-title">PUBLISHED / DRAFT / LOCKED</p>
+          <p class="muted">Статусы приведены к операторскому виду из референса, но сохраняют существующие backend-значения при POST-публикации.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+{% endblock %}

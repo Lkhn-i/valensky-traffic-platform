@@ -1,0 +1,119 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Платформа обучения{% endblock %}</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  </head>
+  <body class="{% block body_class %}{% endblock %}">
+    <div class="board-shell {% block shell_class %}{% endblock %}">
+      <aside class="board-sidebar" aria-label="Боковая навигация">
+        <div class="sidebar-frame">
+          <a class="sidebar-brand" href="/">
+            <span class="sidebar-brand-wordmark">Валенский</span>
+            <span class="sidebar-brand-subline">{% block brand_subline %}по трафику{% endblock %}</span>
+          </a>
+          <div class="sidebar-divider" aria-hidden="true"></div>
+          {% block sidebar %}
+            <section class="sidebar-section stack">
+              <p class="sidebar-kicker">Маршруты</p>
+              <nav class="sidebar-menu">
+                <a class="sidebar-link{% if request.path == '/' %} is-active{% endif %}" href="/">Главная</a>
+                <a class="sidebar-link{% if request.resolver_match.url_name == 'public_preview' %} is-active{% endif %}" href="{% url 'public_preview' %}">
+                  Пробный доступ
+                </a>
+                <a class="sidebar-link{% if request.resolver_match.url_name == 'login' %} is-active{% endif %}" href="{% url 'accounts:login' %}">
+                  Вход
+                </a>
+              </nav>
+            </section>
+          {% endblock %}
+          <div class="sidebar-spacer" aria-hidden="true"></div>
+          {% block sidebar_footer %}
+            <section class="sidebar-card stack">
+              <p class="sidebar-kicker">Аккаунт</p>
+              {% if user.is_authenticated %}
+                <p class="sidebar-profile-name">{{ user.get_full_name|default:user.get_username }}</p>
+                <p class="sidebar-note">
+                  {% if request.resolver_match.namespace == "operator" %}
+                    Рабочий кабинет команды сопровождения.
+                  {% elif request.resolver_match.namespace == "curriculum" %}
+                    Личный кабинет ученика и его прогресса.
+                  {% else %}
+                    Единая платформа бренда Валенский.
+                  {% endif %}
+                </p>
+                <span class="status-pill is-accent">{{ user.get_username }}</span>
+              {% else %}
+                <p class="sidebar-note">Курс, пробный доступ, тарифы и поддержка в одном месте.</p>
+                <span class="status-pill is-success">Сервис доступен</span>
+              {% endif %}
+            </section>
+          {% endblock %}
+        </div>
+      </aside>
+
+      <div class="board-main">
+        <header class="board-topbar">
+          <div class="board-topbar-copy">
+            <p class="eyebrow">{% block page_label %}Валенский{% endblock %}</p>
+            <h1 class="page-title">{% block page_heading %}Платформа обучения{% endblock %}</h1>
+            <p class="page-subtitle">
+              {% block page_subtitle %}Курс, прогресс, домашние задания и поддержка в одном учебном кабинете.{% endblock %}
+            </p>
+          </div>
+          <div class="board-topbar-side">
+            {% block topbar_meta %}
+              <div class="topbar-badges">
+                {% if user.is_authenticated %}
+                  <span class="status-pill is-accent">{{ user.get_username }}</span>
+                  <span class="status-pill">
+                    {% if request.resolver_match.namespace == "operator" %}
+                      Операторская
+                    {% elif request.resolver_match.namespace == "curriculum" %}
+                      Обучение
+                    {% else %}
+                      Платформа
+                    {% endif %}
+                  </span>
+                {% else %}
+                  <span class="status-pill is-success">Гость</span>
+                  <span class="status-pill">Единый вход</span>
+                {% endif %}
+              </div>
+            {% endblock %}
+          </div>
+        </header>
+
+        {% if messages %}
+          <section class="message-stack" aria-label="Сообщения">
+            {% for message in messages %}
+              <p class="flash-message is-{{ message.tags|default:'info' }}">{{ message }}</p>
+            {% endfor %}
+          </section>
+        {% endif %}
+
+        <main class="content">
+          {% block content %}{% endblock %}
+        </main>
+
+        <footer class="board-footer">
+          <span>© Валенский, 2026</span>
+          <span>Курс, прогресс и рабочие кабинеты команды.</span>
+        </footer>
+      </div>
+    </div>
+
+    <nav class="mobile-dock" aria-label="Нижняя навигация">
+      {% block mobile_nav %}
+        <a class="mobile-link{% if request.path == '/' %} is-active{% endif %}" href="/">Главная</a>
+        <a class="mobile-link{% if request.resolver_match.url_name == 'public_preview' %} is-active{% endif %}" href="{% url 'public_preview' %}">Пробный</a>
+        <a class="mobile-link{% if request.resolver_match.url_name == 'login' %} is-active{% endif %}" href="{% url 'accounts:login' %}">Вход</a>
+      {% endblock %}
+    </nav>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

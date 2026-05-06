@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load money %}
+
+{% block title %}Заказы · Операторская{% endblock %}
+{% block brand_subline %}платежи и доступы{% endblock %}
+{% block page_label %}Операторские заказы{% endblock %}
+{% block page_heading %}Заказы и доступы{% endblock %}
+{% block page_subtitle %}Фильтрация заказов и контроль привязанных доступов в операторской панели.{% endblock %}
+
+{% block sidebar %}
+  <section class="sidebar-section stack">
+    <p class="sidebar-kicker">Разделы</p>
+    <nav class="sidebar-menu">
+      <a class="sidebar-link" href="{% url 'operator:dashboard' %}">Панель</a>
+      <a class="sidebar-link" href="{% url 'operator:learners' %}">Ученики</a>
+      <a class="sidebar-link" href="{% url 'operator:content' %}">Контент</a>
+      <a class="sidebar-link" href="{% url 'operator:homework_queue' %}">Домашки</a>
+      <a class="sidebar-link is-active" href="{% url 'operator:orders' %}">Заказы</a>
+      <a class="sidebar-link" href="{% url 'operator:audit' %}">Аудит</a>
+    </nav>
+  </section>
+
+  <section class="sidebar-card stack">
+    <p class="sidebar-kicker">Статус фильтра</p>
+    <p class="sidebar-profile-name">{% if order_status %}{{ order_status }}{% else %}Все{% endif %}</p>
+    <p class="sidebar-note">Строк в выдаче: {{ orders|length }}. Фильтр помогает быстро отследить проблемные оплаты.</p>
+    <span class="status-pill is-accent">Заказы</span>
+  </section>
+{% endblock %}
+
+{% block mobile_nav %}
+  <a class="mobile-link" href="{% url 'operator:dashboard' %}">Панель</a>
+  <a class="mobile-link" href="{% url 'operator:learners' %}">Ученики</a>
+  <a class="mobile-link" href="{% url 'operator:homework_queue' %}">Д/З</a>
+  <a class="mobile-link is-active" href="{% url 'operator:orders' %}">Заказы</a>
+  <a class="mobile-link" href="{% url 'operator:audit' %}">Логи</a>
+{% endblock %}
+
+{% block topbar_meta %}
+  <div class="topbar-badges">
+    <span class="status-pill is-accent">{{ orders|length }} строк</span>
+    <span class="status-pill">{% if order_status %}{{ order_status }}{% else %}Все статусы{% endif %}</span>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <section class="panel stack">
+    <span class="pill">Заказы</span>
+    <h2>Заказы и доступы</h2>
+    <form class="operator-filter" method="get">
+      <select class="operator-input" name="status">
+        <option value="">Все статусы</option>
+        {% for value, label in order_status_options %}
+          <option value="{{ value }}"{% if value == order_status %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <button class="button-link" type="submit">Фильтр</button>
+      <a class="button-link is-muted" href="{% url 'operator:dashboard' %}">Панель</a>
+    </form>
+    <div class="summary-grid">
+      <article class="summary-card">
+        <p class="summary-label">В выдаче</p>
+        <p class="summary-value">{{ orders|length }}</p>
+        <p class="summary-note">Количество заказов по текущему фильтру.</p>
+      </article>
+      <article class="summary-card">
+        <p class="summary-label">Фильтр</p>
+        <p class="summary-value">{% if order_status %}{{ order_status }}{% else %}Все{% endif %}</p>
+        <p class="summary-note">Текущий выбранный статус заказа.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Заказ</th>
+            <th>Статус</th>
+            <th>Пользователь</th>
+            <th>Курс</th>
+            <th>Тариф</th>
+            <th>Сумма</th>
+            <th>Доступ</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+            <tr>
+              <td>{{ order.number }}</td>
+              <td>{{ order.get_status_display }}</td>
+              <td>{{ order.user }}</td>
+              <td>{{ order.course.title }}</td>
+              <td>{{ order.tariff.get_code_display }}</td>
+              <td>{{ order.amount|money:order.currency }}</td>
+              <td>{% if order.access_grant_id %}#{{ order.access_grant_id }}{% else %}нет{% endif %}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="7">Заказов нет.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Урок закрыт{% endblock %}
+{% block brand_subline %}доступ ограничен{% endblock %}
+{% block page_label %}Закрытый урок{% endblock %}
+{% block page_heading %}{{ lesson.title }}{% endblock %}
+{% block page_subtitle %}Закрытый урок виден в программе, чтобы было понятно, что именно блокирует следующий шаг.{% endblock %}
+
+{% block sidebar %}
+  <section class="sidebar-section stack">
+    <p class="sidebar-kicker">Карта модуля</p>
+    <nav class="sidebar-menu">
+      <a class="sidebar-link" href="{% url 'curriculum:learner_dashboard' %}">Дашборд</a>
+      <a class="sidebar-link" href="{% url 'curriculum:course_preview' lesson.module.course.slug %}">Программа</a>
+      <a class="sidebar-link" href="{% url 'curriculum:module_detail' lesson.module.id %}">Модуль</a>
+      <a class="sidebar-link is-active" href="{% url 'curriculum:lesson_detail' lesson.id %}">Урок заблокирован</a>
+    </nav>
+  </section>
+
+  <section class="sidebar-card stack">
+    <p class="sidebar-kicker">Причина блокировки</p>
+    <p class="sidebar-profile-name">Урок пока закрыт</p>
+    <p class="sidebar-note">{{ locked_reason }}</p>
+    <span class="status-pill is-warning">Требуется действие</span>
+  </section>
+{% endblock %}
+
+{% block mobile_nav %}
+  <a class="mobile-link" href="{% url 'curriculum:learner_dashboard' %}">Дашборд</a>
+  <a class="mobile-link" href="{% url 'curriculum:course_preview' lesson.module.course.slug %}">Курс</a>
+  <a class="mobile-link" href="{% url 'curriculum:module_detail' lesson.module.id %}">Модуль</a>
+  <a class="mobile-link is-active" href="{% url 'curriculum:lesson_detail' lesson.id %}">Статус</a>
+{% endblock %}
+
+{% block topbar_meta %}
+  <div class="topbar-badges">
+    <span class="status-pill is-warning">Заблокирован</span>
+    <span class="status-pill is-accent">{{ lesson.module.course.title }}</span>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <section class="locked-lesson-layout">
+    <article class="panel stack locked-hero-card">
+      <a class="list-meta" href="{% url 'curriculum:course_preview' lesson.module.course.slug %}">← Назад к программе</a>
+      <div class="locked-illustration" aria-hidden="true">
+        <div class="chalk-lock"></div>
+      </div>
+      <span class="pill">Урок {{ lesson.position }}</span>
+      <h2>{{ lesson.title }}</h2>
+      <span class="status-pill is-warning">Заблокирован</span>
+      <p class="locked-reason">Доступ закрыт</p>
+      <p class="muted">Этот урок пока закрыт. Чтобы открыть его, нужно выполнить условие ниже.</p>
+
+      <div class="chalk-note">
+        <p class="lesson-title">Текущая причина</p>
+        <p class="muted">{{ locked_reason }}</p>
+      </div>
+      <div class="action-row">
+        <a class="button-link" href="{% url 'curriculum:module_detail' lesson.module.id %}">Вернуться к модулю -></a>
+        <a class="button-link is-muted" href="{% url 'curriculum:course_preview' lesson.module.course.slug %}">Открыть карту курса</a>
+      </div>
+    </article>
+
+    <aside class="stack">
+      <section class="panel stack">
+        <span class="pill">Предыдущий шаг</span>
+        {% if decision.reason == "homework_stop_lesson" %}
+          <h3>Домашнее задание на проверке</h3>
+          <p class="muted">Стоп-урок: менеджер должен принять работу или вернуть её на доработку.</p>
+          <span class="status-pill is-warning">На проверке</span>
+        {% elif decision.reason == "previous_lesson_required" %}
+          <h3>Нужно завершение прошлого урока</h3>
+          <p class="muted">Стоп-урок: сначала завершите предыдущий доступный урок. Перепрыгивать уроки нельзя.</p>
+        {% elif decision.reason == "previous_module_documents_required" %}
+          <h3>Документы предыдущего модуля</h3>
+          <p class="muted">Платформа ждёт документы по предыдущему модулю и юридическое подтверждение.</p>
+        {% elif decision.reason == "module_drip_locked" %}
+          <h3>Расписание курса</h3>
+          <p class="muted">Урок открыт в тарифе, но расписание курса ещё не выпустило этот модуль.</p>
+        {% else %}
+          <h3>Доступ не входит в тариф</h3>
+          <p class="muted">Это часть полной программы. В пробном режиме после диагностики открыт только Урок 0.</p>
+        {% endif %}
+      </section>
+
+      <section class="panel stack">
+        <span class="pill">Что делать дальше</span>
+        {% if decision.reason == "homework_stop_lesson" %}
+          <p class="muted">Дождитесь проверки домашки или вернитесь к ней, если нужно что-то добавить.</p>
+          <a class="button-link" href="{% url 'curriculum:module_detail' lesson.module.id %}">Вернуться к домашке -></a>
+        {% elif decision.reason == "previous_lesson_required" %}
+          <p class="muted">Откройте модуль и завершите предыдущий урок. После этого следующий урок станет доступен.</p>
+          <a class="button-link" href="{% url 'curriculum:module_detail' lesson.module.id %}">Открыть модуль -></a>
+        {% elif decision.reason == "previous_module_documents_required" %}
+          <p class="muted">Вернитесь к предыдущему модулю и подтвердите документы. После этого сработает расписание открытия.</p>
+          <a class="button-link" href="{% url 'curriculum:course_preview' lesson.module.course.slug %}">К карте курса -></a>
+        {% else %}
+          <p class="muted">Проверьте текущий тариф или дождитесь даты открытия следующего модуля.</p>
+          <a class="button-link" href="{% url 'curriculum:course_preview' lesson.module.course.slug %}#tariffs">Посмотреть тарифы -></a>
+        {% endif %}
+      </section>
+
+      <section class="panel stack">
+        <span class="pill">Почему это важно</span>
+        <p class="muted">
+          Платформа останавливает следующий урок не ради формальной галочки, а чтобы ученик не проскакивал материал,
+          домашки, документы и расписание курса. Так сохраняется последовательность обучения.
+        </p>
+      </section>
+    </aside>
+  </section>
+{% endblock %}

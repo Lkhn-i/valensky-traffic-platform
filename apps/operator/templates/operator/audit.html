@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Аудит · Операторская{% endblock %}
+{% block brand_subline %}журнал действий{% endblock %}
+{% block page_label %}Операторский аудит{% endblock %}
+{% block page_heading %}Журнал действий{% endblock %}
+{% block page_subtitle %}Фильтрация логов операторской, публикаций и сервисных операций команды поддержки.{% endblock %}
+
+{% block sidebar %}
+  <section class="sidebar-section stack">
+    <p class="sidebar-kicker">Разделы</p>
+    <nav class="sidebar-menu">
+      <a class="sidebar-link" href="{% url 'operator:dashboard' %}">Панель</a>
+      <a class="sidebar-link" href="{% url 'operator:learners' %}">Ученики</a>
+      <a class="sidebar-link" href="{% url 'operator:content' %}">Контент</a>
+      <a class="sidebar-link" href="{% url 'operator:homework_queue' %}">Домашки</a>
+      <a class="sidebar-link" href="{% url 'operator:orders' %}">Заказы</a>
+      <a class="sidebar-link is-active" href="{% url 'operator:audit' %}">Аудит</a>
+    </nav>
+  </section>
+
+  <section class="sidebar-card stack">
+    <p class="sidebar-kicker">Логи</p>
+    <p class="sidebar-profile-name">{{ logs|length }}</p>
+    <p class="sidebar-note">Записей в текущей выборке по журналу действий.</p>
+    <span class="status-pill is-accent">Аудит</span>
+  </section>
+{% endblock %}
+
+{% block mobile_nav %}
+  <a class="mobile-link" href="{% url 'operator:dashboard' %}">Панель</a>
+  <a class="mobile-link" href="{% url 'operator:learners' %}">Ученики</a>
+  <a class="mobile-link" href="{% url 'operator:homework_queue' %}">Д/З</a>
+  <a class="mobile-link" href="{% url 'operator:orders' %}">Заказы</a>
+  <a class="mobile-link is-active" href="{% url 'operator:audit' %}">Логи</a>
+{% endblock %}
+
+{% block topbar_meta %}
+  <div class="topbar-badges">
+    <span class="status-pill is-accent">{{ logs|length }} записей</span>
+    <span class="status-pill">{% if action %}{{ action }}{% else %}Все действия{% endif %}</span>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <section class="panel stack">
+    <span class="pill">Аудит</span>
+    <h2>Журнал операторских действий</h2>
+    <form class="operator-filter" method="get">
+      <select class="operator-input" name="action">
+        <option value="">Все действия</option>
+        {% for value, label in audit_action_options %}
+          <option value="{{ value }}"{% if value == action %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <button class="button-link" type="submit">Фильтр</button>
+      <a class="button-link is-muted" href="{% url 'operator:dashboard' %}">Панель</a>
+    </form>
+    <div class="summary-grid">
+      <article class="summary-card">
+        <p class="summary-label">Записей</p>
+        <p class="summary-value">{{ logs|length }}</p>
+        <p class="summary-note">Количество логов в текущем фильтре.</p>
+      </article>
+      <article class="summary-card">
+        <p class="summary-label">Действие</p>
+        <p class="summary-value">{% if action %}{{ action }}{% else %}Все{% endif %}</p>
+        <p class="summary-note">Текущий фильтр журнала действий.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Когда</th>
+            <th>Действие</th>
+            <th>Инициатор</th>
+            <th>Объект</th>
+            <th>Результат</th>
+            <th>Сообщение</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+            <tr>
+              <td>{{ log.occurred_at }}</td>
+              <td>{{ log.action_label }}</td>
+              <td>{{ log.actor_identifier }}</td>
+              <td>{{ log.target_label }}</td>
+              <td>{{ log.result_label }}</td>
+              <td>{{ log.message }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="6">Записей нет.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

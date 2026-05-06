@@ -1,0 +1,422 @@
+{% extends "base.html" %}
+{% load money %}
+
+{% block title %}Карточка ученика · Операторская{% endblock %}
+{% block brand_subline %}карточка ученика{% endblock %}
+{% block page_label %}Операторская карточка{% endblock %}
+{% block page_heading %}{{ snapshot.display_name }}{% endblock %}
+{% block page_subtitle %}Профиль ученика, текущий доступ, блокировки, прогресс и операционные действия команды поддержки.{% endblock %}
+
+{% block sidebar %}
+  <section class="sidebar-section stack">
+    <p class="sidebar-kicker">Разделы</p>
+    <nav class="sidebar-menu">
+      <a class="sidebar-link" href="{% url 'operator:dashboard' %}">Панель</a>
+      <a class="sidebar-link" href="{% url 'operator:learners' %}">Ученики</a>
+      <a class="sidebar-link" href="{% url 'operator:content' %}">Контент</a>
+      <a class="sidebar-link" href="{% url 'operator:homework_queue' %}">Домашки</a>
+      <a class="sidebar-link" href="{% url 'operator:orders' %}">Заказы</a>
+      <a class="sidebar-link" href="{% url 'operator:audit' %}">Аудит</a>
+    </nav>
+  </section>
+
+  <section class="sidebar-card stack">
+    <p class="sidebar-kicker">Профиль</p>
+    <p class="sidebar-profile-name">{{ snapshot.username }}</p>
+    <p class="sidebar-note">Заказов: {{ snapshot.orders|length }} · доступов: {{ snapshot.access_grants|length }}</p>
+    <span class="status-pill is-accent">Карточка ученика</span>
+  </section>
+{% endblock %}
+
+{% block mobile_nav %}
+  <a class="mobile-link" href="{% url 'operator:dashboard' %}">Панель</a>
+  <a class="mobile-link is-active" href="{% url 'operator:learners' %}">Ученики</a>
+  <a class="mobile-link" href="{% url 'operator:homework_queue' %}">Д/З</a>
+  <a class="mobile-link" href="{% url 'operator:orders' %}">Заказы</a>
+  <a class="mobile-link" href="{% url 'operator:audit' %}">Логи</a>
+{% endblock %}
+
+{% block topbar_meta %}
+  <div class="topbar-badges">
+    <span class="status-pill is-accent">{{ snapshot.orders|length }} заказов</span>
+    <span class="status-pill is-warning">{{ snapshot.access_diagnostics|length }} проверок доступа</span>
+  </div>
+{% endblock %}
+
+{% block content %}
+  {% if snapshot.access_diagnostics|length %}
+    {% widthratio snapshot.progress|length snapshot.access_diagnostics|length 100 as progress_percent %}
+  {% else %}
+    {% widthratio 0 1 100 as progress_percent %}
+  {% endif %}
+
+  <section class="panel stack">
+    <span class="pill">Поддержка ученика</span>
+    <div class="hero-grid">
+      <div class="stack">
+        <div class="chalk-note">
+          <h2>{{ snapshot.display_name }}</h2>
+          <p class="muted">{{ snapshot.username }}</p>
+          <p class="muted">
+            Роли:
+            {% for role in snapshot.roles %}
+              {% if role == "lead" %}
+                лид
+              {% elif role == "student" %}
+                ученик
+              {% elif role == "manager" %}
+                менеджер
+              {% elif role == "admin" %}
+                администратор
+              {% elif role == "super_admin" %}
+                суперадмин
+              {% else %}
+                {{ role }}
+              {% endif %}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+          </p>
+        </div>
+
+        <div class="action-row">
+          <form method="post" action="{% url 'operator:resend_access_link' snapshot.user_id %}">
+            {% csrf_token %}
+            <input class="operator-input" name="reason" value="Повторная отправка ссылки службой поддержки">
+            <button class="button-link" type="submit">Переотправить ссылку доступа</button>
+          </form>
+          <a class="button-link is-muted" href="{% url 'operator:learners' %}">К списку учеников</a>
+          <a class="button-link is-muted" href="{% url 'operator:homework_queue' %}">Очередь Д/З</a>
+        </div>
+
+        <div class="summary-grid">
+          <article class="summary-card">
+            <p class="summary-label">Заказы</p>
+            <p class="summary-value">{{ snapshot.orders|length }}</p>
+            <p class="summary-note">История оплат и подготовленных заказов.</p>
+          </article>
+          <article class="summary-card">
+            <p class="summary-label">Доступы</p>
+            <p class="summary-value">{{ snapshot.access_grants|length }}</p>
+            <p class="summary-note">Платные, пробные и архивные гранты пользователя.</p>
+          </article>
+          <article class="summary-card">
+            <p class="summary-label">Прогресс</p>
+            <p class="summary-value">{{ progress_percent }}%</p>
+            <p class="summary-note">Отношение записей прогресса к диагностируемым урокам.</p>
+          </article>
+        </div>
+      </div>
+
+      <div class="stack">
+        <article class="panel stack">
+          <span class="pill">Контакты</span>
+          <h3>Как связаться со студентом</h3>
+          <div class="dense-list">
+            <div class="dense-item">
+              <p class="lesson-title">Логин</p>
+              <p class="muted">{{ snapshot.contacts.login }}</p>
+            </div>
+            {% if snapshot.contacts.email %}
+              <div class="dense-item">
+                <p class="lesson-title">Email</p>
+                <p class="muted">{{ snapshot.contacts.email }}</p>
+              </div>
+            {% endif %}
+            {% if snapshot.contacts.phone %}
+              <div class="dense-item">
+                <p class="lesson-title">Телефон</p>
+                <p class="muted">{{ snapshot.contacts.phone }}</p>
+              </div>
+            {% endif %}
+            {% if snapshot.contacts.telegram_username or snapshot.contacts.telegram_id %}
+              <div class="dense-item">
+                <p class="lesson-title">Telegram</p>
+                <p class="muted">
+                  {% if snapshot.contacts.telegram_username %}
+                    {% if snapshot.contacts.telegram_link %}
+                      <a href="{{ snapshot.contacts.telegram_link }}" target="_blank" rel="noopener">@{{ snapshot.contacts.telegram_username }}</a>
+                    {% else %}
+                      @{{ snapshot.contacts.telegram_username }}
+                    {% endif %}
+                  {% else %}
+                    ID {{ snapshot.contacts.telegram_id }}
+                  {% endif %}
+                </p>
+              </div>
+            {% endif %}
+          </div>
+        </article>
+
+        <article class="panel stack">
+          <span class="pill">Текущий доступ</span>
+          {% with primary_access=snapshot.access_grants.0 %}
+            {% if primary_access %}
+              <h3>{{ primary_access.course_slug }}</h3>
+              <p class="muted">
+                {% if primary_access.grant_kind == "paid" %}
+                  Платный доступ
+                {% else %}
+                  Пробный доступ
+                {% endif %}
+                {% if primary_access.tariff_code %}· {{ primary_access.tariff_code }}{% endif %}
+              </p>
+              <p class="muted">
+                Статус:
+                {% if primary_access.status == "active" %}
+                  <span class="status-pill is-success">Активен</span>
+                {% elif primary_access.status == "preview" %}
+                  <span class="status-pill is-accent">Preview</span>
+                {% elif primary_access.status == "expired" %}
+                  <span class="status-pill is-warning">Истек</span>
+                {% elif primary_access.status == "revoked" %}
+                  <span class="status-pill is-danger">Отозван</span>
+                {% else %}
+                  <span class="status-pill">{{ primary_access.status }}</span>
+                {% endif %}
+              </p>
+              <p class="muted">Действует с {{ primary_access.starts_at|date:"d.m.Y" }}{% if primary_access.expires_at %} до {{ primary_access.expires_at|date:"d.m.Y" }}{% endif %}</p>
+              {% if primary_access.lesson_slug %}
+                <p class="muted">Текущий lesson scope: {{ primary_access.lesson_slug }}</p>
+              {% endif %}
+              <span class="lock-badge is-open">{{ progress_percent }}% прогресс</span>
+            {% else %}
+              <h3>Нет активного доступа</h3>
+              <p class="muted">У пользователя нет грантов доступа. Используйте историю заказов и resend_access_link для диагностики.</p>
+            {% endif %}
+          {% endwith %}
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <article class="panel stack">
+      <span class="pill">Причина блокировки</span>
+      <h3>Почему урок может быть закрыт</h3>
+      {% for item in snapshot.access_diagnostics %}
+        {% if not item.allowed %}
+          <article class="access-diagnosis-item is-locked">
+            <p class="lesson-title">{{ item.course_slug }} · {{ item.module_slug }} / {{ item.lesson_title }}</p>
+            <p class="muted">{{ item.reason_label }}</p>
+          </article>
+        {% endif %}
+      {% empty %}
+        <p class="muted">Нет курсов, заказов, прогресса или доступов для диагностики.</p>
+      {% endfor %}
+      {% for item in snapshot.access_diagnostics %}
+        {% if item.allowed %}
+          {% if forloop.first %}
+            <div class="chalk-note">
+              <p class="lesson-title">Есть открытые уроки</p>
+              <p class="muted">Диагностика показывает, что часть контента доступна без блокировок.</p>
+            </div>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    </article>
+
+    <article class="panel stack">
+      <span class="pill">Документы и ссылки</span>
+      {% with latest_order=snapshot.orders.0 primary_access=snapshot.access_grants.0 %}
+        {% if latest_order %}
+          <div class="chalk-note">
+            <p class="lesson-title">Заказ {{ latest_order.order_number }}</p>
+            <p class="muted">{{ latest_order.course_slug }} · {{ latest_order.amount|money:latest_order.currency }} · {{ latest_order.created_at|date:"d.m.Y" }}</p>
+          </div>
+        {% endif %}
+        {% if primary_access %}
+          <div class="chalk-note">
+            <p class="lesson-title">Грант доступа #{{ primary_access.grant_id }}</p>
+            <p class="muted">{{ primary_access.course_slug }} · {{ primary_access.starts_at|date:"d.m.Y" }}{% if primary_access.expires_at %} - {{ primary_access.expires_at|date:"d.m.Y" }}{% endif %}</p>
+          </div>
+        {% endif %}
+        <div class="chalk-note">
+          <p class="lesson-title">Письмо со ссылкой доступа</p>
+          <p class="muted">Отправляется повторно из верхней формы поддержки без изменения backend-процесса.</p>
+        </div>
+        {% if not latest_order and not primary_access %}
+          <p class="muted">Документных и платежных следов пока нет.</p>
+        {% endif %}
+      {% endwith %}
+    </article>
+  </section>
+
+  <section class="grid">
+    <article class="panel stack">
+      <span class="pill">История заказов</span>
+      <h3>Оплаты и тарифы</h3>
+      {% for order in snapshot.orders %}
+        <div class="chalk-note">
+          <p class="lesson-title">
+            {{ order.order_number }} ·
+            {% if order.status == "created" %}
+              Создан
+            {% elif order.status == "pending" %}
+              Ожидает оплаты
+            {% elif order.status == "paid" %}
+              Оплачен
+            {% elif order.status == "failed" %}
+              Неуспешен
+            {% elif order.status == "refunded" %}
+              Возвращен
+            {% elif order.status == "disputed" %}
+              Спорный
+            {% else %}
+              {{ order.status }}
+            {% endif %}
+          </p>
+          <p class="muted">{{ order.course_slug }} · {{ order.tariff_code }} · {{ order.amount|money:order.currency }}</p>
+          <p class="muted">
+            Создан {{ order.created_at|date:"d.m.Y" }}
+            {% if order.paid_at %}· оплачен {{ order.paid_at|date:"d.m.Y" }}{% endif %}
+          </p>
+        </div>
+      {% empty %}
+        <p class="muted">Заказов нет.</p>
+      {% endfor %}
+    </article>
+
+    <article class="panel stack">
+      <span class="pill">Текущие и прошлые доступы</span>
+      <h3>Доступы по ученику</h3>
+      {% for grant in snapshot.access_grants %}
+        <div class="chalk-note">
+          <p class="lesson-title">
+            {% if grant.grant_kind == "paid" %}
+              Платный
+            {% else %}
+              Preview
+            {% endif %}
+            ·
+            {% if grant.status == "active" %}
+              Активен
+            {% elif grant.status == "preview" %}
+              Preview
+            {% elif grant.status == "completed" %}
+              Завершен
+            {% elif grant.status == "canceled" %}
+              Отменен
+            {% elif grant.status == "archived" %}
+              В архиве
+            {% elif grant.status == "consumed" %}
+              Использован
+            {% elif grant.status == "expired" %}
+              Истек
+            {% elif grant.status == "revoked" %}
+              Отозван
+            {% elif grant.status == "frozen" %}
+              Заморожен
+            {% else %}
+              {{ grant.status }}
+            {% endif %}
+          </p>
+          <p class="muted">{{ grant.course_slug }}{% if grant.lesson_slug %} · {{ grant.lesson_slug }}{% endif %}{% if grant.tariff_code %} · {{ grant.tariff_code }}{% endif %}</p>
+          <p class="muted">С {{ grant.starts_at|date:"d.m.Y" }}{% if grant.expires_at %} до {{ grant.expires_at|date:"d.m.Y" }}{% endif %}</p>
+        </div>
+      {% empty %}
+        <p class="muted">Активных и исторических доступов нет.</p>
+      {% endfor %}
+    </article>
+  </section>
+
+  <section class="grid">
+    <article class="panel stack">
+      <span class="pill">Прогресс</span>
+      <h3>Карта уроков и доступов</h3>
+      {% for item in snapshot.access_diagnostics %}
+        <article class="access-diagnosis-item {% if not item.allowed %}is-locked{% endif %}">
+          <p class="lesson-title">{{ item.module_slug }} / {{ item.lesson_title }}</p>
+          <p class="muted">
+            {% if item.allowed %}
+              Доступ открыт
+            {% else %}
+              Доступ закрыт
+            {% endif %}
+            · {{ item.reason_label }}
+          </p>
+        </article>
+      {% empty %}
+        <p class="muted">Нет курсов, заказов, прогресса или доступов для диагностики.</p>
+      {% endfor %}
+    </article>
+
+    <article class="panel stack">
+      <span class="pill">Домашки</span>
+      <h3>Статус по урокам</h3>
+      {% for progress in snapshot.progress %}
+        <div class="chalk-note">
+          <p class="lesson-title">{{ progress.module_slug }} / {{ progress.lesson_slug }}</p>
+          <p class="muted">
+            {% if progress.status == "not_started" %}
+              Не начат
+            {% elif progress.status == "opened" %}
+              Открыт
+            {% elif progress.status == "in_progress" %}
+              В процессе
+            {% elif progress.status == "completed" %}
+              Завершен
+            {% else %}
+              {{ progress.status }}
+            {% endif %}
+            · {{ progress.source }}
+          </p>
+        </div>
+      {% empty %}
+        <p class="muted">Прогресса пока нет.</p>
+      {% endfor %}
+    </article>
+  </section>
+
+  <section class="panel stack">
+    <span class="pill">Подробный журнал прогресса</span>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Курс</th>
+            <th>Урок</th>
+            <th>Статус</th>
+            <th>Последняя активность</th>
+            <th>Источник</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for progress in snapshot.progress %}
+            <tr>
+              <td>{{ progress.course_slug }}</td>
+              <td>{{ progress.module_slug }} / {{ progress.lesson_slug }}</td>
+              <td>
+                {% if progress.status == "not_started" %}
+                  Не начат
+                {% elif progress.status == "opened" %}
+                  Открыт
+                {% elif progress.status == "in_progress" %}
+                  В процессе
+                {% elif progress.status == "completed" %}
+                  Завершен
+                {% else %}
+                  {{ progress.status }}
+                {% endif %}
+              </td>
+              <td>
+                {% if progress.completed_at %}
+                  {{ progress.completed_at|date:"d.m.Y H:i" }}
+                {% elif progress.last_opened_at %}
+                  {{ progress.last_opened_at|date:"d.m.Y H:i" }}
+                {% elif progress.first_opened_at %}
+                  {{ progress.first_opened_at|date:"d.m.Y H:i" }}
+                {% else %}
+                  --
+                {% endif %}
+              </td>
+              <td>{{ progress.source }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5">Прогресса пока нет.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

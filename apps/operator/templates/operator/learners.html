@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Ученики · Операторская{% endblock %}
+{% block brand_subline %}поддержка учеников{% endblock %}
+{% block page_label %}Ученики и лиды{% endblock %}
+{% block page_heading %}Поиск по пользователям{% endblock %}
+{% block page_subtitle %}Фильтрация, статусы ролей и быстрый переход в карточку ученика для команды сопровождения.{% endblock %}
+
+{% block sidebar %}
+  <section class="sidebar-section stack">
+    <p class="sidebar-kicker">Разделы</p>
+    <nav class="sidebar-menu">
+      <a class="sidebar-link" href="{% url 'operator:dashboard' %}">Панель</a>
+      <a class="sidebar-link is-active" href="{% url 'operator:learners' %}">Ученики</a>
+      <a class="sidebar-link" href="{% url 'operator:content' %}">Контент</a>
+      <a class="sidebar-link" href="{% url 'operator:homework_queue' %}">Домашки</a>
+      <a class="sidebar-link" href="{% url 'operator:orders' %}">Заказы</a>
+      <a class="sidebar-link" href="{% url 'operator:audit' %}">Аудит</a>
+    </nav>
+  </section>
+
+  <section class="sidebar-card stack">
+    <p class="sidebar-kicker">Результаты поиска</p>
+    <p class="sidebar-profile-name">{{ learners|length }}</p>
+    <p class="sidebar-note">Пользователей найдено по текущему фильтру{% if query %}: {{ query }}{% else %}.{% endif %}</p>
+    <span class="status-pill is-accent">Поддержка</span>
+  </section>
+{% endblock %}
+
+{% block mobile_nav %}
+  <a class="mobile-link" href="{% url 'operator:dashboard' %}">Панель</a>
+  <a class="mobile-link is-active" href="{% url 'operator:learners' %}">Ученики</a>
+  <a class="mobile-link" href="{% url 'operator:homework_queue' %}">Д/З</a>
+  <a class="mobile-link" href="{% url 'operator:orders' %}">Заказы</a>
+  <a class="mobile-link" href="{% url 'operator:audit' %}">Логи</a>
+{% endblock %}
+
+{% block topbar_meta %}
+  <div class="topbar-badges">
+    <span class="status-pill is-accent">{{ learners|length }} найдено</span>
+    {% if query %}
+      <span class="status-pill">{{ query }}</span>
+    {% else %}
+      <span class="status-pill">Без фильтра</span>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block content %}
+  <section class="panel stack">
+    <span class="pill">Поддержка учеников</span>
+    <h2>Ученики и лиды</h2>
+    <form class="operator-filter" method="get">
+      <input class="operator-input" name="q" value="{{ query }}" placeholder="Имя, логин, почта или телефон">
+      <button class="button-link" type="submit">Найти</button>
+      <a class="button-link is-muted" href="{% url 'operator:dashboard' %}">Панель</a>
+    </form>
+    <div class="summary-grid">
+      <article class="summary-card">
+        <p class="summary-label">Результатов</p>
+        <p class="summary-value">{{ learners|length }}</p>
+        <p class="summary-note">Количество строк в текущей выдаче.</p>
+      </article>
+      <article class="summary-card">
+        <p class="summary-label">Запрос</p>
+        <p class="summary-value">{% if query %}{{ query }}{% else %}Все{% endif %}</p>
+        <p class="summary-note">Поиск по имени, логину, почте или телефону.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Пользователь</th>
+            <th>Роли</th>
+            <th>Заказы</th>
+            <th>Доступы</th>
+            <th>Прогресс</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for learner in learners %}
+            <tr>
+              <td>{{ learner.display_name }}<br><span class="muted">{{ learner.username }}</span></td>
+              <td>
+                {% for role in learner.roles %}
+                  {% if role == "lead" %}
+                    лид
+                  {% elif role == "student" %}
+                    ученик
+                  {% elif role == "manager" %}
+                    менеджер
+                  {% elif role == "admin" %}
+                    администратор
+                  {% elif role == "super_admin" %}
+                    суперадмин
+                  {% else %}
+                    {{ role }}
+                  {% endif %}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+              </td>
+              <td>{{ learner.order_count }}</td>
+              <td>{{ learner.active_grant_count }}</td>
+              <td>{{ learner.completed_lessons }}</td>
+              <td><a class="button-link" href="{% url 'operator:learner_detail' learner.user_id %}">Открыть</a></td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="6">Подходящих учеников или лидов нет.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

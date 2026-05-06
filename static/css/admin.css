@@ -1,0 +1,259 @@
+:root,
+html[data-theme="light"],
+html[data-theme="dark"] {
+  --primary: #080808;
+  --secondary: #10100f;
+  --accent: #f2f1eb;
+  --primary-fg: #f2f1eb;
+  --body-fg: #f2f1eb;
+  --body-bg: #020202;
+  --body-quiet-color: #a4a19a;
+  --body-loud-color: #ffffff;
+  --header-color: #f2f1eb;
+  --header-branding-color: #f2f1eb;
+  --header-bg: #080808;
+  --header-link-color: #f2f1eb;
+  --breadcrumbs-fg: #d2d0c8;
+  --breadcrumbs-link-fg: #f2f1eb;
+  --breadcrumbs-bg: #10100f;
+  --link-fg: #f2f1eb;
+  --link-hover-color: #ffffff;
+  --link-selected-fg: #ffffff;
+  --hairline-color: rgba(242, 241, 235, 0.18);
+  --border-color: rgba(242, 241, 235, 0.22);
+  --error-fg: #e29d9a;
+  --message-success-bg: rgba(242, 241, 235, 0.08);
+  --message-warning-bg: rgba(217, 192, 140, 0.12);
+  --message-error-bg: rgba(226, 157, 154, 0.12);
+  --darkened-bg: rgba(255, 255, 255, 0.035);
+  --selected-bg: rgba(255, 255, 255, 0.07);
+  --selected-row: rgba(242, 241, 235, 0.08);
+  --button-fg: #f2f1eb;
+  --button-bg: #17120d;
+  --button-hover-bg: #251c12;
+  --default-button-bg: #2a2118;
+  --default-button-hover-bg: #33281d;
+  --close-button-bg: #272727;
+  --close-button-hover-bg: #333333;
+  color-scheme: dark;
+}
+
+body {
+  overflow-x: clip;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.018) 0 1px,
+      transparent 1px 18px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.012) 0 1px,
+      transparent 1px 24px
+    ),
+    linear-gradient(145deg, #010101 0%, #080808 48%, #010101 100%);
+  color: var(--body-fg);
+}
+
+body::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  content: "";
+  opacity: 0.28;
+  background-image:
+    repeating-linear-gradient(
+      7deg,
+      transparent 0 14px,
+      rgba(255, 255, 255, 0.026) 14px 15px,
+      transparent 15px 31px
+    ),
+    repeating-linear-gradient(
+      101deg,
+      transparent 0 41px,
+      rgba(255, 255, 255, 0.022) 41px 42px,
+      transparent 42px 83px
+    );
+  background-size: 180px 140px, 260px 220px;
+}
+
+#container {
+  background: transparent;
+}
+
+#header {
+  border-bottom: 1px dashed rgba(242, 241, 235, 0.28);
+  background:
+    repeating-linear-gradient(
+      96deg,
+      transparent 0 20px,
+      rgba(255, 255, 255, 0.022) 20px 21px,
+      transparent 21px 42px
+    ),
+    rgba(8, 8, 8, 0.96);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+}
+
+#branding h1,
+#branding h1 a:link,
+#branding h1 a:visited,
+#site-name a {
+  color: #f2f1eb;
+  font-weight: 800;
+  text-shadow:
+    0 0 1px rgba(255, 255, 255, 0.55),
+    0 0 16px rgba(255, 255, 255, 0.08);
+}
+
+#site-name {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.admin-brand-caption {
+  padding: 4px 9px;
+  border: 1px dashed rgba(242, 241, 235, 0.32);
+  border-radius: 999px;
+  color: #d2d0c8;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+div.breadcrumbs {
+  border-bottom: 1px dashed rgba(242, 241, 235, 0.18);
+  background: rgba(16, 16, 15, 0.92);
+}
+
+#content {
+  color: #f2f1eb;
+}
+
+.module,
+fieldset.module,
+.inline-group,
+#changelist,
+#toolbar,
+.paginator,
+.submit-row,
+.messagelist li,
+.object-tools a,
+.login #container {
+  border: 1px dashed rgba(242, 241, 235, 0.28);
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(
+      -5deg,
+      transparent 0 18px,
+      rgba(255, 255, 255, 0.014) 18px 19px,
+      transparent 19px 42px
+    ),
+    rgba(14, 14, 13, 0.94);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.035);
+}
+
+.module h2,
+.module caption,
+.inline-group h2 {
+  border-radius: 7px 7px 0 0;
+  background: rgba(255, 255, 255, 0.045);
+  color: #f2f1eb;
+  font-weight: 800;
+}
+
+table {
+  background: transparent;
+}
+
+thead th,
+tfoot td,
+tr:nth-child(2n),
+tr:nth-child(2n + 1) {
+  background: transparent;
+}
+
+td,
+th {
+  border-bottom: 1px dashed rgba(242, 241, 235, 0.14);
+}
+
+input,
+textarea,
+select,
+.vTextField {
+  border: 1px dashed rgba(242, 241, 235, 0.32);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.34);
+  color: #f2f1eb;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: rgba(242, 241, 235, 0.74);
+  box-shadow: 0 0 0 3px rgba(242, 241, 235, 0.12);
+}
+
+input[type="submit"],
+button,
+.button,
+a.button,
+.object-tools a {
+  border: 1px dashed rgba(242, 241, 235, 0.34);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(76, 58, 31, 0.34), rgba(28, 22, 14, 0.34)),
+    rgba(10, 10, 10, 0.52);
+  color: #f2f1eb;
+  font-weight: 700;
+}
+
+input[type="submit"]:hover,
+button:hover,
+.button:hover,
+a.button:hover,
+.object-tools a:hover {
+  background:
+    linear-gradient(180deg, rgba(96, 74, 40, 0.38), rgba(36, 28, 18, 0.38)),
+    rgba(10, 10, 10, 0.62);
+}
+
+.login #container {
+  width: min(420px, calc(100% - 32px));
+  overflow: hidden;
+  border: 2px solid rgba(242, 241, 235, 0.28);
+}
+
+.login #header {
+  justify-content: center;
+}
+
+.login #content-main {
+  padding: 24px;
+}
+
+.login .form-row {
+  padding: 8px 0;
+}
+
+.login .submit-row {
+  padding: 16px 0 0;
+  border: 0;
+  background: transparent;
+  text-align: center;
+}
+
+@media (max-width: 560px) {
+  #header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  #site-name {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

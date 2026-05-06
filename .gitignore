@@ -1,0 +1,16 @@
+.env
+.venv/
+*.egg-info/
+__pycache__/
+*.py[cod]
+.DS_Store
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.playwright-cli/
+.runserver.pid
+.runserver.log
+db.sqlite3
+output/
+staticfiles/
+media/

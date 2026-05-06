@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+
+{% block title %}{{ lesson.title }}{% endblock %}
+{% block body_class %}stage8-lesson-page{% endblock %}
+{% block shell_class %}stage8-lesson-shell-frame{% endblock %}
+{% block brand_subline %}по трафику{% endblock %}
+{% block page_label %}Урок{% endblock %}
+{% block page_heading %}{{ lesson_code }} {{ lesson.summary }}{% endblock %}
+{% block page_subtitle %}Видео, конспект, материалы, домашка, комментарии менеджера и переход к следующему уроку.{% endblock %}
+
+{% block sidebar %}
+  <section class="sidebar-section stack">
+    <p class="sidebar-kicker">Навигация</p>
+    <nav class="sidebar-menu">
+      <a class="sidebar-link" href="{% url 'curriculum:learner_dashboard' %}">Дашборд</a>
+      <a class="sidebar-link" href="{% url 'curriculum:course_preview' course.slug %}">Модули</a>
+      <a class="sidebar-link" href="{% url 'curriculum:module_detail' lesson.module.id %}">Расписание</a>
+      <a class="sidebar-link" href="#homework">Домашки <span class="status-pill is-warning">{{ homework_assignments|length }}</span></a>
+      <a class="sidebar-link" href="{% url 'curriculum:lesson_materials' lesson.id %}">Файлы</a>
+      <a class="sidebar-link" href="#comments">Чат</a>
+      <a class="sidebar-link" href="#settings">Настройки</a>
+    </nav>
+  </section>
+
+  <section class="sidebar-card stack">
+    <p class="sidebar-kicker">Ваш прогресс</p>
+    <p class="sidebar-profile-name">{{ course_progress_percent }}%</p>
+    <div class="progress-track" aria-label="Прогресс курса">
+      <span style="width: {{ course_progress_percent }}%"></span>
+    </div>
+    <p class="sidebar-note">Пройдено уроков: {{ course_completed_count }} из {{ course_total_count }}</p>
+  </section>
+
+  <section class="sidebar-card stack">
+    <p class="sidebar-kicker">Профиль</p>
+    <p class="sidebar-profile-name">{{ user.get_full_name|default:user.get_username }}</p>
+    <p class="sidebar-note">Студент</p>
+  </section>
+{% endblock %}
+
+{% block mobile_nav %}
+  <a class="mobile-link" href="{% url 'curriculum:learner_dashboard' %}">Дашборд</a>
+  <a class="mobile-link" href="{% url 'curriculum:course_preview' course.slug %}">Курс</a>
+  <a class="mobile-link" href="{% url 'curriculum:module_detail' lesson.module.id %}">Модуль</a>
+  <a class="mobile-link is-active" href="{% url 'curriculum:lesson_detail' lesson.id %}">Урок</a>
+  <a class="mobile-link" href="#homework">Д/З</a>
+{% endblock %}
+
+{% block topbar_meta %}
+  <div class="topbar-badges">
+    <span class="status-pill{% if progress.is_completed %} is-success{% else %} is-accent{% endif %}">{{ progress_status_label }}</span>
+    {% if homework_completion_gate and not homework_completion_gate.allowed %}
+      <span class="status-pill is-warning">Стоп-урок</span>
+    {% endif %}
+  </div>
+  <div class="topbar-actions">
+    {% if previous_module_lesson %}
+      <a class="button-link is-muted" href="{% url 'curriculum:lesson_detail' previous_module_lesson.id %}">← Предыдущий</a>
+    {% else %}
+      <span class="button-link is-muted is-disabled">← Предыдущий</span>
+    {% endif %}
+    {% if next_module_lesson %}
+      <a class="button-link" href="{% url 'curriculum:lesson_detail' next_module_lesson.id %}">Следующий →</a>
+    {% elif next_lesson and next_lesson.id != lesson.id %}
+      <a class="button-link" href="{% url 'curriculum:lesson_detail' next_lesson.id %}">Следующий →</a>
+    {% else %}
+      <span class="button-link is-disabled">Следующий →</span>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block content %}
+  <section class="stage8-lesson-shell">
+    <div class="stage8-lesson-topline">
+      <a class="stage8-back-link" href="{% url 'curriculum:module_detail' lesson.module.id %}">← К модулям</a>
+      <div class="stage8-status-select" aria-label="Статус урока">{{ progress_status_label }}</div>
+      <div class="stage8-inline-actions">
+        {% if previous_module_lesson %}
+          <a class="button-link is-muted" href="{% url 'curriculum:lesson_detail' previous_module_lesson.id %}">← Предыдущий</a>
+        {% else %}
+          <span class="button-link is-muted is-disabled">← Предыдущий</span>
+        {% endif %}
+        {% if next_module_lesson %}
+          <a class="button-link" href="{% url 'curriculum:lesson_detail' next_module_lesson.id %}">Следующий →</a>
+        {% elif next_lesson and next_lesson.id != lesson.id %}
+          <a class="button-link" href="{% url 'curriculum:lesson_detail' next_lesson.id %}">Следующий →</a>
+        {% else %}
+          <span class="button-link is-disabled">Следующий →</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="stage8-mobile-heading">
+      <a class="stage8-back-link" href="{% url 'curriculum:module_detail' lesson.module.id %}">← К модулям</a>
+      <h2>{{ lesson_code }} {{ lesson.summary }}</h2>
+      <div class="stage8-status-select" aria-label="Статус урока">{{ progress_status_label }}</div>
+    </div>
+
+    <section class="stage8-player-grid">
+      <article class="stage8-video-card panel" data-video-player data-playback-url="{% url 'curriculum:lesson_playback' lesson.id %}">
+        <h3 class="sr-only">Плеер урока</h3>
+        <div class="stage8-video-frame">
+          <div class="stage8-video-sketch" aria-hidden="true">
+            <span class="stage8-stick-person"></span>
+            <span class="stage8-video-arrow"></span>
+            <span class="stage8-target"></span>
+          </div>
+          <div class="stage8-video-title">
+            <span>{{ lesson.summary }}</span>
+          </div>
+          <div class="stage8-video-controls">
+            <button type="button" data-video-start disabled aria-label="Запустить урок">▶</button>
+            <span>↺</span>
+            <span>▸▸</span>
+            <span>🔊</span>
+            <span class="stage8-video-time">07:42 / {{ lesson.estimated_duration_minutes }}:00</span>
+            <span class="stage8-video-spacer"></span>
+            <span data-video-status>Проверка</span>
+            <span>⚙</span>
+            <span>⛶</span>
+          </div>
+          <div class="stage8-video-progress" aria-hidden="true">
+            <span style="width: {{ lesson_progress_percent }}%"></span>
+          </div>
+        </div>
+      </article>
+
+      <aside class="stage8-module-panel panel stack">
+        <div class="stage8-module-title">
+          <span>Модуль {{ module_view.display_index }}</span>
+          <strong>{{ module_view.display_title }}</strong>
+        </div>
+        <div class="stage8-module-list">
+          {% for lesson_view in module_view.lessons %}
+            <a
+              class="stage8-module-row{% if lesson_view.lesson.id == lesson.id %} is-current{% elif not lesson_view.decision.allowed %} is-locked{% elif lesson_view.progress.is_completed %} is-done{% endif %}"
+              href="{% url 'curriculum:lesson_detail' lesson_view.lesson.id %}"
+              title="{% if lesson_view.locked_reason %}{{ lesson_view.locked_reason }}{% else %}{{ lesson_view.ui_state_label }}{% endif %}"
+            >
+              <span>{{ module_view.display_index }}.{{ forloop.counter }}</span>
+              <span>{{ lesson_view.lesson.summary }}</span>
+              {% if lesson_view.progress.is_completed %}
+                <small>✓</small>
+              {% elif lesson_view.lesson.id == lesson.id %}
+                <small>▶</small>
+              {% elif lesson_view.decision.allowed %}
+                <small>○</small>
+              {% else %}
+                <small>🔒</small>
+              {% endif %}
+            </a>
+          {% endfor %}
+        </div>
+        <div class="stage8-side-status">
+          <p>Статус урока <span>{{ progress_status_label }}</span></p>
+          <p>Дата начала <span>{{ progress.last_opened_at|date:"d.m.Y"|default:"Сегодня" }}</span></p>
+          <p>Время в уроке <span>07:42</span></p>
+          <p>Прогресс урока <span>{{ lesson_progress_percent }}%</span></p>
+        </div>
+      </aside>
+    </section>
+
+    <nav class="stage8-tabs" aria-label="Разделы урока">
+      <a class="is-active" href="#notes">Конспект</a>
+      <a href="#materials">Материалы</a>
+      <a href="#homework">Домашка</a>
+      <a href="#comments">Комментарии <span>1</span></a>
+    </nav>
+
+    <section class="stage8-content-grid">
+      <article class="stage8-notes panel stack" id="notes">
+        <h3>Конспект урока</h3>
+        {% for block in lesson.blocks.all %}
+          {% if block.block_type != "download" %}
+            <div class="stage8-note-block">
+              <p class="eyebrow">{{ block.get_block_type_display }}</p>
+              <h4>{{ block.title|default:lesson.summary }}</h4>
+              {% if block.body %}
+                <p class="muted">{{ block.body }}</p>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% empty %}
+          <p class="muted">{{ lesson.summary }} — это практический шаг, который нужно проверить на своем проекте и привести к конкретному результату.</p>
+          <ul class="stage8-checklist">
+            <li>Конкретная гипотеза</li>
+            <li>Проверяемое действие</li>
+            <li>Ожидаемый результат</li>
+          </ul>
+        {% endfor %}
+        <div class="stage8-example-note">
+          <strong>Пример</strong>
+          <p>Если поменять заголовок на более конкретный, конверсия в следующий шаг должна вырасти.</p>
+        </div>
+      </article>
+
+      <div class="stage8-side-grid">
+        <section class="stage8-material-card panel stack" id="materials">
+          <div class="stage8-card-head">
+            <h3>Защищенные материалы</h3>
+            <span>🔒</span>
+          </div>
+          <div class="stage8-material-list">
+            {% for block in download_blocks %}
+              <div class="stage8-material-row">
+                <div>
+                  <strong>{{ block.title }}</strong>
+                  <small>{{ block.body|default:"PDF · материал урока" }}</small>
+                </div>
+                {% if block.payload.resource_slug %}
+                  {% url 'resources:protected_lesson_resource' lesson.id block.payload.resource_slug as material_url %}
+                  <a href="{{ material_url }}">Скачать</a>
+                {% else %}
+                  <span>Скоро</span>
+                {% endif %}
+              </div>
+            {% empty %}
+              <div class="stage8-material-row">
+                <div>
+                  <strong>Шаблон гипотезы.pdf</strong>
+                  <small>PDF · 124 КБ</small>
+                </div>
+                <span>Скоро</span>
+              </div>
+              <div class="stage8-material-row">
+                <div>
+                  <strong>Примеры гипотез.xlsx</strong>
+                  <small>XLSX · 98 КБ</small>
+                </div>
+                <span>Скоро</span>
+              </div>
+            {% endfor %}
+          </div>
+          <a class="button-link is-muted" href="{% url 'curriculum:lesson_materials' lesson.id %}">Скачать все</a>
+        </section>
+
+        <section class="stage8-extra-card panel stack">
+          <h3>Дополнительно</h3>
+          <a class="stage8-extra-link" href="{% url 'curriculum:lesson_materials' lesson.id %}">Чек-лист по уроку</a>
+        </section>
+      </div>
+
+      <section class="stage8-homework-panel panel stack" id="homework">
+        <h3>Домашнее задание</h3>
+        {% if homework_assignments %}
+          {% for assignment in homework_assignments %}
+            <article class="stage8-homework-card stack" id="homework-{{ assignment.public_id }}">
+              <div class="stage8-homework-copy">
+                <p>{{ assignment.summary|default:assignment.title }}</p>
+                {% if assignment.prompt %}
+                  <p class="muted">{{ assignment.prompt }}</p>
+                {% endif %}
+              </div>
+
+              <div class="stage8-homework-form-grid">
+                {% if assignment.can_submit %}
+                  <form class="stage8-upload-card homework-form" method="post" action="{% url 'curriculum:lesson_homework_submit' lesson.id %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="assignment_slug" value="{{ assignment.slug }}">
+                    <label for="homework-answer-{{ assignment.public_id }}">Форма сдачи</label>
+                    <div class="stage8-dropzone">
+                      <input type="file" name="attachments" aria-label="Прикрепить файл" multiple>
+                      <span>Прикрепите файл, скриншот или добавьте ссылку в ответе</span>
+                    </div>
+                    <textarea
+                      class="operator-input homework-form-input"
+                      id="homework-answer-{{ assignment.public_id }}"
+                      name="answer_text"
+                      rows="5"
+                      placeholder="Опишите выполненную работу или вставьте ссылку"
+                    >{% if homework_form_assignment_slug == assignment.slug %}{{ homework_form_text }}{% else %}{{ assignment.answer_text }}{% endif %}</textarea>
+                    {% if homework_form_assignment_slug == assignment.slug and homework_form_error %}
+                      <p class="homework-form-error">{{ homework_form_error }}</p>
+                    {% endif %}
+                    <button class="button-link" type="submit">
+                      {% if assignment.status_code == "returned" %}Доработать и отправить снова{% else %}Отправить на проверку{% endif %}
+                    </button>
+                  </form>
+                {% elif assignment.answer_text or assignment.attachments %}
+                  <div class="stage8-upload-card">
+                    <p class="homework-form-label">Моя отправка</p>
+                    {% if assignment.attachments %}
+                      {% for attachment in assignment.attachments %}
+                        <a class="stage8-file-chip" href="{{ attachment.url }}" target="_blank" rel="noopener">
+                          <span>{{ attachment.filename }}</span>
+                          <small>{{ attachment.size_label }}</small>
+                        </a>
+                      {% endfor %}
+                    {% else %}
+                      <div class="stage8-file-chip">
+                        <span>Мой ответ</span>
+                        <small>отправлен текстом</small>
+                      </div>
+                    {% endif %}
+                  </div>
+                {% endif %}
+
+                <div class="stage8-homework-status">
+                  <h4>Статус домашки</h4>
+                  {% if assignment.status_code == "submitted" %}
+                    <span class="stage8-status-dot is-warning">{{ assignment.status_label }}</span>
+                  {% elif assignment.status_code == "returned" %}
+                    <span class="stage8-status-dot is-danger">{{ assignment.status_label }}</span>
+                  {% elif assignment.status_code == "reviewed" %}
+                    <span class="stage8-status-dot is-success">{{ assignment.status_label }}</span>
+                  {% else %}
+                    <span class="stage8-status-dot">{{ assignment.status_label }}</span>
+                  {% endif %}
+                  <p class="muted">Попыток использовано: {{ assignment.attempts_used }} из {{ assignment.max_attempts }}</p>
+                  {% if assignment.submitted_at %}
+                    <p class="muted">Отправлено: {{ assignment.submitted_at|date:"d.m.Y в H:i" }}</p>
+                  {% endif %}
+                  {% if assignment.answer_text %}
+                    <div class="stage8-last-answer">
+                      <strong>Последний ответ</strong>
+                      <p>{{ assignment.answer_text|linebreaksbr }}</p>
+                    </div>
+                  {% endif %}
+                  {% if assignment.attachments %}
+                    <div class="stage8-last-answer">
+                      <strong>Прикрепленные материалы</strong>
+                      {% for attachment in assignment.attachments %}
+                        <p><a href="{{ attachment.url }}" target="_blank" rel="noopener">{{ attachment.filename }}</a> · {{ attachment.size_label }}</p>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                  {% if assignment.feedback_text %}
+                    <div class="stage8-manager-comment">
+                      <strong>Комментарий менеджера</strong>
+                      <p>{{ assignment.feedback_text|linebreaksbr }}</p>
+                      {% if assignment.status_code == "returned" %}
+                        <span>Нужна доработка</span>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                  {% if assignment.attempts_left == 0 and not assignment.can_submit %}
+                    <p class="muted">Лимит попыток исчерпан.</p>
+                  {% endif %}
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+        {% else %}
+          <p class="muted">Для этого урока нет обязательной домашки.</p>
+        {% endif %}
+      </section>
+
+      <section class="stage8-comments-card panel stack" id="comments">
+        <h3>Комментарии</h3>
+        <p class="muted">Здесь появятся вопросы по уроку, ответы менеджера и рабочая переписка по домашке.</p>
+      </section>
+    </section>
+
+    <section class="stage8-complete-panel panel">
+      <div>
+        <h3>Изучил урок и готов двигаться дальше?</h3>
+        <p class="muted">Убедись, что выполнил домашнее задание, и переходи к следующему уроку.</p>
+      </div>
+      {% if progress.is_completed %}
+        <span class="lock-badge is-open">Завершено</span>
+      {% elif homework_completion_gate and not homework_completion_gate.allowed %}
+        <div class="stage8-complete-lock">
+          <span class="lock-badge">Стоп-урок</span>
+          <p>{{ homework_completion_gate.reason_label }} Домашка: {{ homework_completion_gate.assignment_title }}.</p>
+          <button class="button-link is-disabled" type="button" disabled>Отметить урок как завершенный →</button>
+        </div>
+      {% else %}
+        <form method="post" action="{% url 'curriculum:lesson_complete' lesson.id %}">
+          {% csrf_token %}
+          <button class="button-link" type="submit">Отметить урок как завершенный →</button>
+        </form>
+      {% endif %}
+    </section>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    (() => {
+      const player = document.querySelector("[data-video-player]");
+      if (!player) return;
+
+      const status = player.querySelector("[data-video-status]");
+      const startButton = player.querySelector("[data-video-start]");
+      const messages = {
+        missing: "Нет видео",
+        processing: "Обработка",
+        failed: "Ошибка",
+        locked: "Закрыто",
+      };
+
+      fetch(player.dataset.playbackUrl, { credentials: "same-origin" })
+        .then(async (response) => {
+          const payload = await response.json();
+          if (!response.ok || payload.status !== "ready") {
+            status.textContent = messages[payload.status] || "Недоступно";
+            return;
+          }
+
+          status.textContent = "Готово";
+          startButton.disabled = false;
+          startButton.addEventListener("click", async () => {
+            status.textContent = "Запуск";
+            const streamResponse = await fetch(payload.playback_url, {
+              headers: { "X-Playback-Token": payload.playback_token },
+            });
+            status.textContent = streamResponse.ok ? "Запущено" : "Недоступно";
+          });
+        })
+        .catch(() => {
+          status.textContent = "Недоступно";
+        });
+    })();
+  </script>
+{% endblock %}
