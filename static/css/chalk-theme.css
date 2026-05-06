@@ -1,0 +1,1223 @@
+/*
+ * Chalkboard theme overlay.
+ *
+ * This file layers a hand-drawn, chalk-on-blackboard aesthetic on top of the
+ * existing base.css layout. It expects Google Fonts "Caveat" and "Kalam" to
+ * be loaded from base.html.
+ */
+
+:root {
+  --chalk-font-display: "Caveat", "Marck Script", "Comic Sans MS", "Patrick Hand", cursive;
+  --chalk-font-hand: "Kalam", "Caveat", "Comic Sans MS", "Patrick Hand", cursive;
+  --chalk-font-mono: "JetBrains Mono", "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+
+  --chalk-board: #0a0c0a;
+  --chalk-board-soft: #131513;
+  --chalk-line: rgba(245, 242, 235, 0.78);
+  --chalk-line-soft: rgba(245, 242, 235, 0.42);
+  --chalk-line-faint: rgba(245, 242, 235, 0.18);
+  --chalk-warm: #f6e9c4;
+  --chalk-cream: #f5f2eb;
+  --chalk-yellow: #f0d97a;
+  --chalk-blue: #7fb6e8;
+  --chalk-pink: #f5a3b8;
+  --chalk-green: #9bd49f;
+  --chalk-red: #ed7468;
+
+  /* Override the harsh orange accent from base.css with chalk yellow. */
+  --accent: #f0d97a;
+  --accent-soft: rgba(240, 217, 122, 0.18);
+  --accent-strong: #f7e498;
+}
+
+/* Soft chalkdust background texture for the whole page. */
+body {
+  background-color: var(--chalk-board);
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(255, 255, 255, 0.04) 0, transparent 36%),
+    radial-gradient(circle at 88% 92%, rgba(255, 255, 255, 0.03) 0, transparent 38%),
+    radial-gradient(circle at 60% 30%, rgba(255, 255, 255, 0.018) 0, transparent 50%),
+    repeating-radial-gradient(
+      circle at 30% 40%,
+      rgba(255, 255, 255, 0.012) 0 1.4px,
+      transparent 1.4px 5.4px
+    );
+  font-family: var(--chalk-font-hand);
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  color: var(--chalk-cream);
+}
+
+.board-shell {
+  background-color: rgba(10, 12, 10, 0.65);
+  background-image:
+    repeating-linear-gradient(
+      transparent 0 38px,
+      rgba(255, 255, 255, 0.014) 38px 39px
+    ),
+    repeating-radial-gradient(
+      circle at 22% 18%,
+      rgba(255, 255, 255, 0.014) 0 1.4px,
+      transparent 1.4px 7px
+    );
+}
+
+/* Headings + display copy use Caveat (handwritten Cyrillic). */
+.page-title,
+.auth-title,
+h1,
+h2,
+h3,
+h4,
+.public-hero h1,
+.public-hero-v2 h1,
+.public-hero-copy h1,
+.dashboard-headline,
+.dashboard-title,
+.lesson-title,
+.section-heading,
+.public-tariffs h2,
+.public-page-v2 .public-tariff-card h3,
+.public-page-v2 .public-tariff-card p,
+.training-card h3,
+.training-card p,
+.chalk-headline {
+  font-family: var(--chalk-font-display) !important;
+  font-weight: 700;
+  letter-spacing: 0.005em;
+  line-height: 1.02;
+  color: var(--chalk-cream);
+  text-shadow:
+    0 0 1px rgba(255, 255, 255, 0.55),
+    0 0 14px rgba(255, 255, 255, 0.05);
+}
+
+.public-hero h1,
+.public-hero-v2 h1,
+.public-hero-copy h1 {
+  font-size: clamp(3rem, 6vw, 4.6rem);
+}
+
+.auth-title {
+  font-size: clamp(2.4rem, 4vw, 3.4rem);
+}
+
+h2,
+.public-tariffs h2,
+.section-heading {
+  font-size: clamp(1.8rem, 2.6vw, 2.4rem);
+}
+
+h3 {
+  font-size: 1.45rem;
+  font-family: var(--chalk-font-display);
+  font-weight: 700;
+}
+
+.eyebrow,
+.sidebar-kicker,
+.public-section-kicker,
+.kicker {
+  font-family: var(--chalk-font-hand);
+  font-weight: 700;
+  font-size: 0.86rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--chalk-yellow);
+  text-shadow: 0 0 1px rgba(240, 217, 122, 0.4);
+}
+
+p,
+li,
+small,
+.muted,
+.sidebar-note,
+.public-lead p,
+.page-subtitle,
+.dashboard-paragraph,
+label,
+input,
+textarea,
+select {
+  font-family: var(--chalk-font-hand);
+  font-weight: 400;
+}
+
+.public-lead p,
+.page-subtitle,
+.dashboard-paragraph {
+  font-size: 1.18rem;
+  line-height: 1.45;
+  color: rgba(245, 242, 235, 0.86);
+}
+
+p,
+li {
+  font-size: 1.05rem;
+  line-height: 1.42;
+}
+
+small {
+  font-size: 0.95rem;
+  color: rgba(245, 242, 235, 0.72);
+}
+
+/* Strong "drawn with chalk" line under display titles. */
+.brand-underline,
+.chalk-underline {
+  position: relative;
+  height: 18px;
+  margin: 6px 0 10px;
+  background: none;
+}
+
+.brand-underline::before,
+.chalk-underline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: min(420px, 86%);
+  height: 6px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 420 14' preserveAspectRatio='none'><path d='M3 8 C 60 2, 110 12, 170 6 S 280 2, 340 9 S 410 5, 418 8' stroke='%23f5f2eb' stroke-width='3' stroke-linecap='round' fill='none' opacity='0.85'/></svg>");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.4));
+}
+
+/* Buttons: hand-drawn rectangle outline + chalk fill. */
+.button-link,
+.public-login,
+.dashboard-outline-button,
+button[type="submit"],
+input[type="submit"],
+.action-row .button-link,
+.public-actions .button-link,
+.login-stage-submit,
+.public-tariff-card a,
+.training-card a,
+.preview-primary-cta,
+.course-tier-cta,
+.lesson-action,
+.dashboard-cta,
+.stage5-cta,
+.module-action,
+.next-lesson-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 12px 24px;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  color: var(--chalk-cream) !important;
+  font-family: var(--chalk-font-display) !important;
+  font-size: 1.5rem !important;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  text-decoration: none;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.45);
+  box-shadow: none !important;
+}
+
+.button-link::before,
+.public-login::before,
+.dashboard-outline-button::before,
+button[type="submit"]::before,
+input[type="submit"]::before,
+.login-stage-submit::before,
+.public-tariff-card a::before,
+.training-card a::before,
+.preview-primary-cta::before,
+.course-tier-cta::before,
+.lesson-action::before,
+.dashboard-cta::before,
+.stage5-cta::before,
+.module-action::before,
+.next-lesson-button::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'><path d='M6 8 C 30 5, 70 12, 100 6 S 170 11, 196 7 L 196 52 C 170 56, 130 50, 100 55 S 30 49, 5 53 Z' stroke='%23f5f2eb' stroke-width='2' fill='none' opacity='0.85' stroke-linecap='round'/></svg>");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  transition: transform 0.18s ease, filter 0.18s ease;
+  filter: drop-shadow(0 0 0.5px rgba(255, 255, 255, 0.3));
+}
+
+.button-link:hover::before,
+.public-login:hover::before,
+.dashboard-outline-button:hover::before,
+button[type="submit"]:hover::before,
+.login-stage-submit:hover::before {
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.32));
+  transform: scale(1.01);
+}
+
+.button-link.is-muted::before,
+.dashboard-outline-button.is-muted::before {
+  opacity: 0.55;
+}
+
+.button-link.is-disabled,
+.button-link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button-link.is-accent,
+.public-login,
+.login-stage-submit {
+  color: var(--chalk-yellow);
+  text-shadow: 0 0 1px rgba(240, 217, 122, 0.55);
+}
+
+.button-link.is-accent::before,
+.public-login::before,
+.login-stage-submit::before {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'><path d='M6 8 C 30 5, 70 12, 100 6 S 170 11, 196 7 L 196 52 C 170 56, 130 50, 100 55 S 30 49, 5 53 Z' stroke='%23f0d97a' stroke-width='2.4' fill='none' stroke-linecap='round'/></svg>");
+}
+
+/* Cards: hand-drawn rectangle outlines via SVG background. */
+.public-tariff-card,
+.chalk-card,
+.dashboard-card,
+.course-program-card,
+.tier-card,
+.tariff-card,
+.module-card,
+.lesson-card,
+.panel,
+.chalk-note,
+.login-form-panel,
+.login-access-panel,
+.sidebar-card,
+.module-lessons-shell .sidebar-frame,
+.board-shell .panel,
+.stage6-card,
+.stage6-panel,
+.training-card,
+.training-card-locked {
+  position: relative;
+  background: rgba(13, 16, 14, 0.72) !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  padding: 22px 22px 24px;
+  box-shadow: none !important;
+}
+
+.public-tariff-card::before,
+.chalk-card::before,
+.dashboard-card::before,
+.course-program-card::before,
+.tier-card::before,
+.tariff-card::before,
+.module-card::before,
+.lesson-card::before,
+.panel::before,
+.chalk-note::before,
+.login-form-panel::before,
+.login-access-panel::before,
+.sidebar-card::before,
+.training-card::before,
+.training-card-locked::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' preserveAspectRatio='none'><path d='M8 14 C 60 9, 130 17, 200 11 S 290 13, 294 18 L 294 184 C 240 190, 170 184, 100 192 S 14 188, 8 184 Z' stroke='%23f5f2eb' stroke-width='1.7' fill='none' opacity='0.78' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.public-tariff-card.is-featured::before,
+.training-card.is-featured::before {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' preserveAspectRatio='none'><path d='M8 14 C 60 9, 130 17, 200 11 S 290 13, 294 18 L 294 184 C 240 190, 170 184, 100 192 S 14 188, 8 184 Z' stroke='%23f0d97a' stroke-width='2.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+}
+
+.public-tariff-card.is-vip::before,
+.training-card.is-vip::before {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' preserveAspectRatio='none'><path d='M8 14 C 60 9, 130 17, 200 11 S 290 13, 294 18 L 294 184 C 240 190, 170 184, 100 192 S 14 188, 8 184 Z' stroke='%237fb6e8' stroke-width='2.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+}
+
+.public-tariff-card.is-free::before {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' preserveAspectRatio='none'><path d='M8 14 C 60 9, 130 17, 200 11 S 290 13, 294 18 L 294 184 C 240 190, 170 184, 100 192 S 14 188, 8 184 Z' stroke='%239bd49f' stroke-width='2.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+}
+
+.public-tariff-card h3,
+.training-card h3,
+.tier-card h3,
+.tariff-card h3 {
+  font-family: var(--chalk-font-display);
+  font-size: 1.9rem;
+  margin: 0 0 6px;
+}
+
+.public-tariff-card p,
+.training-card p {
+  font-family: var(--chalk-font-display);
+  font-size: 1.7rem;
+  margin: 0 0 8px;
+  color: var(--chalk-warm);
+}
+
+.public-tariff-card small,
+.training-card small {
+  display: block;
+  margin-bottom: 14px;
+  color: rgba(245, 242, 235, 0.78);
+  font-size: 1.02rem;
+  line-height: 1.36;
+}
+
+.public-tariff-card a,
+.training-card a {
+  display: inline-block;
+  margin-top: 12px;
+  font-family: var(--chalk-font-display);
+  font-size: 1.35rem;
+  color: var(--chalk-yellow);
+  text-decoration: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: rgba(240, 217, 122, 0.8);
+  text-underline-offset: 5px;
+}
+
+/* Inputs: chalk-line border via SVG. */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea,
+select {
+  position: relative;
+  background: rgba(255, 255, 255, 0.02);
+  border: 0;
+  border-radius: 0;
+  padding: 14px 16px;
+  font-family: var(--chalk-font-hand);
+  font-size: 1.1rem;
+  color: var(--chalk-cream);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 60' preserveAspectRatio='none'><path d='M6 8 C 60 4, 140 14, 220 8 S 380 12, 394 9 L 394 50 C 320 54, 220 48, 140 54 S 12 50, 6 48 Z' stroke='%23f5f2eb' stroke-width='1.6' fill='none' opacity='0.6' stroke-linecap='round'/></svg>");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 60' preserveAspectRatio='none'><path d='M6 8 C 60 4, 140 14, 220 8 S 380 12, 394 9 L 394 50 C 320 54, 220 48, 140 54 S 12 50, 6 48 Z' stroke='%23f0d97a' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(245, 242, 235, 0.42);
+  font-family: var(--chalk-font-hand);
+  font-style: italic;
+}
+
+/* Sidebar links: chalk underline on hover/active. */
+.sidebar-link,
+.public-nav-links a,
+.mobile-link {
+  font-family: var(--chalk-font-hand);
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: var(--chalk-cream);
+  text-decoration: none;
+  letter-spacing: 0.005em;
+}
+
+.sidebar-link.is-active,
+.public-nav-links a.is-active,
+.mobile-link.is-active {
+  color: var(--chalk-yellow);
+  text-shadow: 0 0 1px rgba(240, 217, 122, 0.4);
+  background: transparent !important;
+  border-color: transparent !important;
+}
+
+.sidebar-link.is-active::before {
+  content: "→ ";
+  color: var(--chalk-yellow);
+}
+
+/* Sidebar container: subtle chalk frame */
+.board-sidebar {
+  background: transparent !important;
+}
+
+.sidebar-frame {
+  position: relative;
+  padding: 20px;
+}
+
+.sidebar-frame::before {
+  position: absolute;
+  inset: 6px 6px;
+  content: "";
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 600' preserveAspectRatio='none'><path d='M8 14 C 60 9, 200 17, 290 12 L 290 588 C 240 593, 100 586, 8 590 Z' stroke='%23f5f2eb' stroke-width='1.5' fill='none' opacity='0.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.sidebar-brand-wordmark {
+  font-family: var(--chalk-font-display);
+  font-size: 2.3rem;
+  font-weight: 700;
+  letter-spacing: 0.005em;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+.sidebar-brand-subline {
+  font-family: var(--chalk-font-hand);
+  font-size: 0.98rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--chalk-yellow);
+}
+
+/* Status pills: chalk circle outline. */
+.status-pill,
+.pill,
+.tag,
+.chalk-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  font-family: var(--chalk-font-hand);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--chalk-cream);
+  background: transparent;
+  border: 0;
+  position: relative;
+  border-radius: 999px;
+}
+
+.status-pill::before,
+.pill::before,
+.tag::before,
+.chalk-pill::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 32' preserveAspectRatio='none'><path d='M14 4 C 40 2, 80 6, 110 4 C 116 8, 116 24, 110 28 C 80 30, 40 26, 14 28 C 8 24, 8 8, 14 4 Z' stroke='%23f5f2eb' stroke-width='1.5' fill='none' opacity='0.7' stroke-linecap='round'/></svg>");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.status-pill.is-success::before { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 32' preserveAspectRatio='none'><path d='M14 4 C 40 2, 80 6, 110 4 C 116 8, 116 24, 110 28 C 80 30, 40 26, 14 28 C 8 24, 8 8, 14 4 Z' stroke='%239bd49f' stroke-width='1.8' fill='none' stroke-linecap='round'/></svg>"); color: var(--chalk-green); }
+.status-pill.is-accent::before { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 32' preserveAspectRatio='none'><path d='M14 4 C 40 2, 80 6, 110 4 C 116 8, 116 24, 110 28 C 80 30, 40 26, 14 28 C 8 24, 8 8, 14 4 Z' stroke='%23f0d97a' stroke-width='1.8' fill='none' stroke-linecap='round'/></svg>"); color: var(--chalk-yellow); }
+.status-pill.is-warning::before { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 32' preserveAspectRatio='none'><path d='M14 4 C 40 2, 80 6, 110 4 C 116 8, 116 24, 110 28 C 80 30, 40 26, 14 28 C 8 24, 8 8, 14 4 Z' stroke='%23ed7468' stroke-width='1.8' fill='none' stroke-linecap='round'/></svg>"); color: var(--chalk-red); }
+.status-pill.is-info::before { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 32' preserveAspectRatio='none'><path d='M14 4 C 40 2, 80 6, 110 4 C 116 8, 116 24, 110 28 C 80 30, 40 26, 14 28 C 8 24, 8 8, 14 4 Z' stroke='%237fb6e8' stroke-width='1.8' fill='none' stroke-linecap='round'/></svg>"); color: var(--chalk-blue); }
+
+/* Topbar styling */
+.board-topbar {
+  background: transparent !important;
+  border-bottom: 1px dashed rgba(245, 242, 235, 0.18);
+  padding-bottom: 18px;
+}
+
+.board-footer {
+  background: transparent !important;
+  border-top: 1px dashed rgba(245, 242, 235, 0.18);
+  font-family: var(--chalk-font-hand);
+  color: rgba(245, 242, 235, 0.6);
+}
+
+/* Telegram card */
+.telegram-card {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 22px;
+  background: transparent;
+  text-decoration: none;
+  color: var(--chalk-cream);
+  font-family: var(--chalk-font-hand);
+  font-size: 1.08rem;
+  border-radius: 14px;
+  border: 0;
+}
+
+.telegram-card::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 64' preserveAspectRatio='none'><path d='M8 8 C 60 4, 200 12, 290 6 L 290 56 C 240 60, 100 54, 8 58 Z' stroke='%237fb6e8' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.telegram-card strong {
+  font-family: var(--chalk-font-display);
+  font-size: 1.4rem;
+  color: var(--chalk-blue);
+}
+
+.telegram-card small {
+  display: block;
+  color: rgba(245, 242, 235, 0.7);
+}
+
+.telegram-mark {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  background: transparent;
+}
+
+.telegram-mark::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='13' stroke='%237fb6e8' stroke-width='2' fill='none'/><path d='M9 17 L 14 21 L 24 11' stroke='%237fb6e8' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+/* Chalk arrow drawn between sections */
+.chalk-arrow {
+  display: inline-block;
+  width: 64px;
+  height: 24px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 24'><path d='M3 12 C 16 6, 36 18, 56 12 M 48 6 L 58 12 L 48 18' stroke='%23f5f2eb' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* Public hero illustration container — hand-drawn frame */
+.public-illustration,
+.public-chalk-flow,
+.chalk-board-card,
+.chalk-board-card-v2 {
+  position: relative;
+  background: rgba(13, 16, 14, 0.78);
+  border-radius: 18px;
+  padding: 24px;
+  min-height: 380px;
+  background-image:
+    repeating-linear-gradient(
+      transparent 0 32px,
+      rgba(255, 255, 255, 0.012) 32px 33px
+    ),
+    radial-gradient(circle at 10% 12%, rgba(255, 255, 255, 0.04), transparent 56%);
+}
+
+.public-illustration::before,
+.public-chalk-flow::before,
+.chalk-board-card::before,
+.chalk-board-card-v2::before {
+  position: absolute;
+  inset: 4px;
+  content: "";
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400' preserveAspectRatio='none'><path d='M10 18 C 80 8, 220 22, 340 12 S 590 16, 592 22 L 592 386 C 460 394, 200 384, 80 388 S 10 380, 8 374 Z' stroke='%23f5f2eb' stroke-width='2.2' fill='none' opacity='0.78' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+/* Login screen polish */
+.login-stage-page {
+  background: transparent;
+}
+
+.login-stage-brand span {
+  font-family: var(--chalk-font-display);
+  font-size: 2.4rem;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+.login-stage-grid {
+  align-items: stretch;
+}
+
+.login-form-panel,
+.login-access-panel {
+  padding: 32px 30px 36px;
+}
+
+.login-form-panel h1.auth-title {
+  margin-bottom: 8px;
+}
+
+.login-stage-copy,
+.login-access-list small {
+  color: rgba(245, 242, 235, 0.78);
+}
+
+/* Flash messages */
+.flash-message {
+  font-family: var(--chalk-font-hand);
+  background: transparent !important;
+  border: 0 !important;
+  padding: 14px 22px;
+  position: relative;
+  border-radius: 10px;
+  color: var(--chalk-cream);
+}
+
+.flash-message::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 60' preserveAspectRatio='none'><path d='M8 8 C 80 4, 280 12, 392 6 L 392 52 C 320 56, 100 50, 8 54 Z' stroke='%23f0d97a' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.flash-message.is-error::before,
+.flash-message.is-danger::before {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 60' preserveAspectRatio='none'><path d='M8 8 C 80 4, 280 12, 392 6 L 392 52 C 320 56, 100 50, 8 54 Z' stroke='%23ed7468' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");
+}
+
+.flash-message.is-success::before {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 60' preserveAspectRatio='none'><path d='M8 8 C 80 4, 280 12, 392 6 L 392 52 C 320 56, 100 50, 8 54 Z' stroke='%239bd49f' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");
+}
+
+/* Public navigation */
+.public-nav {
+  align-items: center;
+  padding: 22px 28px;
+  background: transparent;
+  border-bottom: 1px dashed rgba(245, 242, 235, 0.18);
+}
+
+.public-brand span {
+  font-family: var(--chalk-font-display);
+  font-size: 1.9rem;
+  letter-spacing: 0.005em;
+  color: var(--chalk-cream);
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+.public-nav-links {
+  display: flex;
+  gap: 22px;
+}
+
+.public-nav-links a {
+  font-family: var(--chalk-font-hand);
+  font-size: 1.05rem;
+  color: rgba(245, 242, 235, 0.86);
+  text-decoration: none;
+  position: relative;
+}
+
+.public-nav-links a:hover {
+  color: var(--chalk-yellow);
+}
+
+/* Lesson page polish (existing classes) */
+.stage8-lesson-shell h2,
+.stage8-lesson-shell h3 {
+  font-family: var(--chalk-font-display);
+}
+
+.stage8-back-link,
+.back-link {
+  font-family: var(--chalk-font-hand);
+  font-size: 1.05rem;
+  color: var(--chalk-yellow);
+  text-decoration: none;
+}
+
+.stage8-back-link::before,
+.back-link::before {
+  content: "← ";
+  display: inline-block;
+  margin-right: 4px;
+  color: var(--chalk-yellow);
+}
+
+/* Progress track: dashed with chalk fill */
+.progress-track {
+  position: relative;
+  height: 14px;
+  border-radius: 99px;
+  background: transparent;
+  border: 0;
+}
+
+.progress-track::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 14' preserveAspectRatio='none'><path d='M3 7 C 80 4, 200 10, 320 6 S 396 8, 397 7' stroke='%23f5f2eb' stroke-width='1.4' fill='none' opacity='0.55' stroke-linecap='round'/><path d='M3 7 C 80 4, 200 10, 320 6 S 396 8, 397 7' stroke='%23f5f2eb' stroke-width='1.4' fill='none' opacity='0.55' stroke-linecap='round' transform='translate(0 4)'/></svg>");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.progress-track span {
+  display: block;
+  height: 100%;
+  background:
+    linear-gradient(90deg, rgba(240, 217, 122, 0.85), rgba(240, 217, 122, 0.55));
+  border-radius: 99px;
+  box-shadow: 0 0 6px rgba(240, 217, 122, 0.3);
+}
+
+/* Tariff card highlight badge */
+.public-tariff-card.is-featured::after,
+.training-card.is-featured::after {
+  position: absolute;
+  top: -14px;
+  right: 18px;
+  padding: 2px 12px;
+  font-family: var(--chalk-font-display);
+  font-size: 1.15rem;
+  color: var(--chalk-yellow);
+  background: var(--chalk-board);
+  content: "★ топ";
+  z-index: 1;
+}
+
+/* Hand-drawn divider */
+.chalk-divider,
+hr {
+  height: 12px;
+  border: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 12' preserveAspectRatio='none'><path d='M3 6 C 100 2, 250 10, 380 5 S 590 7, 597 6' stroke='%23f5f2eb' stroke-width='1.5' fill='none' opacity='0.55' stroke-linecap='round'/></svg>");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  margin: 22px 0;
+}
+
+/* Stickman illustration block (used in landing/login) */
+.chalk-stickman {
+  width: clamp(180px, 22vw, 320px);
+  height: auto;
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.3));
+}
+
+.chalk-stickman path,
+.chalk-stickman line,
+.chalk-stickman circle,
+.chalk-stickman polyline,
+.chalk-stickman polygon {
+  fill: none;
+  stroke: var(--chalk-cream);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chalk-stickman .accent {
+  stroke: var(--chalk-yellow);
+}
+
+/* Two-column hero refinement */
+.public-hero-v2 {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 48px;
+  padding: 36px 28px 56px;
+}
+
+.public-hero-copy h1 {
+  margin: 0 0 8px;
+}
+
+.public-hero-copy .public-actions {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+@media (max-width: 880px) {
+  .public-hero-v2 {
+    grid-template-columns: 1fr;
+  }
+  .public-illustration {
+    min-height: 320px;
+  }
+}
+
+/* Tariffs grid spacing */
+.public-tariffs-v2 {
+  padding: 32px 28px 48px;
+}
+
+.public-tariff-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 22px;
+}
+
+/* Login-stage refinement */
+.login-stage-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 32px;
+  align-items: stretch;
+}
+
+@media (max-width: 880px) {
+  .login-stage-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.password-field-frame {
+  position: relative;
+  display: block;
+}
+
+.password-eye-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.password-eye-button::before {
+  display: none;
+}
+
+.password-eye-icon {
+  width: 22px;
+  height: 14px;
+  display: block;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16'><path d='M2 8 C 6 2, 18 2, 22 8 C 18 14, 6 14, 2 8 Z' stroke='%23f5f2eb' stroke-width='1.4' fill='none'/><circle cx='12' cy='8' r='2.4' stroke='%23f5f2eb' stroke-width='1.4' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* Reduce harshness of legacy "stage" styles */
+.stage6-sidebar-link,
+.stage6-card,
+.stage6-panel {
+  background: transparent !important;
+  border-color: transparent !important;
+}
+
+.stage6-sidebar-link.is-active,
+.stage5-sidebar-link.is-active,
+.sidebar-link.is-active {
+  color: var(--chalk-yellow) !important;
+  background: transparent !important;
+  border-color: var(--chalk-yellow) !important;
+  box-shadow: none !important;
+}
+
+/* Force chalk-yellow accent across the app to avoid neon orange highlights. */
+.preview-progress-bar,
+.preview-tab.is-active,
+.preview-step-mark.is-active,
+.stage5-sidebar-link.is-active,
+.module-progress-bar,
+.lesson-status.is-current,
+.preview-lesson-row.is-current {
+  color: var(--chalk-yellow) !important;
+  background-color: rgba(240, 217, 122, 0.12) !important;
+  border-color: rgba(240, 217, 122, 0.55) !important;
+}
+
+/* Solid orange CTA blocks: replace with chalk look. */
+.preview-primary-cta,
+.course-tier-cta,
+.dashboard-cta,
+.lesson-action.is-primary,
+.module-action.is-primary {
+  color: var(--chalk-yellow) !important;
+}
+
+.preview-primary-cta::before,
+.course-tier-cta::before,
+.dashboard-cta::before,
+.lesson-action.is-primary::before,
+.module-action.is-primary::before {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'><path d='M6 8 C 30 5, 70 12, 100 6 S 170 11, 196 7 L 196 52 C 170 56, 130 50, 100 55 S 30 49, 5 53 Z' stroke='%23f0d97a' stroke-width='2.4' fill='none' stroke-linecap='round'/></svg>") !important;
+}
+
+/* Mobile dock */
+.mobile-dock {
+  background: rgba(10, 12, 10, 0.92);
+  border-top: 1px dashed rgba(245, 242, 235, 0.22);
+}
+
+.mobile-link {
+  font-family: var(--chalk-font-hand);
+  letter-spacing: 0.01em;
+  color: var(--chalk-cream);
+}
+
+.mobile-link.is-active {
+  color: var(--chalk-yellow);
+}
+
+/* Generic chalk title block decoration */
+.chalk-title-with-doodle {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.chalk-title-with-doodle .chalk-stickman {
+  width: 80px;
+  height: 80px;
+}
+
+/* Course/lesson list rows — chalk numbered bullets */
+.lesson-row,
+.module-row,
+.training-row,
+.course-map-row {
+  position: relative;
+  padding: 12px 14px 12px 56px;
+  font-family: var(--chalk-font-hand);
+  font-size: 1.06rem;
+  color: var(--chalk-cream);
+}
+
+.lesson-row::before,
+.module-row::before,
+.training-row::before,
+.course-map-row::before {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  content: "";
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'><circle cx='18' cy='18' r='15' stroke='%23f5f2eb' stroke-width='1.7' fill='none' opacity='0.6'/></svg>");
+  background-size: contain;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+/* "Locked" overlay — show a chalk lock icon */
+.is-locked,
+.locked,
+.training-card-locked {
+  opacity: 0.92;
+}
+
+.lock-mark {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M6 11 L 6 8 C 6 4, 10 2, 12 2 C 14 2, 18 4, 18 8 L 18 11 M 4 11 L 20 11 L 20 22 L 4 22 Z' stroke='%23f0d97a' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+}
+
+/* Auth form spacing */
+.auth-form {
+  display: grid;
+  gap: 18px;
+}
+
+.auth-form-field,
+.login-stage-field {
+  display: grid;
+  gap: 8px;
+}
+
+.auth-form-label {
+  font-family: var(--chalk-font-hand);
+  font-size: 0.98rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--chalk-yellow);
+}
+
+.auth-form-error {
+  font-family: var(--chalk-font-hand);
+  color: var(--chalk-red);
+  font-size: 0.95rem;
+}
+
+.login-stage-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  font-family: var(--chalk-font-hand);
+  color: rgba(245, 242, 235, 0.86);
+}
+
+/* Container of all primary content */
+.content {
+  background: transparent !important;
+}
+
+/* Hero secondary content */
+.public-hero-copy .telegram-card {
+  margin-top: 22px;
+}
+
+/* Chalk doodle helpers used as decorative accents */
+.chalk-doodle {
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+.chalk-doodle.is-arrow {
+  width: 60px;
+  height: 24px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 24'><path d='M3 12 C 18 6, 38 18, 56 12 M 48 6 L 58 12 L 48 18' stroke='%23f0d97a' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");
+}
+
+.chalk-doodle.is-star {
+  width: 28px;
+  height: 28px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M16 3 L 19 12 L 28 13 L 21 19 L 23 28 L 16 23 L 9 28 L 11 19 L 4 13 L 13 12 Z' stroke='%23f0d97a' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+}
+
+.chalk-doodle.is-heart {
+  width: 26px;
+  height: 24px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 24'><path d='M13 22 C 4 14, 1 8, 6 5 C 9 3, 12 5, 13 8 C 14 5, 17 3, 20 5 C 25 8, 22 14, 13 22 Z' stroke='%23f5a3b8' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
+}
+
+/* Ensure tariff price stays prominent */
+.public-tariff-card p,
+.training-card p {
+  text-shadow: 0 0 1px rgba(246, 233, 196, 0.4);
+}
+
+/* Operator role pages: keep chalk treatment but tighter */
+[class*="operator"] table,
+[class*="operator"] th,
+[class*="operator"] td {
+  font-family: var(--chalk-font-hand);
+  border: 0;
+  border-bottom: 1px dashed rgba(245, 242, 235, 0.22);
+  padding: 10px 12px;
+}
+
+[class*="operator"] th {
+  color: var(--chalk-yellow);
+  text-align: left;
+  letter-spacing: 0.06em;
+  font-size: 0.95rem;
+}
+
+/* Headlines on hero/login should not be uppercase forced. */
+.public-hero h1,
+.public-hero-v2 h1,
+.public-hero-copy h1,
+.auth-title {
+  text-transform: none;
+}
+
+/* Empty learner dashboard, login illustration, hero-side stickman. */
+.empty-state-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  align-items: center;
+  gap: 32px;
+}
+
+.empty-state-illustration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-state-illustration .chalk-stickman {
+  width: clamp(200px, 28vw, 320px);
+  height: auto;
+}
+
+@media (max-width: 880px) {
+  .empty-state-grid {
+    grid-template-columns: 1fr;
+  }
+  .empty-state-illustration {
+    order: -1;
+  }
+}
+
+.empty-state-chalk h2 {
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  margin-top: 6px;
+}
+
+.empty-state-chalk p {
+  font-size: 1.18rem;
+}
+
+/* Login page right panel chalk illustration. */
+.login-access-illustration {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 18px;
+}
+
+.login-access-illustration .chalk-stickman {
+  width: 220px;
+  height: auto;
+}
+
+/* Hero stickmen row in landing page. */
+.public-hero-stickmen {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 16px 0 8px;
+  padding: 12px 8px;
+  border-top: 1px dashed rgba(245, 242, 235, 0.18);
+  border-bottom: 1px dashed rgba(245, 242, 235, 0.18);
+}
+
+.public-hero-stickmen .chalk-stickman {
+  width: 90px;
+  height: auto;
+}
+
+/* Course preview hero illustration */
+.course-hero-stickmen {
+  display: none;
+}
+
+@media (min-width: 1180px) {
+  .course-hero-stickmen {
+    display: flex;
+    gap: 18px;
+    align-items: flex-end;
+    margin-top: 12px;
+  }
+}
+
+/* Stickman accent on the lesson page top */
+.lesson-illustration {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 12px;
+}
+
+.lesson-illustration .chalk-stickman {
+  width: 120px;
+  height: auto;
+}

@@ -1,0 +1,22 @@
+{% comment %}Stick figure standing in front of a chalk lock — for locked content.{% endcomment %}
+<svg class="chalk-stickman {{ size_class|default:'' }}" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <!-- head -->
+  <path d="M82 32 C 70 18, 110 10, 128 18 C 144 24, 146 46, 130 54 C 116 62, 86 56, 82 44 Z"/>
+  <!-- sad eyes -->
+  <circle cx="98" cy="32" r="2"/>
+  <circle cx="120" cy="32" r="2"/>
+  <!-- frown -->
+  <path d="M98 46 C 104 42, 116 42, 122 46"/>
+  <!-- body -->
+  <path d="M110 58 L 110 130"/>
+  <path d="M110 76 L 86 96"/>
+  <path d="M110 76 L 134 96"/>
+  <path d="M110 130 L 92 188"/>
+  <path d="M110 130 L 128 188"/>
+  <!-- big chalk lock right -->
+  <path class="accent" d="M158 96 L 158 80 C 158 64, 178 60, 184 76 L 184 96 M 148 96 L 196 96 L 196 156 L 148 156 Z" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle class="accent" cx="172" cy="124" r="4"/>
+  <path class="accent" d="M172 128 L 172 142"/>
+  <!-- ground -->
+  <path d="M30 200 C 100 194, 160 204, 200 198" opacity="0.5"/>
+</svg>

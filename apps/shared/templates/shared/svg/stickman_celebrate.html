@@ -1,0 +1,26 @@
+{% comment %}Happy stick figure with raised arms — chalk style.{% endcomment %}
+<svg class="chalk-stickman {{ size_class|default:'' }}" viewBox="0 0 220 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <!-- head -->
+  <path d="M88 38 C 76 24, 110 14, 128 22 C 144 28, 146 50, 132 60 C 118 70, 92 62, 88 50 Z"/>
+  <!-- eyes (closed, happy) -->
+  <path d="M100 38 C 102 36, 108 36, 110 38"/>
+  <path d="M120 38 C 122 36, 128 36, 130 38"/>
+  <!-- big smile -->
+  <path d="M100 50 C 108 60, 124 60, 132 50"/>
+  <!-- body -->
+  <path d="M114 64 L 114 142"/>
+  <!-- arms raised -->
+  <path d="M114 80 L 70 30"/>
+  <path d="M114 80 L 162 30"/>
+  <!-- hands as small circles -->
+  <circle cx="68" cy="28" r="4"/>
+  <circle cx="164" cy="28" r="4"/>
+  <!-- legs -->
+  <path d="M114 142 L 92 210"/>
+  <path d="M114 142 L 138 210"/>
+  <!-- happy doodles -->
+  <path class="accent" d="M40 70 L 50 76 L 40 82 L 50 88" stroke-linecap="round"/>
+  <path class="accent" d="M180 70 L 188 76 L 180 82" stroke-linecap="round"/>
+  <!-- ground -->
+  <path d="M50 218 C 100 212, 140 222, 180 216" opacity="0.5"/>
+</svg>

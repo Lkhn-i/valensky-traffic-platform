@@ -326,13 +326,27 @@
       </section>
     {% endwith %}
   {% else %}
-    <section class="panel stack empty-state">
-      <span class="pill">Кабинет ученика</span>
-      <h2>Моё обучение</h2>
-      <p class="muted">После диагностики или оплаты курс появится здесь.</p>
-      <a class="button-link" href="{% url 'diagnostic_handoff:simulate_submit' %}">
-        Симулировать вход после диагностики
-      </a>
+    <section class="panel stack empty-state empty-state-chalk">
+      <div class="empty-state-grid">
+        <div class="stack">
+          <span class="pill">Кабинет ученика</span>
+          <h2>Моё обучение</h2>
+          <p>После диагностики или оплаты курс появится здесь.</p>
+          <p class="muted">
+            Меловые человечки уже на доске и ждут. Нажмите кнопку — мы сэмулируем
+            вход после опроса и откроем нулевой урок.
+          </p>
+          <div class="action-row">
+            <a class="button-link is-accent" href="{% url 'diagnostic_handoff:simulate_submit' %}">
+              Симулировать вход после диагностики
+            </a>
+            <a class="button-link is-muted" href="/">На главную</a>
+          </div>
+        </div>
+        <div class="empty-state-illustration" aria-hidden="true">
+          {% include "shared/svg/stickman_thinking.html" %}
+        </div>
+      </div>
     </section>
   {% endif %}
 {% endblock %}
