@@ -2,9 +2,9 @@
 
 {% block title %}Операторская{% endblock %}
 {% block brand_subline %}операторская{% endblock %}
-{% block page_label %}Панель оператора{% endblock %}
+{% block page_label %}Панель команды{% endblock %}
 {% block page_heading %}Рабочая панель команды{% endblock %}
-{% block page_subtitle %}Рабочая панель для контроля учеников, контента, доступов и очереди домашних работ.{% endblock %}
+{% block page_subtitle %}Менеджеры видят домашки и учеников, админы — контент и платежи. Один экран в едином стиле.{% endblock %}
 
 {% block sidebar %}
   <section class="sidebar-section stack">
@@ -12,8 +12,8 @@
     <nav class="sidebar-menu">
       <a class="sidebar-link is-active" href="{% url 'operator:dashboard' %}">Панель</a>
       <a class="sidebar-link" href="{% url 'operator:learners' %}">Ученики</a>
-      <a class="sidebar-link" href="{% url 'operator:content' %}">Контент</a>
       <a class="sidebar-link" href="{% url 'operator:homework_queue' %}">Домашки</a>
+      <a class="sidebar-link" href="{% url 'operator:content' %}">Контент курса</a>
       <a class="sidebar-link" href="{% url 'operator:orders' %}">Заказы</a>
       <a class="sidebar-link" href="{% url 'operator:audit' %}">Аудит</a>
     </nav>
@@ -21,9 +21,9 @@
 
   <section class="sidebar-card stack">
     <p class="sidebar-kicker">Фокус смены</p>
-    <p class="sidebar-profile-name">{{ metrics.pending_homework_reviews }}</p>
-    <p class="sidebar-note">Домашек ждут проверки менеджером. Платные доступы: {{ metrics.active_paid_access_grants }}.</p>
-    <span class="status-pill is-accent">Панель команды</span>
+    <p class="sidebar-profile-name">{{ metrics.pending_homework_reviews }} ждут проверки</p>
+    <p class="sidebar-note">Платных доступов: {{ metrics.active_paid_access_grants }}. Преview: {{ metrics.active_preview_access_grants }}.</p>
+    <span class="status-pill is-accent">Команда</span>
   </section>
 {% endblock %}
 
@@ -31,196 +31,164 @@
   <a class="mobile-link is-active" href="{% url 'operator:dashboard' %}">Панель</a>
   <a class="mobile-link" href="{% url 'operator:learners' %}">Ученики</a>
   <a class="mobile-link" href="{% url 'operator:homework_queue' %}">Д/З</a>
+  <a class="mobile-link" href="{% url 'operator:content' %}">Контент</a>
   <a class="mobile-link" href="{% url 'operator:orders' %}">Заказы</a>
-  <a class="mobile-link" href="{% url 'operator:audit' %}">Логи</a>
 {% endblock %}
 
 {% block topbar_meta %}
   <div class="topbar-badges">
-    <span class="status-pill is-accent">{{ metrics.learner_users }} активных учеников</span>
-    <span class="status-pill is-warning">{{ metrics.pending_homework_reviews }} ждут проверки</span>
-    <span class="status-pill">{{ metrics.pending_orders }} оплат требуют внимания</span>
+    <span class="status-pill is-accent">{{ metrics.learner_users }} учеников в работе</span>
+    <span class="status-pill is-warning">{{ metrics.pending_homework_reviews }} домашек на проверке</span>
+    <span class="status-pill">{{ metrics.pending_orders }} оплат к контролю</span>
   </div>
 {% endblock %}
 
 {% block content %}
-  <section class="panel stack">
-    <span class="pill">Операторская</span>
-    <div class="hero-grid">
-      <div class="stack">
-        <div class="chalk-note">
-          <p class="eyebrow">Dashboard</p>
-          <h2>Панель оператора</h2>
-          <p class="muted">Один экран для контроля пользователей, публикации курса, домашних заданий, платежей и системных сигналов.</p>
-        </div>
-        <div class="action-row">
-          <a class="button-link" href="{% url 'operator:homework_queue' %}">Очередь домашних работ</a>
-          <a class="button-link is-muted" href="{% url 'operator:content' %}">Курсы и контент</a>
-          <a class="button-link is-muted" href="{% url 'operator:orders' %}">Платежи и доступы</a>
-          <a class="button-link is-muted" href="{% url 'operator:learners' %}">Карточки учеников</a>
+  <section class="gc-dashboard stack">
+    <section class="panel gc-hero-panel">
+      <div class="gc-hero-copy stack">
+        <span class="pill">Операторская</span>
+        <h2>Один экран для команды поддержки</h2>
+        <p class="muted">Менеджер заходит и сразу видит домашки на проверке. Админ — публикацию и платежи. Логика одинаковая для всей команды.</p>
+        <div class="gc-hero-next">
+          <div>
+            <p class="eyebrow">Следующее действие</p>
+            <h3>{{ metrics.pending_homework_reviews }} домашек ждут проверки</h3>
+            <p class="muted">Откройте очередь и пройдите по нерассмотренным отправкам учеников.</p>
+          </div>
+          <div class="action-row">
+            <a class="button-link" href="{% url 'operator:homework_queue' %}">Открыть очередь домашек</a>
+            <a class="button-link is-muted" href="{% url 'operator:learners' %}">Карточки учеников</a>
+          </div>
         </div>
       </div>
-      <div class="summary-grid">
-        <article class="summary-card">
-          <p class="summary-label">Операторы в команде</p>
-          <p class="summary-value">{{ metrics.operator_users }}</p>
-          <p class="summary-note">Менеджеры и администраторы, ведущие смену.</p>
-        </article>
-        <article class="summary-card">
-          <p class="summary-label">Опубликованные уроки</p>
-          <p class="summary-value">{{ metrics.published_lessons }}</p>
-          <p class="summary-note">Контент, уже доступный ученикам.</p>
-        </article>
-        <article class="summary-card">
-          <p class="summary-label">Завершенные уроки</p>
-          <p class="summary-value">{{ metrics.completed_lessons }}</p>
-          <p class="summary-note">Фактически пройденные уроки в системе.</p>
-        </article>
-      </div>
-    </div>
-  </section>
+      <aside class="gc-hero-side stack">
+        <div class="gc-kpi-card">
+          <span>Активные ученики</span>
+          <strong>{{ metrics.learner_users }}</strong>
+          <small>Студенты и лиды в работе</small>
+        </div>
+        <div class="gc-kpi-card">
+          <span>Платные доступы</span>
+          <strong>{{ metrics.active_paid_access_grants }}</strong>
+          <small>Активированные учебные гранты</small>
+        </div>
+        <div class="gc-kpi-card">
+          <span>Заказы к контролю</span>
+          <strong>{{ metrics.pending_orders }}</strong>
+          <small>Ждут оплаты или активации</small>
+        </div>
+      </aside>
+    </section>
 
-  <section class="metric-grid">
-    <article class="summary-card">
-      <p class="summary-label">Активные ученики</p>
-      <p class="summary-value">{{ metrics.learner_users }}</p>
-      <p class="summary-note">Учеников и лидов в сопровождении команды.</p>
-    </article>
-    <article class="summary-card">
-      <p class="summary-label">Пробные доступы</p>
-      <p class="summary-value">{{ metrics.active_preview_access_grants }}</p>
-      <p class="summary-note">Пробные доступы, которые еще активны.</p>
-    </article>
-    <article class="summary-card">
-      <p class="summary-label">Пользователи в системе</p>
-      <p class="summary-value">{{ metrics.total_users }}</p>
-      <p class="summary-note">Общее число аккаунтов по платформе.</p>
-    </article>
-    <article class="summary-card">
-      <p class="summary-label">Оплаченные заказы</p>
-      <p class="summary-value">{{ metrics.paid_orders }}</p>
-      <p class="summary-note">Подтвержденные оплаты с доступом.</p>
-    </article>
-    <article class="summary-card">
-      <p class="summary-label">ДЗ в очереди</p>
-      <p class="summary-value">{{ metrics.pending_homework_reviews }}</p>
-      <p class="summary-note">Работы, требующие проверки менеджером.</p>
-    </article>
-    <article class="summary-card">
-      <p class="summary-label">Платные доступы</p>
-      <p class="summary-value">{{ metrics.active_paid_access_grants }}</p>
-      <p class="summary-note">Активированные учебные гранты.</p>
-    </article>
-    <article class="summary-card">
-      <p class="summary-label">Платежи с риском</p>
-      <p class="summary-value">{{ metrics.pending_orders }}</p>
-      <p class="summary-note">Заказы, ожидающие оплаты или активации.</p>
-    </article>
-    <article class="summary-card">
-      <p class="summary-label">Черновики курса</p>
-      <p class="summary-value">{{ metrics.draft_courses }}</p>
-      <p class="summary-note">Материалы, требующие публикации.</p>
-    </article>
-  </section>
-
-  <section class="grid">
-    <article class="panel stack">
-      <div class="module-head">
+    <section class="panel stack">
+      <div class="gc-section-head">
         <div>
-          <span class="pill">Очередь домашних заданий</span>
-          <h3>Preview очереди ДЗ</h3>
-          <p class="muted">На dashboard доступен агрегированный preview. Детальная проверка и review form вынесены в отдельный раздел.</p>
+          <span class="pill">Маршрут смены</span>
+          <h2>Что делать дальше</h2>
         </div>
-        <a class="button-link is-muted" href="{% url 'operator:homework_queue' %}">Смотреть все</a>
+        <p class="muted">Подсказки построены по ролям: менеджер сначала смотрит домашки, админ — контент.</p>
       </div>
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Ученик</th>
-              <th>Курс / урок</th>
-              <th>Задание</th>
-              <th>Статус</th>
-              <th>В очереди</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Все отправки</td>
-              <td>Операторская очередь</td>
-              <td>Домашние задания, ожидающие проверки менеджером</td>
-              <td><span class="status-pill is-warning">На проверке</span></td>
-              <td>{{ metrics.pending_homework_reviews }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </article>
 
-    <article class="panel stack">
-      <span class="pill">Быстрые действия</span>
-      <h3>Следующий шаг по смене</h3>
-      <div class="dense-list">
-        <div class="dense-item">
-          <p class="lesson-title">Проверить домашки</p>
-          <p class="muted">{{ metrics.pending_homework_reviews }} работ ждут review_homework.</p>
-        </div>
-        <div class="dense-item">
-          <p class="lesson-title">Открыть карточки учеников</p>
-          <p class="muted">Доступы и причины блокировки доступны из learner card.</p>
-        </div>
-        <div class="dense-item">
-          <p class="lesson-title">Пройтись по черновикам</p>
-          <p class="muted">{{ metrics.draft_courses }} курсов требуют публикации или доработки.</p>
-        </div>
-      </div>
-      <div class="action-row">
-        <a class="button-link" href="{% url 'operator:homework_queue' %}">Проверить Д/З</a>
-        <a class="button-link is-muted" href="{% url 'operator:learners' %}">Открыть учеников</a>
-        <a class="button-link is-muted" href="{% url 'operator:content' %}">Проверить публикацию</a>
-      </div>
-    </article>
-  </section>
+      <div class="gc-program-grid">
+        <article class="gc-program-card">
+          <div class="gc-program-head">
+            <span class="course-map-number">D</span>
+            <div>
+              <h3>Проверка домашек</h3>
+              <p>Менеджер открывает очередь и оставляет фидбек по работам учеников.</p>
+            </div>
+          </div>
+          <ul class="gc-bullet-list">
+            <li>Сейчас в очереди: {{ metrics.pending_homework_reviews }}</li>
+            <li>Можно фильтровать по модулю и слову</li>
+            <li>Решение фиксируется в карточке ученика</li>
+          </ul>
+          <a class="dashboard-outline-button" href="{% url 'operator:homework_queue' %}">Открыть очередь</a>
+        </article>
 
-  <section class="grid">
-    <article class="panel stack">
-      <span class="pill">Системные уведомления</span>
-      <h3>Что требует реакции</h3>
-      <div class="dense-list">
-        <div class="dense-item">
-          <p class="lesson-title">Очередь домашних работ</p>
-          <p class="muted">{{ metrics.pending_homework_reviews }} отправок ждут менеджера.</p>
-        </div>
-        <div class="dense-item">
-          <p class="lesson-title">Платежи и доступы</p>
-          <p class="muted">{{ metrics.pending_orders }} заказов нужно довести до оплаты и выдачи доступа.</p>
-        </div>
-        <div class="dense-item">
-          <p class="lesson-title">Контентные блокеры</p>
-          <p class="muted">{{ metrics.draft_courses }} курсов пока остаются в draft-режиме.</p>
-        </div>
-        <div class="dense-item">
-          <p class="lesson-title">Позитивный сигнал</p>
-          <p class="muted">{{ metrics.completed_lessons }} уроков уже завершены учениками.</p>
-        </div>
-      </div>
-    </article>
+        <article class="gc-program-card">
+          <div class="gc-program-head">
+            <span class="course-map-number">У</span>
+            <div>
+              <h3>Карточки учеников</h3>
+              <p>Менеджер видит, какие уроки и тарифы открыты, и пишет ученику в Telegram.</p>
+            </div>
+          </div>
+          <ul class="gc-bullet-list">
+            <li>{{ metrics.learner_users }} активных учеников</li>
+            <li>{{ metrics.active_preview_access_grants }} пробных доступов</li>
+            <li>Контакты и логи действий внутри карточки</li>
+          </ul>
+          <a class="dashboard-outline-button" href="{% url 'operator:learners' %}">Открыть учеников</a>
+        </article>
 
-    <article class="panel stack">
-      <span class="pill">Сводка смены</span>
-      <h3>Ключевые переходы</h3>
-      <div class="chalk-note">
-        <p class="lesson-title">Ученики и доступы</p>
-        <p class="muted">{{ metrics.active_paid_access_grants }} активных платных доступов и {{ metrics.active_preview_access_grants }} preview-грантов.</p>
+        <article class="gc-program-card">
+          <div class="gc-program-head">
+            <span class="course-map-number">К</span>
+            <div>
+              <h3>Контент курса</h3>
+              <p>Админ публикует уроки, проверяет порядок модулей и доступность материалов.</p>
+            </div>
+          </div>
+          <ul class="gc-bullet-list">
+            <li>{{ metrics.published_lessons }} опубликованных уроков</li>
+            <li>{{ metrics.draft_courses }} курсов в черновиках</li>
+            <li>{{ metrics.completed_lessons }} завершённых уроков учениками</li>
+          </ul>
+          <a class="dashboard-outline-button" href="{% url 'operator:content' %}">Управлять контентом</a>
+        </article>
+
+        <article class="gc-program-card">
+          <div class="gc-program-head">
+            <span class="course-map-number">$</span>
+            <div>
+              <h3>Платежи и заказы</h3>
+              <p>Финансовый контроль: оплаты, активация доступа и аудит платёжных событий.</p>
+            </div>
+          </div>
+          <ul class="gc-bullet-list">
+            <li>{{ metrics.paid_orders }} оплаченных заказов</li>
+            <li>{{ metrics.pending_orders }} требуют действий</li>
+            <li>Аудит вынесен в отдельный экран</li>
+          </ul>
+          <a class="dashboard-outline-button" href="{% url 'operator:orders' %}">Открыть заказы</a>
+        </article>
       </div>
-      <div class="chalk-note">
-        <p class="lesson-title">Публикация и прогресс</p>
-        <p class="muted">{{ metrics.published_courses }} курсов опубликовано, {{ metrics.published_lessons }} уроков доступны прямо сейчас.</p>
-      </div>
-      <div class="chalk-note">
-        <p class="lesson-title">Операционный фокус</p>
-        <p class="muted">Приоритет: домашние задания, pending-оплаты и проверка публикации контента.</p>
-      </div>
-    </article>
+    </section>
+
+    <section class="gc-dashboard-grid">
+      <article class="panel stack">
+        <span class="pill">Превью очереди</span>
+        <h2>Домашки на проверке</h2>
+        <div class="gc-activity-list">
+          <article class="gc-activity-row">
+            <strong>{{ metrics.pending_homework_reviews }} отправок ждут менеджера</strong>
+            <span>Откройте очередь, чтобы увидеть учеников, уроки и комментарии.</span>
+          </article>
+          <article class="gc-activity-row">
+            <strong>{{ metrics.active_paid_access_grants }} платных доступов активны</strong>
+            <span>Платные ученики имеют приоритет в проверке домашек.</span>
+          </article>
+          <article class="gc-activity-row">
+            <strong>{{ metrics.active_preview_access_grants }} пробных доступов</strong>
+            <span>Это лиды после опроса — им открыт только нулевой урок.</span>
+          </article>
+        </div>
+        <a class="button-link" href="{% url 'operator:homework_queue' %}">Перейти в очередь</a>
+      </article>
+
+      <article class="panel stack">
+        <span class="pill">Системные сигналы</span>
+        <h2>Что важно держать в фокусе</h2>
+        <ul class="gc-bullet-list">
+          <li>Домашки на проверке: {{ metrics.pending_homework_reviews }}</li>
+          <li>Заказы без оплаты: {{ metrics.pending_orders }}</li>
+          <li>Курсы в черновике: {{ metrics.draft_courses }}</li>
+          <li>Опубликованных курсов: {{ metrics.published_courses }}</li>
+        </ul>
+        <a class="button-link is-muted" href="{% url 'operator:audit' %}">Открыть аудит</a>
+      </article>
+    </section>
   </section>
 {% endblock %}

@@ -6,7 +6,7 @@
 {% block brand_subline %}учебная платформа{% endblock %}
 {% block page_label %}Валенский про трафик{% endblock %}
 {% block page_heading %}Валенский про трафик{% endblock %}
-{% block page_subtitle %}Главная, тарифы, Telegram и вход в личный кабинет.{% endblock %}
+{% block page_subtitle %}Главная страница с тарифами, входом и понятной логикой доступа.{% endblock %}
 
 {% block sidebar %}{% endblock %}
 {% block sidebar_footer %}{% endblock %}
@@ -14,17 +14,21 @@
 {% block mobile_nav %}{% endblock %}
 
 {% block content %}
-  <section class="public-page public-page-v2">
-    <header class="public-nav">
+  <section class="public-page public-page-v3">
+    <header class="public-nav public-nav-chalk">
       <a class="public-brand" href="/">
-        <span>ВАЛЕНСКИЙ ПРО ТРАФИК</span>
+        <span>ВАЛЕНСКИЙ</span>
       </a>
       <nav class="public-nav-links" aria-label="Публичная навигация">
+        <a href="#flow">Как это работает</a>
         <a href="#tariffs">Тарифы</a>
+        <a href="https://t.me/Vanlsky1" target="_blank" rel="noopener">Telegram-канал</a>
         <a href="https://t.me/valenskymanager" target="_blank" rel="noopener">Поддержка</a>
-        <a href="https://t.me/Vanlsky1" target="_blank" rel="noopener">Telegram</a>
       </nav>
-      <a class="public-login" href="{% url 'accounts:login' %}">Войти в платформу <span aria-hidden="true">&rarr;</span></a>
+      <div class="public-nav-actions">
+        <a class="button-link is-muted" href="#tariffs">Смотреть тарифы</a>
+        <a class="public-login" href="{% url 'accounts:login' %}">Войти в платформу <span aria-hidden="true">→</span></a>
+      </div>
       <button class="public-menu-button" type="button" aria-label="Открыть меню">
         <span></span>
         <span></span>
@@ -32,130 +36,123 @@
       </button>
     </header>
 
-    <main class="public-hero public-hero-v2" id="logic">
-      <div class="public-hero-copy">
-        <p class="sr-only">Учебная платформа</p>
-        <h1>ВАЛЕНСКИЙ ПРО ТРАФИК</h1>
-        <div class="brand-underline" aria-hidden="true"></div>
-        <div class="public-lead">
-          <p>Закрытая платформа для тех, кто хочет собрать понятный поток заявок и не теряться в хаосе каналов.</p>
-          <p>На главной выберите тариф, после оплаты войдите в личный кабинет и проходите нулевой урок, воркшоп или обучение из 7 модулей.</p>
-          <p>Если доступ закрыт, внутри аккаунта будет честно написано, что нужно сделать дальше: оплатить, пройти опрос или дождаться проверки.</p>
+    <section class="panel public-entry-hero" id="flow">
+      <div class="public-entry-copy stack">
+        <span class="pill">Учебная платформа</span>
+        <h1>Обучение, которое ведёт человека от входа до результата</h1>
+        <p class="public-entry-lead">Сначала человек видит тарифы и понятный путь входа. После логина попадает в кабинет, где сразу видно: что открыто, что закрыто и какой следующий шаг.</p>
+        <div class="public-entry-points">
+          <article>
+            <strong>1. Главная</strong>
+            <span>Тарифы, Telegram, вход и защищённая оплата.</span>
+          </article>
+          <article>
+            <strong>2. Личный кабинет</strong>
+            <span>Нулевой урок, воркшоп, основной курс и понятные причины блокировок.</span>
+          </article>
+          <article>
+            <strong>3. Уроки и домашки</strong>
+            <span>Видео, материалы, сдача Д/З, прогресс и переход к следующему шагу.</span>
+          </article>
         </div>
-
         <div class="public-actions">
           <a class="button-link" href="{% url 'accounts:login' %}">Зайти в аккаунт</a>
-          <a class="button-link is-muted" href="#tariffs">Смотреть тарифы</a>
+          <a class="button-link is-muted" href="{% url 'public_preview' %}">Открыть нулевой урок</a>
         </div>
-
         <a class="telegram-card" href="https://t.me/Vanlsky1" target="_blank" rel="noopener">
           <span class="telegram-mark" aria-hidden="true"></span>
           <span>
-            <strong>Telegram-канал</strong>
-            <small>Новости, разборы и связь с командой курса</small>
+            <strong>Telegram-канал Валенского</strong>
+            <small>Коротко о продажах, трафике и мышлении.</small>
           </span>
-          <span aria-hidden="true">&rarr;</span>
+          <span aria-hidden="true">→</span>
         </a>
       </div>
 
-      <div class="public-illustration public-chalk-flow" aria-hidden="true">
-        <div class="chalk-flow-board">
-          <div class="chalk-flow-entry">
-            <span class="chalk-flow-label">1. ВХОД</span>
-            <span class="chalk-stick-person"></span>
-            <span class="chalk-door"></span>
-            <span class="chalk-flow-arrow arrow-entry"></span>
+      <aside class="public-entry-board" aria-hidden="true">
+        <div class="public-entry-doodle panel stack">
+          <p class="eyebrow">Схема платформы</p>
+          <div class="public-entry-path">
+            <div class="public-entry-step">
+              <span>Трафик</span>
+              <small>человек заходит на сайт</small>
+            </div>
+            <div class="public-entry-arrow">→</div>
+            <div class="public-entry-step">
+              <span>Вход</span>
+              <small>логин и пароль</small>
+            </div>
+            <div class="public-entry-arrow">→</div>
+            <div class="public-entry-step">
+              <span>Курс</span>
+              <small>уроки, модули, домашки</small>
+            </div>
           </div>
-          <div class="chalk-flow-lessons">
-            <span class="chalk-flow-label">2. УРОКИ</span>
-            <span class="chalk-video-icon"></span>
-            <span class="chalk-flow-arrow arrow-lessons"></span>
-            <span class="chalk-notebook-icon"></span>
-            <span class="chalk-flow-arrow arrow-modules"></span>
-            <span class="chalk-module-grid"></span>
-          </div>
-          <div class="chalk-flow-result">
-            <span class="chalk-flow-arrow arrow-result"></span>
-            <span class="chalk-flow-label">3. РЕЗУЛЬТАТ</span>
-            <span class="chalk-result-person"></span>
-            <span class="chalk-result-rays"></span>
+          <div class="public-hero-stickmen" aria-hidden="true">
+            {% include "shared/svg/stickman_thinking.html" %}
+            {% include "shared/svg/stickman_lessons.html" %}
+            {% include "shared/svg/stickman_celebrate.html" %}
           </div>
         </div>
-        <div class="public-hero-stickmen" aria-hidden="true">
-          {% include "shared/svg/stickman_thinking.html" %}
-          {% include "shared/svg/stickman_lessons.html" %}
-          {% include "shared/svg/stickman_celebrate.html" %}
-        </div>
-      </div>
-    </main>
+      </aside>
+    </section>
 
-    <section class="public-tariffs public-tariffs-v2" id="tariffs" aria-label="Оплата и тарифы">
+    <section class="panel public-flow-grid">
+      <article class="public-flow-card">
+        <span class="pill">Главная</span>
+        <h2>Человек сначала понимает предложение</h2>
+        <p>На первом экране должны быть тарифы, кнопка входа, ссылка в Telegram и понятная продажная логика: что человек получит после оплаты.</p>
+      </article>
+      <article class="public-flow-card">
+        <span class="pill">Логин</span>
+        <h2>Потом — единый вход</h2>
+        <p>После клика человек попадает на страницу входа. Один логин подходит студентам, менеджерам, админам и супер-админам.</p>
+      </article>
+      <article class="public-flow-card">
+        <span class="pill">Обучение</span>
+        <h2>После входа — только нужные действия</h2>
+        <p>Внутри кабинета сразу видно текущий доступ, следующий урок, домашку и что нужно сделать для открытия следующего шага.</p>
+      </article>
+    </section>
+
+    <section class="public-tariffs public-tariffs-v3" id="tariffs" aria-label="Оплата и тарифы">
       <div class="public-tariffs-copy">
         <p class="public-section-kicker">Тарифы</p>
-        <h2>Выберите, что именно вам нужно открыть</h2>
-        <p>
-          Нулевой урок открывается после опроса. Платные кнопки ведут через вход в аккаунт,
-          чтобы заказ и доступ были привязаны к конкретному ученику.
-        </p>
+        <h2>Открывайте тот уровень, который нужен сейчас</h2>
+        <p>Кнопки оплаты привязаны к аккаунту: человек входит в платформу, открывает защищённый заказ и после подтверждения получает доступ именно в свой кабинет.</p>
       </div>
 
       <div class="public-tariff-list">
         <article class="public-tariff-card is-free">
+          <span class="pill">Старт</span>
           <h3>Нулевой урок</h3>
           <p>Бесплатно</p>
-          <small>Вводный урок, который показывает логику платформы и помогает стартовать после опроса.</small>
+          <small>Вводный урок, который показывает логику платформы и помогает начать после опроса.</small>
           <a href="{% url 'public_preview' %}">Открыть после опроса</a>
         </article>
 
         {% if landing_tariffs %}
           {% for tariff in landing_tariffs %}
-            <article class="public-tariff-card{% if tariff.code == 'mentor' %} is-featured{% endif %}{% if tariff.code == 'vip' %} is-vip{% endif %}">
+            <article class="public-tariff-card{% if tariff.code == 'mentor' %} is-featured{% endif %}">
+              <span class="pill">{{ tariff.code|upper }}</span>
               <h3>{{ tariff.title }}</h3>
               <p>{{ tariff.price_amount|money:tariff.currency }}</p>
               <small>{{ tariff.description }}</small>
-              <span class="sr-only">{{ tariff.title }} {{ tariff.price_amount|floatformat:0 }}</span>
-              {% if landing_course %}
-                <a href="{% url 'accounts:login' %}?next={% url 'curriculum:course_preview' landing_course.slug %}%23tariffs">Защищенная оплата</a>
-              {% else %}
-                <a href="{% url 'accounts:login' %}">Войти для оплаты</a>
-              {% endif %}
+              <ul class="public-tariff-features clean">
+                {% for feature in tariff.metadata.features %}
+                  <li>{{ feature }}</li>
+                {% empty %}
+                  <li>Доступ оформляется через защищённый заказ</li>
+                {% endfor %}
+              </ul>
+              <form method="post" action="{% url 'commerce:checkout_start' tariff.code %}">
+                {% csrf_token %}
+                <button type="submit">Защищённая оплата</button>
+              </form>
             </article>
           {% endfor %}
-        {% else %}
-          <article class="public-tariff-card">
-            <h3>Воркшоп</h3>
-            <p>1 500 ₽</p>
-            <small>Отдельная практическая ветка с быстрым результатом и материалами.</small>
-            <a href="{% url 'accounts:login' %}">Защищенная оплата</a>
-          </article>
-          <article class="public-tariff-card">
-            <h3>Базовый</h3>
-            <p>50 000 ₽</p>
-            <small>Основные модули, уроки и материалы для самостоятельного прохождения.</small>
-            <a href="{% url 'accounts:login' %}">Защищенная оплата</a>
-          </article>
-          <article class="public-tariff-card is-featured">
-            <h3>С ментором</h3>
-            <p>80 000 ₽</p>
-            <small>Полная программа с домашними заданиями, проверкой и обратной связью.</small>
-            <a href="{% url 'accounts:login' %}">Защищенная оплата</a>
-          </article>
-          <article class="public-tariff-card">
-            <h3>VIP</h3>
-            <p>120 000 ₽</p>
-            <small>Полный доступ, личная поддержка, созвоны и расширенные разборы.</small>
-            <a href="{% url 'accounts:login' %}">Защищенная оплата</a>
-          </article>
         {% endif %}
       </div>
     </section>
-
-    <footer class="public-page-footer">
-      <span>© Валенский про трафик, 2026</span>
-      <span>
-        <a href="#privacy">политика конфиденциальности</a>
-        <a href="#terms">пользовательское соглашение</a>
-      </span>
-    </footer>
   </section>
 {% endblock %}

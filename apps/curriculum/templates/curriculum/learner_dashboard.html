@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 
-{% block title %}Дашборд{% endblock %}
+{% block title %}Мой кабинет{% endblock %}
 {% block body_class %}student-dashboard-body{% endblock %}
 {% block shell_class %}student-dashboard-shell{% endblock %}
-{% block brand_subline %}система продаж{% endblock %}
-{% block page_label %}{% endblock %}
-{% block page_heading %}Дашборд{% endblock %}
-{% block page_subtitle %}{% endblock %}
+{% block brand_subline %}по трафику{% endblock %}
+{% block page_label %}Личный кабинет{% endblock %}
+{% block page_heading %}Обучение и доступ{% endblock %}
+{% block page_subtitle %}Продолжайте с последнего урока, смотрите доступные ветки и сразу понимайте, что открыто сейчас.{% endblock %}
 
 {% block sidebar %}
   <section class="sidebar-section stack">
     <p class="sidebar-kicker">Навигация</p>
     <nav class="sidebar-menu">
-      <a class="sidebar-link is-active" href="{% url 'curriculum:learner_dashboard' %}">Дашборд</a>
+      <a class="sidebar-link is-active" href="{% url 'curriculum:learner_dashboard' %}">Главная</a>
       {% if courses %}
-        <a class="sidebar-link" href="{% url 'curriculum:course_preview' courses.0.course.slug %}">Курс</a>
+        <a class="sidebar-link" href="{% url 'curriculum:course_preview' courses.0.course.slug %}">Карта курса</a>
+        {% if courses.0.next_lesson %}
+          <a class="sidebar-link" href="{% url 'curriculum:lesson_detail' courses.0.next_lesson.id %}">Следующий урок</a>
+        {% endif %}
       {% endif %}
-      <a class="sidebar-link" href="{% if courses.0.workshop_module %}{% url 'curriculum:module_detail' courses.0.workshop_module.id %}{% else %}#workshops{% endif %}">Воркшопы</a>
-      <a class="sidebar-link" href="#documents">Документы</a>
-      <a class="sidebar-link" href="#homework">Домашние задания</a>
-      <a class="sidebar-link" href="#community">Сообщество</a>
-      <a class="sidebar-link" href="#chat">Чат</a>
-      <a class="sidebar-link" href="#reviews">Разборы</a>
-      <a class="sidebar-link" href="#support">Помощь</a>
+      <a class="sidebar-link" href="#programs">Программы</a>
+      <a class="sidebar-link" href="#homework">Домашка</a>
+      <a class="sidebar-link" href="#activity">Активность</a>
+      <a class="sidebar-link" href="#support">Поддержка</a>
     </nav>
   </section>
 
@@ -34,27 +34,27 @@
       <div class="progress-track" aria-label="Прогресс курса">
         <span style="width: {{ courses.0.progress_percent }}%"></span>
       </div>
-      <a class="sidebar-profile-link" href="{% url 'curriculum:course_preview' courses.0.course.slug %}">Профиль</a>
+      <p class="sidebar-note">Пройдено {{ courses.0.completed_count }} из {{ courses.0.total_count }} уроков</p>
     </section>
   {% endif %}
 
   <section class="sidebar-section stack" id="support">
-    <p class="sidebar-kicker">Техподдержка</p>
+    <p class="sidebar-kicker">Помощь</p>
     <nav class="sidebar-menu">
-      <a class="sidebar-link" href="#support">Поддержка</a>
-      <a class="sidebar-link" href="#chat">Задать вопрос</a>
+      <a class="sidebar-link" href="https://t.me/valenskymanager" target="_blank" rel="noopener">Telegram поддержки</a>
+      <a class="sidebar-link" href="/#tariffs">Тарифы</a>
     </nav>
   </section>
 {% endblock %}
 
 {% block sidebar_footer %}
   <section class="sidebar-card stack student-sidebar-footer">
-    <p class="sidebar-note">© Валенский.<br>Все права защищены.</p>
+    <p class="sidebar-note">© Валенский.<br>Закрытая учебная платформа.</p>
   </section>
 {% endblock %}
 
 {% block mobile_nav %}
-  <a class="mobile-link is-active" href="{% url 'curriculum:learner_dashboard' %}">Дашборд</a>
+  <a class="mobile-link is-active" href="{% url 'curriculum:learner_dashboard' %}">Главная</a>
   {% if courses %}
     <a class="mobile-link" href="{% url 'curriculum:course_preview' courses.0.course.slug %}">Курс</a>
     {% if courses.0.next_lesson %}
@@ -62,266 +62,194 @@
     {% endif %}
   {% endif %}
   <a class="mobile-link" href="#homework">Д/З</a>
-  <a class="mobile-link" href="#chat">Чат</a>
+  <a class="mobile-link" href="#activity">Лента</a>
 {% endblock %}
 
 {% block topbar_meta %}
-  <a class="dashboard-notification-link" href="#activity" aria-label="Уведомления">
-    <span class="dashboard-bell" aria-hidden="true"></span>
-    <span>Уведомления</span>
-  </a>
+  {% if courses %}
+    <div class="topbar-badges">
+      <span class="status-pill is-accent">{{ courses.0.tariff_label }}</span>
+      <span class="status-pill">{{ courses.0.payment_state_label }}</span>
+    </div>
+  {% endif %}
 {% endblock %}
 
 {% block content %}
   {% if courses %}
     {% with featured=courses.0 %}
-      <section class="student-dashboard">
-        <span class="sr-only">Моё обучение · Курс Гатса: продажи · Следующий шаг · Защищённая оплата · Воркшоп</span>
+      <section class="gc-dashboard stack">
+        <section class="panel gc-hero-panel">
+          <div class="gc-hero-copy stack">
+            <span class="pill">Моё обучение</span>
+            <h2>{{ featured.course.title }}</h2>
+            <p class="muted">{{ featured.access_state_hint }}</p>
 
-        <section class="student-trainings" aria-label="Мои тренинги">
-          <div class="student-trainings-head">
-            <div>
-              <p class="student-section-title">Моё обучение</p>
-              <h2>Мои тренинги</h2>
+            <div class="gc-hero-next">
+              <div>
+                <p class="eyebrow">Следующий шаг</p>
+                {% if featured.next_lesson %}
+                  <h3>{{ featured.next_lesson.title }}</h3>
+                  <p class="muted">{{ featured.next_lesson.module.title }} · урок откроется в привычном формате платформы.</p>
+                {% else %}
+                  <h3>Карта курса и тариф</h3>
+                  <p class="muted">Если доступ ограничен, на карте будет видно, что именно нужно сделать дальше.</p>
+                {% endif %}
+              </div>
+              <div class="action-row">
+                {% if featured.next_lesson %}
+                  <a class="button-link" href="{% url 'curriculum:lesson_detail' featured.next_lesson.id %}">Продолжить обучение</a>
+                {% elif featured.lesson0 %}
+                  <a class="button-link" href="{% url 'curriculum:lesson_detail' featured.lesson0.id %}">Открыть урок 0</a>
+                {% endif %}
+                <a class="button-link is-muted" href="{% url 'curriculum:course_preview' featured.course.slug %}">Открыть карту курса</a>
+              </div>
             </div>
-            <p>
-              Здесь видно всё: нулевой урок, воркшоп и основное обучение из 7 модулей.
-              Закрытые тренинги тоже открываются как статус-страницы: там написано, что нужно сделать.
-            </p>
           </div>
 
-          <div class="student-training-grid">
-            <article class="student-panel student-training-card is-open">
-              <div class="student-training-doodle is-lesson0" aria-hidden="true"></div>
-              <div>
-                <span class="student-training-status is-open">Открыт</span>
-                <h3>Нулевой урок</h3>
-                <p>Первый тренинг: ввод в систему, базовая логика курса и старт после опроса.</p>
-                <small>Открывает маршрут и показывает, куда двигаться дальше.</small>
+          <aside class="gc-hero-side stack">
+            <div class="gc-kpi-card">
+              <span>Прогресс</span>
+              <strong>{{ featured.progress_percent }}%</strong>
+              <small>{{ featured.completed_count }} из {{ featured.total_count }} уроков</small>
+            </div>
+            <div class="gc-kpi-card">
+              <span>Модули</span>
+              <strong>{{ featured.completed_module_count }} / {{ featured.total_module_count }}</strong>
+              <small>Завершено модулей</small>
+            </div>
+            <div class="gc-kpi-card">
+              <span>Домашки</span>
+              <strong>{{ featured.homework_completed_count }} / {{ featured.homework_total_count }}</strong>
+              <small>Сдано заданий</small>
+            </div>
+            <div class="gc-kpi-card">
+              <span>Оплата</span>
+              <strong>{{ featured.payment_state_label }}</strong>
+              <small>{{ featured.tariff_label }}</small>
+            </div>
+          </aside>
+        </section>
+
+        <section class="panel stack" id="programs">
+          <div class="gc-section-head">
+            <div>
+              <span class="pill">Маршрут обучения</span>
+              <h2>Программы и ветки</h2>
+            </div>
+            <p class="muted">Логика как в учебной платформе: сначала видно текущий вход, затем доступные ветки и причины блокировок.</p>
+          </div>
+
+          <div class="gc-program-grid">
+            <article class="gc-program-card is-open">
+              <div class="gc-program-head">
+                <span class="course-map-number">0</span>
+                <div>
+                  <h3>Нулевой урок</h3>
+                  <p>Точка входа после опроса и первый ориентир по всей платформе.</p>
+                </div>
               </div>
+              <ul class="gc-bullet-list">
+                <li>Виден сразу после входа</li>
+                <li>Объясняет, как устроен курс</li>
+                <li>Открывает дальнейшую логику доступа</li>
+              </ul>
               {% if featured.lesson0 %}
                 <a class="dashboard-outline-button" href="{% url 'curriculum:lesson_detail' featured.lesson0.id %}">Открыть урок 0</a>
-              {% else %}
-                <a class="dashboard-outline-button" href="{% url 'curriculum:course_preview' featured.course.slug %}">Открыть карту</a>
               {% endif %}
             </article>
 
-            {% if featured.access_mode_label == "WORKSHOP" or featured.access_mode_label == "FULL WITH HOMEWORK" %}
-              <article class="student-panel student-training-card is-open">
-                <div class="student-training-doodle is-workshop" aria-hidden="true"></div>
+            <article class="gc-program-card{% if featured.access_mode_label == 'WORKSHOP' or featured.access_mode_label == 'FULL WITH HOMEWORK' %} is-open{% else %} is-locked{% endif %}">
+              <div class="gc-program-head">
+                <span class="course-map-number">W</span>
                 <div>
-                  <span class="student-training-status is-open">Открыт</span>
                   <h3>Воркшоп</h3>
-                  <p>Второй тренинг: отдельная практическая ветка с уроками, материалами и быстрым запуском.</p>
-                  <small>Доступ открыт по текущему тарифу.</small>
+                  <p>Практическая ветка с быстрым запуском, материалами и отдельными уроками.</p>
                 </div>
-                <a class="dashboard-outline-button" href="{% if featured.workshop_module %}{% url 'curriculum:module_detail' featured.workshop_module.id %}{% else %}{% url 'curriculum:course_preview' featured.course.slug %}#workshop{% endif %}">Открыть воркшоп</a>
-              </article>
-            {% else %}
-              <article class="student-panel student-training-card is-locked">
-                <div class="student-training-doodle is-lock" aria-hidden="true"></div>
-                <div>
-                  <span class="student-training-status is-locked">Заблокирован</span>
-                  <h3>Воркшоп</h3>
-                  <p>Второй тренинг виден заранее, но откроется после покупки доступа к воркшопу.</p>
-                  <small>Нужно оплатить воркшоп или выбрать тариф с полным доступом.</small>
-                </div>
-                <a class="dashboard-outline-button" href="{% url 'curriculum:course_preview' featured.course.slug %}#tariffs">Что нужно сделать</a>
-              </article>
-            {% endif %}
+              </div>
+              <ul class="gc-bullet-list">
+                <li>Отдельный формат внутри платформы</li>
+                <li>Материалы и практика в одном месте</li>
+                <li>{% if featured.access_mode_label == 'WORKSHOP' or featured.access_mode_label == 'FULL WITH HOMEWORK' %}Доступ открыт{% else %}Откроется после оплаты тарифа с воркшопом{% endif %}</li>
+              </ul>
+              <a class="dashboard-outline-button" href="{% if featured.workshop_module %}{% url 'curriculum:module_detail' featured.workshop_module.id %}{% else %}{% url 'curriculum:course_preview' featured.course.slug %}#tariffs{% endif %}">
+                {% if featured.access_mode_label == 'WORKSHOP' or featured.access_mode_label == 'FULL WITH HOMEWORK' %}Открыть воркшоп{% else %}Что нужно сделать{% endif %}
+              </a>
+            </article>
 
-            {% if featured.access_mode_label == "FULL COURSE" or featured.access_mode_label == "FULL WITH HOMEWORK" %}
-              <article class="student-panel student-training-card is-open">
-                <div class="student-training-doodle is-course" aria-hidden="true"></div>
+            <article class="gc-program-card{% if featured.access_mode_label == 'FULL COURSE' or featured.access_mode_label == 'FULL WITH HOMEWORK' %} is-open{% else %} is-locked{% endif %}">
+              <div class="gc-program-head">
+                <span class="course-map-number">7</span>
                 <div>
-                  <span class="student-training-status is-open">Открыт</span>
-                  <h3>Обучение: 7 модулей</h3>
-                  <p>Третий тренинг: основная программа с модулями, уроками, материалами и постепенным открытием.</p>
-                  <small>
-                    {% if featured.tariff_label == "Базовый" %}
-                      Сейчас открыты модули 1-4. Остальные видны на карте и ждут апгрейда тарифа.
-                    {% else %}
-                      {{ featured.access_mode_hint }}
-                    {% endif %}
-                  </small>
+                  <h3>Основной курс</h3>
+                  <p>Основная программа с модулями, уроками, материалами и последовательным открытием.</p>
                 </div>
-                <a class="dashboard-outline-button" href="{% url 'curriculum:course_preview' featured.course.slug %}">Открыть модули</a>
-              </article>
-            {% else %}
-              <article class="student-panel student-training-card is-locked">
-                <div class="student-training-doodle is-lock" aria-hidden="true"></div>
-                <div>
-                  <span class="student-training-status is-locked">Заблокирован</span>
-                  <h3>Обучение: 7 модулей</h3>
-                  <p>Вся программа видна на карте, но уроки откроются только после оплаты подходящего тарифа.</p>
-                  <small>Нужно пройти нулевой урок и выбрать доступ к обучению.</small>
-                </div>
-                <a class="dashboard-outline-button" href="{% url 'curriculum:course_preview' featured.course.slug %}#tariffs">Что нужно сделать</a>
-              </article>
-            {% endif %}
+              </div>
+              <ul class="gc-bullet-list">
+                <li>Карта модулей и следующий урок</li>
+                <li>Понятные причины блокировки</li>
+                <li>{% if featured.access_mode_label == 'FULL COURSE' or featured.access_mode_label == 'FULL WITH HOMEWORK' %}Доступ по текущему тарифу{% else %}Откроется после оплаты полного доступа{% endif %}</li>
+              </ul>
+              <a class="dashboard-outline-button" href="{% url 'curriculum:course_preview' featured.course.slug %}">
+                {% if featured.access_mode_label == 'FULL COURSE' or featured.access_mode_label == 'FULL WITH HOMEWORK' %}Открыть курс{% else %}К карте и тарифам{% endif %}
+              </a>
+            </article>
           </div>
         </section>
 
-        <section class="student-dashboard-grid" aria-label="Главные действия">
-          <article class="student-panel student-continue-card">
-            <p class="student-section-title">Продолжить с места остановки</p>
-            <div class="student-continue-layout">
-              <div class="dashboard-lesson-sketch" aria-hidden="true">
-                {% if featured.next_lesson %}
-                  <span class="dashboard-sketch-number">{{ featured.next_lesson.module.position }}.{{ featured.next_lesson.position }}</span>
-                {% else %}
-                  <span class="dashboard-sketch-number">✓</span>
-                {% endif %}
-                <span class="dashboard-stick"></span>
-              </div>
-              <div class="student-continue-copy">
-                {% if featured.next_lesson %}
-                  <p class="dashboard-card-kicker">{{ featured.next_lesson.module.title }}</p>
-                  <h2>{{ featured.next_lesson.title }}</h2>
-                  <div class="student-progress-line">
-                    <span style="width: {{ featured.progress_percent }}%"></span>
-                  </div>
-                  <p class="student-meta">Просмотрено: {{ featured.completed_count }} из {{ featured.total_count }} уроков ({{ featured.progress_percent }}%)</p>
-                {% else %}
-                  <p class="dashboard-card-kicker">{{ featured.course.title }}</p>
-                  <h2>Все доступные уроки завершены</h2>
-                  <div class="student-progress-line">
-                    <span style="width: {{ featured.progress_percent }}%"></span>
-                  </div>
-                  <p class="student-meta">Откройте карту курса, чтобы увидеть следующие блокировки и расписание.</p>
-                {% endif %}
-              </div>
-            </div>
-            {% if featured.next_lesson %}
-              <a class="dashboard-primary-button" href="{% url 'curriculum:lesson_detail' featured.next_lesson.id %}">Продолжить обучение <span>-></span></a>
+        <section class="gc-dashboard-grid">
+          <article class="panel stack" id="homework">
+            <span class="pill">Ближайшее действие</span>
+            {% if featured.next_homework %}
+              <h2>{{ featured.next_homework.title }}</h2>
+              <p class="muted">{{ featured.next_homework.lesson.module.title }} · {{ featured.next_homework.due_label }}</p>
+              <a class="button-link" href="{% url 'curriculum:lesson_detail' featured.next_homework.lesson.id %}">Открыть домашку</a>
+            {% elif featured.next_lesson %}
+              <h2>Сначала откройте следующий урок</h2>
+              <p class="muted">Форма сдачи домашки появится внутри урока, если она входит в текущий доступ.</p>
+              <a class="button-link" href="{% url 'curriculum:lesson_detail' featured.next_lesson.id %}">Перейти к уроку</a>
             {% else %}
-              <a class="dashboard-primary-button" href="{% url 'curriculum:course_preview' featured.course.slug %}">Открыть курс <span>-></span></a>
+              <h2>Новых домашних заданий пока нет</h2>
+              <p class="muted">Проверьте карту курса: там видно расписание открытия модулей и условия перехода дальше.</p>
+              <a class="button-link is-muted" href="{% url 'curriculum:course_preview' featured.course.slug %}">Открыть карту</a>
             {% endif %}
           </article>
 
-          <aside class="student-panel student-progress-card">
-            <p class="student-section-title">Общий прогресс</p>
-            <div class="dashboard-progress-summary">
-              <div class="dashboard-donut" style="--progress: {{ featured.progress_percent }}%">
-                <span>{{ featured.progress_percent }}%</span>
-              </div>
-              <div class="dashboard-progress-rows">
-                <div><span>Пройдено модулей</span><strong>{{ featured.completed_module_count }} из {{ featured.total_module_count }}</strong></div>
-                <div><span>Уроков завершено</span><strong>{{ featured.completed_count }} из {{ featured.total_count }}</strong></div>
-                <div><span>Домашек сдано</span><strong>{{ featured.homework_completed_count }} из {{ featured.homework_total_count }}</strong></div>
-              </div>
-            </div>
-          </aside>
-
-          <aside class="student-panel student-access-card">
-            <p class="student-section-title">Ваш уровень доступа</p>
-            <div class="student-access-layout">
-              <div class="dashboard-crown-person" aria-hidden="true">
-                <span></span>
-              </div>
-              <div>
-                <h3>
-                  {% if featured.access_mode_label == "LESSON0-ONLY" %}
-                    Нулевой урок
-                  {% elif featured.access_mode_label == "WORKSHOP" %}
-                    Воркшоп
-                  {% elif featured.access_mode_label == "FULL WITH HOMEWORK" %}
-                    Обучение с домашкой
-                  {% else %}
-                    Основное обучение
-                  {% endif %}
-                </h3>
-                <ul class="dashboard-check-list">
-                  <li>Курс: {{ featured.access_state_label }}</li>
-                  <li>Воркшопы: по тарифу</li>
-                  <li>Домашние задания: {{ featured.access_mode_hint }}</li>
-                </ul>
-                {% if featured.latest_order %}
-                  <a class="student-order-link" href="{% url 'commerce:checkout_order' featured.latest_order.public_id %}">
-                    {{ featured.payment_state_label }} · заказ {{ featured.latest_order.number }}
-                  </a>
-                {% else %}
-                  <p class="student-meta">{{ featured.payment_state_label }}</p>
-                {% endif %}
-              </div>
-            </div>
-          </aside>
-        </section>
-
-        <article class="student-panel student-homework-card" id="homework">
-          <div class="dashboard-homework-icon" aria-hidden="true">Д/З</div>
-          <div class="student-homework-copy">
-            <p class="student-section-title">Ближайшая домашка</p>
-            {% if featured.next_homework %}
-              <p class="dashboard-card-kicker">{{ featured.next_homework.lesson.module.title }}</p>
-              <h2>{{ featured.next_homework.title }}</h2>
-              <p class="student-meta">{{ featured.next_homework.due_label }}</p>
-            {% elif featured.next_lesson %}
-              <p class="dashboard-card-kicker">{{ featured.next_lesson.module.title }}</p>
-              <h2>Д/З появится внутри следующего урока</h2>
-              <p class="student-meta">Если тариф включает проверку, после урока откроется форма сдачи.</p>
+          <article class="panel stack">
+            <span class="pill">Ваш доступ</span>
+            <h2>{{ featured.tariff_label }}</h2>
+            <ul class="gc-bullet-list">
+              <li>Статус курса: {{ featured.access_state_label }}</li>
+              <li>Режим доступа: {{ featured.access_mode_label }}</li>
+              <li>Домашние задания: {{ featured.access_mode_hint }}</li>
+            </ul>
+            {% if featured.latest_order %}
+              <a class="button-link" href="{% url 'commerce:checkout_order' featured.latest_order.public_id %}">Заказ {{ featured.latest_order.number }} · защищённая оплата</a>
             {% else %}
-              <p class="dashboard-card-kicker">{{ featured.course.title }}</p>
-              <h2>Новых домашних заданий нет</h2>
-              <p class="student-meta">Проверьте карту курса и расписание открытия модулей.</p>
+              <a class="button-link is-muted" href="{% url 'curriculum:course_preview' featured.course.slug %}#tariffs">Защищённая оплата и тарифы</a>
             {% endif %}
-          </div>
-          {% if featured.next_homework %}
-            <a class="dashboard-outline-button" href="{% url 'curriculum:lesson_detail' featured.next_homework.lesson.id %}">Открыть домашку</a>
-          {% elif featured.next_lesson %}
-            <a class="dashboard-outline-button" href="{% url 'curriculum:lesson_detail' featured.next_lesson.id %}">Открыть домашку</a>
-          {% else %}
-            <a class="dashboard-outline-button" href="{% url 'curriculum:course_preview' featured.course.slug %}">Открыть курс</a>
-          {% endif %}
-        </article>
-
-        <section class="student-branches" id="workshops" aria-label="Доступные ветки">
-          <h2>Доступные ветки</h2>
-          <div class="student-branch-grid">
-            <article class="student-panel student-branch-card">
-              <div class="dashboard-branch-icon is-course" aria-hidden="true"></div>
-              <div>
-                <h3>Курс</h3>
-                <p>Основная программа обучения: модули, уроки и порядок прохождения.</p>
-                <p class="student-meta">Прогресс: {{ featured.progress_percent }}%</p>
-              </div>
-              <a class="dashboard-outline-button" href="{% url 'curriculum:course_preview' featured.course.slug %}">Открыть курс <span>-></span></a>
-            </article>
-            <article class="student-panel student-branch-card" id="reviews">
-              <div class="dashboard-branch-icon is-workshop" aria-hidden="true"></div>
-              <div>
-                <h3>Воркшопы</h3>
-                <p>Практические занятия, интенсивы и тренировочные разборы.</p>
-                <p class="student-meta">Доступ: по уровню аккаунта</p>
-              </div>
-              <a class="dashboard-outline-button" href="{% if featured.workshop_module %}{% url 'curriculum:module_detail' featured.workshop_module.id %}{% else %}{% url 'curriculum:course_preview' featured.course.slug %}#workshop{% endif %}">Открыть воркшопы <span>-></span></a>
-            </article>
-            <article class="student-panel student-branch-card" id="documents">
-              <div class="dashboard-branch-icon is-documents" aria-hidden="true"></div>
-              <div>
-                <h3>Документы</h3>
-                <p>Договор, правила платформы, материалы курса и подтверждения модулей.</p>
-                <p class="student-meta">Файлов: по мере открытия модулей</p>
-              </div>
-              <a class="dashboard-outline-button" href="{% url 'curriculum:course_preview' featured.course.slug %}#documents">Открыть документы <span>-></span></a>
-            </article>
-          </div>
+          </article>
         </section>
 
-        <section class="student-panel student-activity" id="activity">
-          <h2>Недавние действия</h2>
-          <div class="student-activity-list">
+        <section class="panel stack" id="activity">
+          <div class="gc-section-head">
+            <div>
+              <span class="pill">Лента</span>
+              <h2>Недавние действия</h2>
+            </div>
+          </div>
+          <div class="gc-activity-list">
             {% for action in featured.recent_actions %}
-              <article>
-                <span class="dashboard-activity-icon" aria-hidden="true"></span>
-                <div>
-                  <p>{{ action.title }}</p>
-                  <span>{{ action.detail }}</span>
-                </div>
+              <article class="gc-activity-row">
+                <strong>{{ action.title }}</strong>
+                <span>{{ action.detail }}</span>
+              </article>
+            {% empty %}
+              <article class="gc-activity-row">
+                <strong>Действий пока нет</strong>
+                <span>После первого открытия урока и выполнения шагов история появится здесь.</span>
               </article>
             {% endfor %}
           </div>
-          <a class="dashboard-outline-button" href="#activity">Вся активность</a>
         </section>
       </section>
     {% endwith %}
@@ -330,16 +258,11 @@
       <div class="empty-state-grid">
         <div class="stack">
           <span class="pill">Кабинет ученика</span>
-          <h2>Моё обучение</h2>
+          <h2>Обучение появится после входа</h2>
           <p>После диагностики или оплаты курс появится здесь.</p>
-          <p class="muted">
-            Меловые человечки уже на доске и ждут. Нажмите кнопку — мы сэмулируем
-            вход после опроса и откроем нулевой урок.
-          </p>
+          <p class="muted">Для демо можно сэмулировать вход после опроса и сразу открыть нулевой урок.</p>
           <div class="action-row">
-            <a class="button-link is-accent" href="{% url 'diagnostic_handoff:simulate_submit' %}">
-              Симулировать вход после диагностики
-            </a>
+            <a class="button-link is-accent" href="{% url 'diagnostic_handoff:simulate_submit' %}">Симулировать вход</a>
             <a class="button-link is-muted" href="/">На главную</a>
           </div>
         </div>

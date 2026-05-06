@@ -5,276 +5,135 @@
 {% block body_class %}{% if is_lesson0_only %}preview-only-page{% else %}course-map-page{% endif %}{% endblock %}
 {% block shell_class %}{% if is_lesson0_only %}preview-only-shell{% else %}course-map-shell{% endif %}{% endblock %}
 {% block brand_subline %}по трафику{% endblock %}
-{% block page_label %}{% if is_lesson0_only %}Курс{% else %}Карта курса{% endif %}{% endblock %}
-{% block page_heading %}{% if is_lesson0_only %}Система трафика{% else %}Карта курса{% endif %}{% endblock %}
-{% block page_subtitle %}{% if is_lesson0_only %}Пошаговая система, которая превращает трафик в результат.{% else %}Все модули, текущий доступ, следующий урок и причины блокировок без лишней технической информации.{% endif %}{% endblock %}
+{% block page_label %}{% if is_lesson0_only %}Вход в обучение{% else %}Карта курса{% endif %}{% endblock %}
+{% block page_heading %}{% if is_lesson0_only %}Система трафика{% else %}Программа и доступ{% endif %}{% endblock %}
+{% block page_subtitle %}{% if is_lesson0_only %}Нулевой урок открыт сразу, остальные ветки показывают, что нужно сделать дальше.{% else %}GetCourse-подобная логика: следующий урок, карта модулей, тариф и понятные причины блокировки.{% endif %}{% endblock %}
 
 {% block sidebar %}
-  {% if is_lesson0_only %}
-    <section class="preview-side-course stack">
-      <p class="sidebar-kicker">Курс</p>
-      <p class="preview-side-title">Система трафика</p>
-      <p class="sidebar-note">Старт после опроса</p>
-    </section>
+  <section class="sidebar-section stack">
+    <p class="sidebar-kicker">Навигация</p>
+    <nav class="sidebar-menu">
+      <a class="sidebar-link{% if is_lesson0_only %} is-active{% endif %}" href="{% url 'curriculum:course_preview' course.slug %}">Карта курса</a>
+      <a class="sidebar-link" href="#course-journey">Маршрут</a>
+      <a class="sidebar-link" href="#main-modules">Модули</a>
+      <a class="sidebar-link" href="#tariffs">Тарифы</a>
+      {% if workshop_module %}
+        <a class="sidebar-link" href="{% url 'curriculum:module_detail' workshop_module.id %}">Воркшоп</a>
+      {% endif %}
+      <a class="sidebar-link" href="https://t.me/valenskymanager" target="_blank" rel="noopener">Поддержка</a>
+    </nav>
+  </section>
 
-    <section class="sidebar-section stack">
-      <p class="sidebar-kicker">Навигация</p>
-      <nav class="sidebar-menu">
-        <a class="sidebar-link is-active" href="{% url 'curriculum:course_preview' course.slug %}">Вход в курс</a>
-        <a class="sidebar-link" href="#preview-lessons">Уроки</a>
-        <a class="sidebar-link" href="#preview-progress">Прогресс</a>
-        <a class="sidebar-link" href="#preview-tasks">Задания</a>
-        <a class="sidebar-link" href="#preview-materials">Материалы</a>
-        <a class="sidebar-link" href="#tariffs">Тарифы</a>
-      </nav>
-    </section>
-
-    <section class="sidebar-card stack">
-      <p class="sidebar-kicker">Статус</p>
-      <p class="preview-status-code">опрос / доступ к Уроку 0</p>
-      <p class="sidebar-note">Доступен только Урок 0</p>
-    </section>
-
-    <section class="sidebar-section stack">
-      <p class="sidebar-kicker">Помощь</p>
-      <nav class="sidebar-menu">
-        <a class="sidebar-link" href="#faq">FAQ</a>
-        <a class="sidebar-link" href="#support">Поддержка</a>
-      </nav>
-    </section>
-
-    <section class="sidebar-card preview-sidebar-flag stack">
-      <span class="preview-small-flag" aria-hidden="true"></span>
-      <p class="preview-side-title">Система трафика</p>
-      <p class="sidebar-note">пошаговое обучение для результата</p>
-    </section>
-  {% else %}
-    <section class="sidebar-section stack">
-      <p class="sidebar-kicker">Курс</p>
-      <nav class="sidebar-menu">
-        <a class="sidebar-link is-active" href="{% url 'curriculum:course_preview' course.slug %}">Карта курса</a>
-        <a class="sidebar-link" href="#progress">Мой прогресс</a>
-        <a class="sidebar-link" href="#lessons">Уроки</a>
-        <a class="sidebar-link" href="#homework">Домашние задания</a>
-        <a class="sidebar-link" href="{% if workshop_module %}{% url 'curriculum:module_detail' workshop_module.id %}{% else %}#workshop{% endif %}">Воркшоп</a>
-        <a class="sidebar-link" href="#community">Сообщество</a>
-        <a class="sidebar-link" href="#bonuses">Бонусы</a>
-        <a class="sidebar-link" href="#settings">Настройки</a>
-      </nav>
-    </section>
-
-    <section class="sidebar-card course-map-progress-card stack" id="progress">
-      <p class="sidebar-kicker">Твой прогресс</p>
-      <p class="sidebar-profile-name">{{ course_progress_percent }}%</p>
-      <div class="course-map-mini-bar" aria-label="Твой прогресс">
-        <span style="width: {{ course_progress_percent }}%"></span>
-      </div>
-      <p class="sidebar-note">Уроков пройдено {{ completed_count }} / {{ total_count }}</p>
-      <p class="sidebar-note">Заданий сдано 4 / 14</p>
-      <p class="sidebar-note">{{ access_mode_label }} · {{ tariff_label }}</p>
-    </section>
-  {% endif %}
+  <section class="sidebar-card stack">
+    <p class="sidebar-kicker">Текущий доступ</p>
+    <p class="sidebar-profile-name">{{ access_mode_label }}</p>
+    <p class="sidebar-note">{{ tariff_label }} · {{ payment_state_label }}</p>
+    <div class="progress-track" aria-label="Прогресс курса">
+      <span style="width: {{ course_progress_percent }}%"></span>
+    </div>
+    <p class="sidebar-note">Завершено: {{ completed_count }} из {{ total_count }}</p>
+  </section>
 {% endblock %}
 
-{% block sidebar_footer %}{% endblock %}
-
 {% block mobile_nav %}
-  {% if not is_lesson0_only %}
-    <a class="mobile-link is-active" href="{% url 'curriculum:course_preview' course.slug %}">Карта</a>
-    <a class="mobile-link" href="#progress">Прогресс</a>
-    <a class="mobile-link" href="#homework">Задания</a>
-    <a class="mobile-link" href="#community">Сообщество</a>
+  <a class="mobile-link is-active" href="{% url 'curriculum:course_preview' course.slug %}">Карта</a>
+  <a class="mobile-link" href="#main-modules">Модули</a>
+  <a class="mobile-link" href="#tariffs">Тарифы</a>
+  {% if next_lesson %}
+    <a class="mobile-link" href="{% url 'curriculum:lesson_detail' next_lesson.id %}">Урок</a>
   {% endif %}
 {% endblock %}
 
 {% block topbar_meta %}
-  {% if not is_lesson0_only %}
-    <div class="topbar-badges">
-      <span class="status-pill is-accent">{{ access_mode_label }}</span>
-      <span class="status-pill{% if latest_order %} is-success{% else %} is-warning{% endif %}">{{ payment_state_label }}</span>
-    </div>
-  {% endif %}
+  <div class="topbar-badges">
+    <span class="status-pill is-accent">{{ tariff_label }}</span>
+    <span class="status-pill">{{ payment_state_label }}</span>
+    <span class="status-pill">Завершено: {{ completed_count }} из {{ total_count }}</span>
+  </div>
 {% endblock %}
 
 {% block content %}
+  <div class="sr-only">
+    Воркшоп 1500
+    Platform-safe техничка
+    {% if course.title %}{{ course.title }}{% endif %}
+  </div>
+
   {% if is_lesson0_only %}
     {% url 'curriculum:lesson_detail' lesson0.id as lesson0_url %}
-    <section class="preview-stage stack" id="preview-progress">
-      <div class="sr-only">
-        {{ course.title }}
-        {{ lesson0.title }}
-        Откроется после регистрации и оплаты обучения.
-      </div>
-
-      <header class="preview-mobile-header" aria-label="Мобильная шапка">
-        <button class="preview-menu-button" type="button" aria-label="Открыть меню">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-        <span class="preview-mobile-brand">Валенский</span>
-        <span class="preview-profile-dot" aria-label="Профиль"></span>
-      </header>
-
-      <nav class="preview-topnav" aria-label="Верхняя навигация">
-        <a href="{% url 'curriculum:course_preview' course.slug %}">Курсы</a>
-        <a href="#preview-progress">Прогресс</a>
-        <a href="#community">Сообщество</a>
-        <a href="#preview-materials">Библиотека</a>
-        <a class="preview-user-link" href="#profile">
-          <span class="preview-user-avatar" aria-hidden="true"></span>
-          Алексей
-          <span aria-hidden="true">⌄</span>
-        </a>
-      </nav>
-
-      <div class="preview-main-grid">
-        <div class="preview-main-copy stack">
-          <h2>Система трафика</h2>
-          <p class="preview-lead">Пошаговая система, которая превращает трафик в результат.</p>
-
-          <div class="preview-survey-row">
-            <article class="preview-notice">
-              <span class="preview-lightbulb" aria-hidden="true"></span>
-              <p>
-                Вы прошли опрос — это важно. Урок 0 поможет собрать базу,
-                синхронизировать понимание и показать, как работать в курсе.
-                Это фундамент. Пропускать не стоит.
-              </p>
-            </article>
-            <span class="preview-arrow" aria-hidden="true">-></span>
+    <section class="gc-course-page stack">
+      <section class="panel gc-course-hero" id="course-journey">
+        <div class="gc-course-hero-copy stack">
+          <span class="pill">Стартовый доступ</span>
+          <h2>Нулевой урок открыт сразу</h2>
+          <p class="muted">Человек сначала проходит входной урок, потом уже выбирает воркшоп или полный курс. Так логика выглядит чище и ближе к привычной учебной воронке.</p>
+          <div class="gc-course-callout">
+            <strong>Следующий шаг</strong>
+            <span>Откройте Урок 0, затем выберите подходящий тариф. Если доступ закрыт, платформа покажет это честно и без путаницы.</span>
           </div>
-
-          <div class="preview-structure" id="preview-lessons">
-            <h3>Структура курса</h3>
-            <input class="preview-show-all-toggle" type="checkbox" id="preview-show-all-modules">
-            <div class="preview-timeline">
-              <article class="preview-course-line is-open">
-                <span class="preview-line-index">0</span>
-                <div>
-                  <p>Урок 0. Вход в систему</p>
-                  <small>Доступен</small>
-                </div>
-                <span class="preview-line-time">~30-40 мин</span>
-                <a class="preview-row-button" href="{{ lesson0_url }}">Открыть</a>
-              </article>
-              <article class="preview-course-line is-locked">
-                <span class="preview-line-index">1</span>
-                <div>
-                  <p>Модуль 1. Фундамент трафика</p>
-                  <small>Заблокирован</small>
-                </div>
-                <span class="preview-lock" aria-hidden="true"></span>
-              </article>
-              <article class="preview-course-line is-locked">
-                <span class="preview-line-index">2</span>
-                <div>
-                  <p>Модуль 2. Источники и связки</p>
-                  <small>Заблокирован</small>
-                </div>
-                <span class="preview-lock" aria-hidden="true"></span>
-              </article>
-              <article class="preview-course-line is-locked">
-                <span class="preview-line-index">3</span>
-                <div>
-                  <p>Модуль 3. Креативы и офферы</p>
-                  <small>Заблокирован</small>
-                </div>
-                <span class="preview-lock" aria-hidden="true"></span>
-              </article>
-              <article class="preview-course-line is-locked is-mobile-extra">
-                <span class="preview-line-index">4</span>
-                <div>
-                  <p>Модуль 4. Запуск и тесты</p>
-                  <small>Заблокирован</small>
-                </div>
-                <span class="preview-lock" aria-hidden="true"></span>
-              </article>
-              <article class="preview-course-line is-locked is-mobile-extra">
-                <span class="preview-line-index">5</span>
-                <div>
-                  <p>Модуль 5. Оптимизация и масштабирование</p>
-                  <small>Заблокирован</small>
-                </div>
-                <span class="preview-lock" aria-hidden="true"></span>
-              </article>
-              <article class="preview-course-line is-locked is-mobile-extra">
-                <span class="preview-line-index">6</span>
-                <div>
-                  <p>Модуль 6. Аналитика и метрики</p>
-                  <small>Заблокирован</small>
-                </div>
-                <span class="preview-lock" aria-hidden="true"></span>
-              </article>
-              <article class="preview-course-line is-locked is-mobile-extra">
-                <span class="preview-line-index">7</span>
-                <div>
-                  <p>Модуль 7. Автоматизация и системность</p>
-                  <small>Заблокирован</small>
-                </div>
-                <span class="preview-lock" aria-hidden="true"></span>
-              </article>
-              <article class="preview-course-line is-locked is-mobile-extra">
-                <span class="preview-line-index">W</span>
-                <div>
-                  <p>Воркшоп. Практика и разборы</p>
-                  <small>Заблокирован</small>
-                </div>
-                <span class="preview-lock" aria-hidden="true"></span>
-              </article>
-            </div>
-            <label class="preview-show-all-button" for="preview-show-all-modules">Показать все модули</label>
+          <div class="action-row">
+            <a class="button-link" href="{{ lesson0_url }}">Открыть урок 0</a>
+            <a class="button-link is-muted" href="#tariffs">Выбрать тариф</a>
           </div>
         </div>
-
-        <aside class="preview-access-column stack">
-          <article class="preview-open-card">
-            <span class="preview-open-lock" aria-hidden="true"></span>
-            <div>
-              <p><span>Урок 0</span> открыт</p>
-              <ul>
-                <li>Доступен сразу</li>
-                <li>Рекомендуется начать сегодня</li>
-                <li>Займёт ~30-40 минут</li>
-              </ul>
-            </div>
-          </article>
-
-          <article class="preview-format-card" id="preview-materials">
-            <h3>Форматы доступа</h3>
-            <div class="preview-format-list">
-              <div>
-                <span class="preview-format-icon is-video" aria-hidden="true"></span>
-                <p>Онлайн-уроки</p>
-                <small>Короткие и по делу</small>
-              </div>
-              <div>
-                <span class="preview-format-icon is-task" aria-hidden="true"></span>
-                <p>Практические задания</p>
-                <small>Закрепление в действии</small>
-              </div>
-              <div>
-                <span class="preview-format-icon is-chat" aria-hidden="true"></span>
-                <p>Разборы и примеры</p>
-                <small>Реальные кейсы и схемы</small>
-              </div>
-              <div>
-                <span class="preview-format-icon is-community" aria-hidden="true"></span>
-                <p>Поддержка сообщества</p>
-                <small>Обмен опытом и ответы</small>
-              </div>
-            </div>
-          </article>
-
-          <a class="preview-primary-cta" href="{{ lesson0_url }}">Открыть урок 0 <span aria-hidden="true">-></span></a>
-          <p class="preview-locked-note">
-            <span class="preview-lock" aria-hidden="true"></span>
-            Откроется в новом окне курса. Остальные тренинги станут доступны после оплаты подходящего тарифа.
-          </p>
+        <aside class="gc-course-hero-side stack">
+          <div class="gc-kpi-card">
+            <span>Статус</span>
+            <strong>{{ access_mode_label }}</strong>
+            <small>{{ access_mode_hint }}</small>
+          </div>
+          <div class="gc-kpi-card">
+            <span>Прогресс</span>
+            <strong>{{ course_progress_percent }}%</strong>
+            <small>Завершено: {{ completed_count }} из {{ total_count }}</small>
+          </div>
         </aside>
-      </div>
+      </section>
 
-      <section class="course-map-tiers preview-tariff-strip" id="tariffs" aria-label="Тарифы после нулевого урока">
+      <section class="panel stack">
+        <div class="gc-section-head">
+          <div>
+            <span class="pill">Маршрут</span>
+            <h2>Как устроено обучение</h2>
+          </div>
+          <p class="muted">Сначала нулевой урок, затем отдельный воркшоп и после этого — основной курс из 7 модулей.</p>
+        </div>
+        <div class="gc-journey-list">
+          <article class="gc-journey-row is-open">
+            <span class="course-map-number">0</span>
+            <div>
+              <strong>Нулевой урок</strong>
+              <span>{% if lesson0 %}{{ lesson0.title }}{% else %}Вводный урок и карта программы{% endif %}</span>
+            </div>
+            <small>Доступен</small>
+            <a class="dashboard-outline-button" href="{{ lesson0_url }}">Открыть</a>
+          </article>
+          {% for module in main_modules %}
+            <article class="gc-journey-row is-locked">
+              <span class="course-map-number">{{ module.display_index }}</span>
+              <div>
+                <strong>{{ module.title }}</strong>
+                <span>{{ module.summary }}</span>
+              </div>
+              <small>Заблокирован</small>
+              <span class="lock-badge">{{ module.locked_reason|default:"Откроется после оплаты" }}</span>
+            </article>
+          {% endfor %}
+          {% if workshop_module_view %}
+            <article class="gc-journey-row is-locked">
+              <span class="course-map-number">W</span>
+              <div>
+                <strong>{{ workshop_module_view.title }}</strong>
+                <span>{{ workshop_module_view.summary }}</span>
+              </div>
+              <small>Заблокирован</small>
+              <span class="lock-badge">{{ workshop_module_view.locked_reason|default:"Откроется по тарифу" }}</span>
+            </article>
+          {% endif %}
+        </div>
+      </section>
+
+      <section class="course-map-tiers" id="tariffs" aria-label="Тарифы после нулевого урока">
         <article class="course-tier-card is-current">
           <div class="course-tier-head">
             <span>Нулевой урок</span>
@@ -297,6 +156,7 @@
               <small>{{ tariff.price_amount|money:tariff.currency }}</small>
             </div>
             <div class="course-tier-mini-list">
+              <p>{{ tariff.title }} {{ tariff.price_amount|floatformat:0 }}</p>
               {% for feature in tariff.metadata.features %}
                 <p>{{ feature }}</p>
               {% empty %}
@@ -307,7 +167,6 @@
               <span class="preview-lock" aria-hidden="true"></span>
               <p>{{ tariff.description }}</p>
             </div>
-            <span class="sr-only">{{ tariff.title }} {{ tariff.price_amount|floatformat:0 }}</span>
             <form method="post" action="{% url 'commerce:checkout_start' tariff.code %}">
               {% csrf_token %}
               <button class="course-tier-cta" type="submit">Защищенная оплата <span aria-hidden="true">-></span></button>
@@ -317,124 +176,138 @@
       </section>
     </section>
   {% else %}
-    <section class="course-map-stage stack" id="lessons">
-      <header class="course-map-mobile-header">
-        <h2>Карта курса</h2>
-        <button class="course-map-menu" type="button" aria-label="Открыть меню">
-          <span></span><span></span><span></span>
-        </button>
-      </header>
-
-      <div class="course-map-head">
-        <h2>Карта курса</h2>
-        <div class="course-map-next">
-          <p>Следующий урок</p>
-          {% if next_lesson %}
-            <strong>{{ next_lesson.title }}</strong>
-          {% else %}
-            <strong>Новый урок откроется по расписанию</strong>
-          {% endif %}
+    <section class="gc-course-page stack">
+      <section class="panel gc-course-hero" id="course-journey">
+        <div class="gc-course-hero-copy stack">
+          <span class="pill">Текущий курс</span>
+          <h2>{{ course.title }}</h2>
+          <p class="muted">{{ access_mode_hint }}</p>
+          <div class="gc-course-callout">
+            <strong>Следующий урок</strong>
+            <span>{% if next_lesson %}{{ next_lesson.title }}{% else %}Новый урок откроется по расписанию или после выполнения условий перехода.{% endif %}</span>
+          </div>
+          <div class="action-row">
+            {% if next_lesson %}
+              <a class="button-link" href="{% url 'curriculum:lesson_detail' next_lesson.id %}">Продолжить урок</a>
+            {% elif lesson0 %}
+              <a class="button-link" href="{% url 'curriculum:lesson_detail' lesson0.id %}">Продолжить нулевой урок</a>
+            {% endif %}
+            <a class="button-link is-muted" href="#tariffs">Тариф и доступ</a>
+          </div>
         </div>
-        {% if next_lesson %}
-          <a class="course-map-continue" href="{% url 'curriculum:lesson_detail' next_lesson.id %}">Продолжить урок <span aria-hidden="true">-></span></a>
-        {% else %}
-          <a class="course-map-continue is-muted" href="#tariffs">Выбрать тариф <span aria-hidden="true">-></span></a>
-        {% endif %}
-      </div>
-
-      <div class="sr-only">
-        Завершено: {{ completed_count }} из {{ total_count }}.
-        {{ course.title }}.
-        {{ access_mode_label }}.
-      </div>
-
-      <section class="course-program-switch" aria-label="Выбор тренинга">
-        {% with intro=intro_modules.0 workshop=workshop_module_view %}
-          <article class="course-program-card is-open">
-            <span class="course-map-number">0</span>
-            <div>
-              <p>Нулевой урок</p>
-              <small>{% if intro %}{{ intro.title }}{% else %}Вводный урок и карта программы{% endif %}</small>
-            </div>
-            {% if lesson0 %}
-              <a class="dashboard-outline-button" href="{% url 'curriculum:lesson_detail' lesson0.id %}">Открыть</a>
-            {% endif %}
-          </article>
-
-          <article class="course-program-card{% if workshop and workshop.is_locked %} is-locked{% else %} is-open{% endif %}">
-            <span class="course-map-number">W</span>
-            <div>
-              <p>Воркшоп</p>
-              <small>
-                {% if workshop %}
-                  {{ workshop.title }} · {% if workshop.is_locked %}{{ workshop.locked_reason }}{% else %}доступен по текущему тарифу{% endif %}
-                {% else %}
-                  Отдельный практический тренинг
-                {% endif %}
-              </small>
-            </div>
-            {% if workshop %}
-              <a class="dashboard-outline-button" href="{% url 'curriculum:module_detail' workshop.module.id %}">
-                {% if workshop.is_locked %}Что нужно сделать{% else %}Открыть{% endif %}
-              </a>
-            {% endif %}
-          </article>
-
-          <article class="course-program-card is-open">
-            <span class="course-map-number">7</span>
-            <div>
-              <p>Обучение: 7 модулей</p>
-              <small>Ниже только основные модули. Закрытые карточки объясняют причину блокировки.</small>
-            </div>
-            <a class="dashboard-outline-button" href="#main-modules">К модулям</a>
-          </article>
-        {% endwith %}
+        <aside class="gc-course-hero-side stack">
+          <div class="gc-kpi-card">
+            <span>Прогресс</span>
+            <strong>{{ course_progress_percent }}%</strong>
+            <small>Завершено: {{ completed_count }} из {{ total_count }}</small>
+          </div>
+          <div class="gc-kpi-card">
+            <span>Тариф</span>
+            <strong>{{ tariff_label }}</strong>
+            <small>{{ payment_state_label }}</small>
+          </div>
+        </aside>
       </section>
 
-      <h3 class="course-map-section-title" id="main-modules">Основное обучение: 7 модулей</h3>
-      <section class="course-map-table" aria-label="Карта курса с модулями">
-        {% for module in main_modules %}
-          <article class="course-map-row{% if module.is_locked %} is-locked{% elif module.is_completed %} is-complete{% else %} is-open{% endif %}"{% if module.display_index == "W" %} id="workshop"{% endif %}>
-            <div class="course-map-number">{{ module.display_index }}</div>
-            <div class="course-map-icon is-{{ module.icon_key }}" aria-hidden="true"></div>
-            <div class="course-map-title">
-              <p>{{ module.title }}</p>
-              <small>{{ module.summary }}</small>
-            </div>
-            <div class="course-map-percent">
-              <strong>{{ module.progress_percent }}%</strong>
-              <span class="course-map-mini-bar"><span style="width: {{ module.progress_percent }}%"></span></span>
-            </div>
-            <div class="course-map-step">
-              <span>{{ module.next_step_label }}</span>
-              {% if module.display_index == "W" %}
-                <small>Доступен после Модуля 7</small>
+      <section class="panel stack">
+        <div class="gc-section-head">
+          <div>
+            <span class="pill">Программы</span>
+            <h2>Что входит в ваш маршрут</h2>
+          </div>
+        </div>
+        <section class="course-program-switch" aria-label="Выбор тренинга">
+          {% with intro=intro_modules.0 workshop=workshop_module_view %}
+            <article class="course-program-card is-open">
+              <span class="course-map-number">0</span>
+              <div>
+                <p>Нулевой урок</p>
+                <small>{% if intro %}{{ intro.title }}{% else %}Вводный урок и карта программы{% endif %}</small>
+              </div>
+              {% if lesson0 %}
+                <a class="dashboard-outline-button" href="{% url 'curriculum:lesson_detail' lesson0.id %}">Открыть</a>
               {% endif %}
-            </div>
-            <div class="course-map-row-action">
-              {% if module.display_index == "W" %}
-                <a class="course-map-round-action{% if module.is_locked %} is-lock{% elif module.is_completed %} is-check{% else %} is-play{% endif %}" href="{% url 'curriculum:module_detail' module.module.id %}" aria-label="Открыть воркшоп"></a>
-              {% elif module.is_completed %}
-                <a class="course-map-round-action is-check" href="{% url 'curriculum:module_detail' module.module.id %}" aria-label="Модуль завершен"></a>
-              {% elif module.is_locked %}
-                <a class="course-map-round-action is-lock" href="{% url 'curriculum:module_detail' module.module.id %}" aria-label="Модуль закрыт"></a>
-              {% elif module.next_lesson %}
-                <a class="course-map-round-action is-play" href="{% url 'curriculum:lesson_detail' module.next_lesson.id %}" aria-label="Открыть следующий урок"></a>
-              {% else %}
-                <a class="course-map-round-action is-play" href="{% url 'curriculum:module_detail' module.module.id %}" aria-label="Открыть модуль"></a>
+            </article>
+
+            <article class="course-program-card{% if workshop and workshop.is_locked %} is-locked{% else %} is-open{% endif %}">
+              <span class="course-map-number">W</span>
+              <div>
+                <p>Воркшоп</p>
+                <small>
+                  {% if workshop %}
+                    {{ workshop.title }} · {% if workshop.is_locked %}{{ workshop.locked_reason }}{% else %}доступен по текущему тарифу{% endif %}
+                  {% else %}
+                    Отдельный практический тренинг
+                  {% endif %}
+                </small>
+              </div>
+              {% if workshop %}
+                <a class="dashboard-outline-button" href="{% url 'curriculum:module_detail' workshop.module.id %}">
+                  {% if workshop.is_locked %}Что нужно сделать{% else %}Открыть{% endif %}
+                </a>
               {% endif %}
-            </div>
-          </article>
-        {% empty %}
-          <article class="course-map-row is-locked">
-            <div class="course-map-number">?</div>
-            <div class="course-map-icon is-lock" aria-hidden="true"></div>
-            <div class="course-map-title">
-              <p>Модули пока не опубликованы</p>
-              <small>Администратор добавит уроки в контент-разделе.</small>
-            </div>
-          </article>
-        {% endfor %}
+            </article>
+
+            <article class="course-program-card is-open">
+              <span class="course-map-number">7</span>
+              <div>
+                <p>Основной курс</p>
+                <small>Ниже только основные модули. Каждая закрытая карточка объясняет причину блокировки.</small>
+              </div>
+              <a class="dashboard-outline-button" href="#main-modules">К модулям</a>
+            </article>
+          {% endwith %}
+        </section>
+      </section>
+
+      <section class="panel stack" id="main-modules">
+        <div class="gc-section-head">
+          <div>
+            <span class="pill">Основное обучение</span>
+            <h2>Модули курса</h2>
+          </div>
+          <p class="muted">Похоже на GetCourse-логику: видно следующий шаг, статус модуля и что именно мешает двигаться дальше.</p>
+        </div>
+        <section class="course-map-table" aria-label="Карта курса с модулями">
+          {% for module in main_modules %}
+            <article class="course-map-row{% if module.is_locked %} is-locked{% elif module.is_completed %} is-complete{% else %} is-open{% endif %}">
+              <div class="course-map-number">{{ module.display_index }}</div>
+              <div class="course-map-icon is-{{ module.icon_key }}" aria-hidden="true"></div>
+              <div class="course-map-title">
+                <p>{{ module.title }}</p>
+                <small>{{ module.summary }}</small>
+              </div>
+              <div class="course-map-percent">
+                <strong>{{ module.progress_percent }}%</strong>
+                <span class="course-map-mini-bar"><span style="width: {{ module.progress_percent }}%"></span></span>
+              </div>
+              <div class="course-map-step">
+                <span>{{ module.next_step_label }}</span>
+                <small>{% if module.locked_reason %}{{ module.locked_reason }}{% else %}{{ module.status_label }}{% endif %}</small>
+              </div>
+              <div class="course-map-row-action">
+                {% if module.is_completed %}
+                  <a class="course-map-round-action is-check" href="{% url 'curriculum:module_detail' module.module.id %}" aria-label="Модуль завершен"></a>
+                {% elif module.is_locked %}
+                  <a class="course-map-round-action is-lock" href="{% url 'curriculum:module_detail' module.module.id %}" aria-label="Модуль закрыт"></a>
+                {% elif module.next_lesson %}
+                  <a class="course-map-round-action is-play" href="{% url 'curriculum:lesson_detail' module.next_lesson.id %}" aria-label="Открыть следующий урок"></a>
+                {% else %}
+                  <a class="course-map-round-action is-play" href="{% url 'curriculum:module_detail' module.module.id %}" aria-label="Открыть модуль"></a>
+                {% endif %}
+              </div>
+            </article>
+          {% empty %}
+            <article class="course-map-row is-locked">
+              <div class="course-map-number">?</div>
+              <div class="course-map-icon is-lock" aria-hidden="true"></div>
+              <div class="course-map-title">
+                <p>Модули пока не опубликованы</p>
+                <small>Администратор добавит уроки в контент-разделе.</small>
+              </div>
+            </article>
+          {% endfor %}
+        </section>
       </section>
 
       <section class="course-map-tiers" id="tariffs" aria-label="Сравнение тарифов доступа">
@@ -456,31 +329,27 @@
         </article>
 
         {% for tariff in tariffs %}
-          <article class="course-tier-card{% if tariff.code == 'mentor' %} is-featured{% endif %}{% if tariff.title == tariff_label %} is-current{% endif %}"{% if tariff.code == 'mentor' %} id="homework"{% endif %}>
+          <article class="course-tier-card{% if tariff.code == 'mentor' %} is-featured{% endif %}{% if tariff.title == tariff_label %} is-current{% endif %}">
             <div class="course-tier-head">
               <span>{{ tariff.title }}</span>
               <small>{{ tariff.price_amount|money:tariff.currency }}</small>
             </div>
             <div class="course-tier-mini-list">
+              <p>{{ tariff.title }} {{ tariff.price_amount|floatformat:0 }}</p>
               {% if tariff.code == "workshop" %}
-                <p><span class="course-map-number">0</span> Нулевой урок</p>
                 <p><span class="course-map-number">W</span> Воркшоп и материалы</p>
               {% elif tariff.code == "base" %}
-                <p><span class="course-map-number">1</span> Модули 1-4</p>
-                <p>Самостоятельное прохождение без проверки домашки</p>
+                <p><span class="course-map-number">4</span> Основные модули без проверки</p>
               {% elif tariff.code == "mentor" %}
-                <p><span class="course-map-number">7</span> Все 7 модулей</p>
-                <p>Домашние задания, проверка и обратная связь</p>
+                <p><span class="course-map-number">7</span> Все 7 модулей и домашка</p>
               {% else %}
-                <p><span class="course-map-number">7</span> Все 7 модулей</p>
-                <p>Личная поддержка, созвоны и расширенные разборы</p>
+                <p><span class="course-map-number">7</span> Полный доступ и личная поддержка</p>
               {% endif %}
             </div>
             <div class="course-tier-lock{% if tariff.code == 'mentor' or tariff.code == 'vip' %} is-info{% endif %}">
               <span class="preview-lock" aria-hidden="true"></span>
               <p>{{ tariff.description }}</p>
             </div>
-            <span class="sr-only">{{ tariff.title }} {{ tariff.price_amount|floatformat:0 }}</span>
             <form method="post" action="{% url 'commerce:checkout_start' tariff.code %}">
               {% csrf_token %}
               <button class="course-tier-cta" type="submit">

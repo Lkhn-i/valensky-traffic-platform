@@ -6,7 +6,7 @@
 {% block brand_subline %}единый вход{% endblock %}
 {% block page_label %}Авторизация{% endblock %}
 {% block page_heading %}Вход в платформу{% endblock %}
-{% block page_subtitle %}Единый вход для всех пользователей платформы.{% endblock %}
+{% block page_subtitle %}Один логин для ученика, менеджера и команды сопровождения.{% endblock %}
 
 {% block sidebar %}{% endblock %}
 {% block sidebar_footer %}{% endblock %}
@@ -14,7 +14,7 @@
 {% block mobile_nav %}{% endblock %}
 
 {% block content %}
-  <section class="login-stage-page">
+  <section class="login-stage-page login-stage-page-v2">
     <header class="login-stage-header">
       <a class="login-stage-brand" href="/">
         <span>ВАЛЕНСКИЙ</span>
@@ -26,9 +26,10 @@
     </header>
 
     <div class="login-stage-grid">
-      <article class="login-form-panel">
-        <h1 class="auth-title">Вход в платформу</h1>
-        <p class="login-stage-copy">Введите логин и пароль, чтобы открыть учебную платформу.</p>
+      <article class="login-form-panel login-form-panel-v2">
+        <span class="pill">Авторизация</span>
+        <h1 class="auth-title">Войдите в свой кабинет</h1>
+        <p class="login-stage-copy">После входа вы попадёте сразу в свой сценарий: ученик — в обучение, менеджер — в очередь домашних работ, админ — в операторскую.</p>
 
         {% if next %}
           <p class="auth-form-next">После входа вернем вас на предыдущий защищенный экран.</p>
@@ -78,100 +79,96 @@
               <input type="checkbox" name="remember_me">
               <span>Запомнить меня</span>
             </label>
-            <a href="https://t.me/valenskymanager" target="_blank" rel="noopener">Забыли пароль?</a>
+            <a href="https://t.me/valenskymanager" target="_blank" rel="noopener">Нужна помощь со входом?</a>
           </div>
 
           <button class="button-link login-stage-submit" type="submit">Войти</button>
         </form>
       </article>
 
-      <aside class="login-access-panel" aria-label="Статус доступа">
+      <aside class="login-access-panel login-access-panel-v2" aria-label="Что будет после входа">
         <div class="login-access-inner">
           <div class="login-access-illustration" aria-hidden="true">
             {% include "shared/svg/stickman_zen.html" %}
           </div>
-          <h2>Нет логина и пароля?</h2>
+          <h2>Что происходит после входа</h2>
           <div class="login-access-list">
             <div class="login-access-item">
               <span class="login-access-icon is-check" aria-hidden="true"></span>
               <span>
-                <strong>Курс можно купить на сайте</strong>
-                <small>Выберите тариф, войдите в аккаунт и откройте защищённую оплату.</small>
+                <strong>Ученик видит своё обучение</strong>
+                <small>Нулевой урок, воркшоп, модули, уроки, материалы и домашки в правильной последовательности.</small>
               </span>
             </div>
             <div class="login-access-item">
               <span class="login-access-icon is-clock" aria-hidden="true"></span>
               <span>
-                <strong>Поддержка в Telegram</strong>
-                <small>Менеджер поможет восстановить доступ или разобраться с оплатой.</small>
+                <strong>Менеджер видит очередь проверок</strong>
+                <small>Сразу после входа можно перейти к домашним работам и карточкам учеников.</small>
               </span>
             </div>
             <div class="login-access-item">
               <span class="login-access-icon is-mail" aria-hidden="true"></span>
               <span>
-                <strong>Единый вход</strong>
-                <small>Один логин подходит студентам, менеджерам, админам и супер-админам.</small>
+                <strong>Админ управляет контентом</strong>
+                <small>Публикация курсов, модулей и уроков доступна в операторской панели.</small>
               </span>
             </div>
             <div class="login-access-item">
               <span class="login-access-icon is-doc" aria-hidden="true"></span>
               <span>
-                <strong>Статус доступа</strong>
-                <small>После входа покажем, какие тренинги открыты, а что нужно докупить.</small>
+                <strong>Если доступа нет — это будет видно</strong>
+                <small>Платформа сразу покажет, что нужно сделать: оплатить, дождаться проверки или пройти стартовый шаг.</small>
               </span>
             </div>
           </div>
 
           <div class="login-help-card">
-            <h3>Нужен доступ?</h3>
-            <p>Посмотрите тарифы или напишите менеджеру, если уже оплатили, но не получили логин.</p>
+            <h3>Нет логина или пароля?</h3>
+            <p>Выберите тариф на сайте или напишите менеджеру, если уже оплатили, но не получили доступ.</p>
             <div class="login-help-actions">
               <a class="button-link" href="/#tariffs">Смотреть тарифы</a>
-              <a class="button-link is-muted" href="https://t.me/valenskymanager" target="_blank" rel="noopener">
-                Написать в поддержку
-              </a>
+              <a class="button-link is-muted" href="https://t.me/valenskymanager" target="_blank" rel="noopener">Написать в поддержку</a>
             </div>
           </div>
         </div>
       </aside>
 
       <details class="login-mobile-status" open>
-        <summary>Статус доступа</summary>
+        <summary>Что будет после входа</summary>
         <div class="login-access-list">
           <div class="login-access-item">
             <span class="login-access-icon is-check" aria-hidden="true"></span>
             <span>
-              <strong>Курс можно купить на сайте</strong>
-              <small>Выберите тариф и откройте защищённую оплату после входа.</small>
+              <strong>Ученик видит своё обучение</strong>
+              <small>Уроки, модули, материалы и домашки в правильной логике.</small>
             </span>
           </div>
           <div class="login-access-item">
             <span class="login-access-icon is-clock" aria-hidden="true"></span>
             <span>
-              <strong>Поддержка в Telegram</strong>
-              <small>Нет логина и пароля? Напишите менеджеру.</small>
+              <strong>Менеджер видит очередь проверок</strong>
+              <small>Можно сразу перейти к домашним работам.</small>
             </span>
           </div>
           <div class="login-access-item">
             <span class="login-access-icon is-mail" aria-hidden="true"></span>
             <span>
-              <strong>Единый вход</strong>
-              <small>Для учеников, менеджеров, админов и супер-админов.</small>
+              <strong>Админ управляет контентом</strong>
+              <small>Публикация курсов и уроков доступна в операторской.</small>
             </span>
           </div>
           <div class="login-access-item">
             <span class="login-access-icon is-doc" aria-hidden="true"></span>
             <span>
-              <strong>Статус доступа</strong>
-              <small>После входа видно, что открыто и что нужно оплатить.</small>
+              <strong>Нет доступа? Это будет видно сразу</strong>
+              <small>Платформа покажет следующий шаг без путаницы.</small>
             </span>
           </div>
         </div>
         <div class="login-help-actions">
           <a class="button-link" href="/#tariffs">Смотреть тарифы</a>
-          <a class="button-link is-muted" href="https://t.me/valenskymanager" target="_blank" rel="noopener">
-            Написать в поддержку
-          </a>
+          <a class="button-link is-muted" href="https://t.me/valenskymanager" target="_blank" rel="noopener">Написать в поддержку</a>
         </div>
       </details>
     </div>
