@@ -317,6 +317,30 @@ label {
   padding: clamp(26px, 5vw, 64px);
 }
 
+.hero-cover {
+  position: relative;
+  display: block;
+  border: 2px solid var(--chalk-line);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.24);
+  padding: clamp(20px, 3vw, 36px);
+  min-height: clamp(360px, 60vh, 560px);
+  overflow: hidden;
+}
+
+.hero-cover .cover-placeholder {
+  border-radius: 8px;
+  min-height: clamp(320px, 56vh, 500px);
+}
+
+.hero-cover .cover-placeholder-mark {
+  width: min(100%, 220px);
+}
+
+.hero-cover .cover-placeholder-label {
+  font-size: 1.05rem;
+}
+
 .hero-copy h1,
 .section-title h1 {
   margin: 0;

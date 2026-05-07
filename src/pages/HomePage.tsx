@@ -9,37 +9,10 @@ export function HomePage() {
 
   return (
     <>
-      <section className="hero-board">
-        <div className="hero-copy">
-          <span className="chalk-eyebrow">учебная платформа</span>
-          <h1>Личный бренд через контент, Telegram и измеримую монетизацию</h1>
-          <p>
-            От хаотичных публикаций к системе: контент, воронка, оффер, продажи и масштабирование.
-            Внутри все разложено как на доске: уроки, материалы, домашки, доступы и проверка.
-          </p>
-          <div className="action-row hero-actions">
-            <Link className="chalk-button" to="/login">
-              Войти
-            </Link>
-            <a className="chalk-button ghost" href="https://t.me/Valensky1" target="_blank" rel="noreferrer">
-              Telegram-канал
-            </a>
-          </div>
-        </div>
-
-        <div className="hero-visual">
-          <div className="chalk-diagram" aria-label="Маршрут курса">
-            <span>личный бренд</span>
-            <i />
-            <span>контентная система</span>
-            <i />
-            <span>Telegram</span>
-            <i />
-            <span>оффер</span>
-            <i />
-            <span>продажи</span>
-          </div>
-          <div className="hero-side-figure" aria-hidden="true" />
+      <section className="hero-cover" aria-label="Место для главной обложки">
+        <div className="cover-placeholder">
+          <span className="cover-placeholder-mark" aria-hidden="true" />
+          <span className="cover-placeholder-label">Место для обложки</span>
         </div>
       </section>
 
