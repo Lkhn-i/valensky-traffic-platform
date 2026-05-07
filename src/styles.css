@@ -14,26 +14,11 @@
   --danger: #f09a93;
   --ok: #8dd26d;
   --shadow: rgba(0, 0, 0, 0.34);
-  --font-chalk-script: "Caveat", "Trebuchet MS", "Segoe UI", cursive;
   font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
   background: var(--board);
   color: var(--chalk);
-}
-
-.font-chalk {
-  font-family: var(--font-chalk-script);
-  letter-spacing: 0.01em;
-  text-shadow:
-    0 0 1px rgba(247, 242, 232, 0.45),
-    0 0 6px rgba(247, 242, 232, 0.18);
-}
-
-.font-chalk strong,
-.font-chalk small {
-  font-family: inherit;
-  font-weight: 600;
 }
 
 *,
@@ -143,18 +128,6 @@ label {
 .brand-mark small {
   color: var(--chalk-soft);
   font-size: 0.78rem;
-}
-
-.brand-symbol {
-  width: 46px;
-  height: 46px;
-  display: grid;
-  place-items: center;
-  border: 2px solid var(--chalk);
-  border-radius: 50%;
-  box-shadow: 0 0 0 4px rgba(247, 242, 232, 0.05) inset;
-  font-weight: 900;
-  color: var(--chalk-purple);
 }
 
 .top-nav {
@@ -562,13 +535,7 @@ label {
 }
 
 .hero-cover .cover-placeholder-label {
-  font-family: var(--font-chalk-script);
-  font-size: 1.5rem;
-  letter-spacing: 0.02em;
-  color: var(--chalk);
-  text-shadow:
-    0 0 1px rgba(247, 242, 232, 0.45),
-    0 0 6px rgba(247, 242, 232, 0.18);
+  font-size: 1.05rem;
 }
 
 .wide-cover {
@@ -1305,12 +1272,6 @@ select:focus {
 
   .brand-mark {
     gap: 8px;
-  }
-
-  .brand-symbol {
-    width: 34px;
-    height: 34px;
-    font-size: 0.9rem;
   }
 
   .brand-mark small {
