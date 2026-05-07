@@ -6,3 +6,4 @@ output/
 *.tsbuildinfo
 vite.config.js
 vite.config.d.ts
+server/data/session-store.json

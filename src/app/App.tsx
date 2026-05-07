@@ -4,7 +4,6 @@ import { AccessDeniedPage } from "../pages/AccessDeniedPage";
 import { AdminPage } from "../pages/AdminPage";
 import { FolderPage } from "../pages/FolderPage";
 import { HomePage } from "../pages/HomePage";
-import { LegalPage } from "../pages/LegalPage";
 import { LessonPage } from "../pages/LessonPage";
 import { LoginPage } from "../pages/LoginPage";
 import { ManagerHomeworksPage } from "../pages/ManagerHomeworksPage";
@@ -19,7 +18,6 @@ export function App() {
       <Route element={<AppLayout />}>
         <Route index element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/legal/:documentId" element={<LegalPage />} />
         <Route path="/trainings" element={<TrainingsPage />} />
         <Route path="/trainings/:trainingId" element={<TrainingPage />} />
         <Route path="/trainings/:trainingId/folders/:folderId" element={<FolderPage />} />

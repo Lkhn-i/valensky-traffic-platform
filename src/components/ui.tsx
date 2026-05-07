@@ -32,9 +32,18 @@ export function Breadcrumbs({ items }: { items: Array<{ label: string; to?: stri
 }
 
 export function EntityCover({ entity, className = "" }: { entity: Pick<BaseEntity, "coverImage" | "title">; className?: string }) {
+  const hasCustomImage = Boolean(entity.coverImage && !entity.coverImage.startsWith("data:image/svg+xml"));
+
   return (
     <div className={`cover-frame ${className}`}>
-      {entity.coverImage ? <img src={entity.coverImage} alt="" /> : <span>{entity.title}</span>}
+      {hasCustomImage ? (
+        <img src={entity.coverImage} alt="" />
+      ) : (
+        <div className="cover-placeholder">
+          <span className="cover-placeholder-mark" aria-hidden="true" />
+          <span className="cover-placeholder-label">Место для обложки</span>
+        </div>
+      )}
     </div>
   );
 }

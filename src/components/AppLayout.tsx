@@ -1,6 +1,9 @@
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useApp } from "../app/context";
 
+const telegramChannelUrl = "https://t.me/Valensky1";
+const supportUrl = "https://t.me/valenskymanager";
+
 function shortName(name: string) {
   return name
     .split(" ")
@@ -29,12 +32,23 @@ export function AppLayout() {
         </Link>
 
         <nav className="top-nav">
-          <NavLink to="/trainings">Тренинги</NavLink>
-          {currentUser?.role === "manager" ? <NavLink to="/manager/homeworks">Домашки</NavLink> : null}
-          {currentUser?.role === "admin" ? <NavLink to="/admin">Админка</NavLink> : null}
-          <a href="https://t.me/valenskymanager" target="_blank" rel="noreferrer">
-            Поддержка
-          </a>
+          {currentUser ? (
+            <>
+              <NavLink to="/trainings">Тренинги</NavLink>
+              {currentUser.role === "manager" ? <NavLink to="/manager/homeworks">Домашки</NavLink> : null}
+              {currentUser.role === "admin" ? <NavLink to="/admin">Контент</NavLink> : null}
+              <a href={supportUrl} target="_blank" rel="noreferrer">
+                Поддержка
+              </a>
+            </>
+          ) : (
+            <>
+              <a href="/#tariffs">Тарифы</a>
+              <a href={supportUrl} target="_blank" rel="noreferrer">
+                Поддержка
+              </a>
+            </>
+          )}
         </nav>
 
         <div className="top-actions">
@@ -67,17 +81,14 @@ export function AppLayout() {
       </main>
 
       <footer className="site-footer">
-        <div>
-          <strong>Менторство Валенского</strong>
-          <p>Учебная среда в логике GetCourse, собранная как рабочая доска курса.</p>
-        </div>
+        <strong className="footer-brand">Валенский</strong>
         <div className="footer-links">
-          <Link to="/legal/privacy">Политика конфиденциальности</Link>
-          <Link to="/legal/terms">Пользовательское соглашение</Link>
-          <a href="https://t.me/Valensky1" target="_blank" rel="noreferrer">
-            Telegram-группа
+          <span>Политика конфиденциальности</span>
+          <span>Пользовательское соглашение</span>
+          <a href={telegramChannelUrl} target="_blank" rel="noreferrer">
+            Telegram-канал
           </a>
-          <a href="https://t.me/valenskymanager" target="_blank" rel="noreferrer">
+          <a href={supportUrl} target="_blank" rel="noreferrer">
             Поддержка
           </a>
         </div>

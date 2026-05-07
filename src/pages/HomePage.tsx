@@ -17,26 +17,29 @@ export function HomePage() {
             От хаотичных публикаций к системе: контент, воронка, оффер, продажи и масштабирование.
             Внутри все разложено как на доске: уроки, материалы, домашки, доступы и проверка.
           </p>
-          <div className="action-row">
+          <div className="action-row hero-actions">
             <Link className="chalk-button" to="/login">
               Войти
             </Link>
             <a className="chalk-button ghost" href="https://t.me/Valensky1" target="_blank" rel="noreferrer">
-              Telegram-группа
+              Telegram-канал
             </a>
           </div>
         </div>
 
-        <div className="chalk-diagram" aria-label="Маршрут курса">
-          <span>личный бренд</span>
-          <i />
-          <span>контентная система</span>
-          <i />
-          <span>Telegram</span>
-          <i />
-          <span>оффер</span>
-          <i />
-          <span>продажи</span>
+        <div className="hero-visual">
+          <div className="chalk-diagram" aria-label="Маршрут курса">
+            <span>личный бренд</span>
+            <i />
+            <span>контентная система</span>
+            <i />
+            <span>Telegram</span>
+            <i />
+            <span>оффер</span>
+            <i />
+            <span>продажи</span>
+          </div>
+          <div className="hero-side-figure" aria-hidden="true" />
         </div>
       </section>
 
@@ -53,7 +56,7 @@ export function HomePage() {
             ["Telegram", "Посадочный пост, продуктовая среда, лид-магнит, оффер и первый следующий шаг."],
             ["Продажи", "Метрики, заявки, переписка, диагностики, возражения и дожим без давления."],
           ].map(([title, text]) => (
-            <article className="chalk-card" key={title}>
+            <article className="chalk-card feature-card" key={title}>
               <h3>{title}</h3>
               <p>{text}</p>
             </article>
@@ -89,7 +92,7 @@ export function HomePage() {
         />
         <div className="tariff-grid">
           {tariffs.map((tariff) => (
-            <article className="tariff-card" key={tariff.id}>
+            <article className="tariff-card pricing-card" key={tariff.id}>
               <span className="chalk-eyebrow">{tariff.highlight}</span>
               <h3>{tariff.title}</h3>
               <strong className="price">{tariff.priceLabel}</strong>
