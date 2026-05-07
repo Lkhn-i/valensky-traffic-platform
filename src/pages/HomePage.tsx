@@ -19,7 +19,7 @@ export function HomePage() {
       <section className="board-section">
         <ChalkTitle
           eyebrow="что собираем"
-          title="Не курс про ролики, а рабочая система роста"
+          title="Рабочая система роста"
           text="Короткое видео, AI-production, social search, Telegram, paid amplification и аналитика работают как части одного маршрута."
         />
         <div className="feature-grid">

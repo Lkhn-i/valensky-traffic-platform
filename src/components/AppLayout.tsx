@@ -23,7 +23,7 @@ export function AppLayout() {
   return (
     <div className="app-shell">
       <header className="topbar" aria-label="Главная навигация">
-        <Link to="/" className="brand-mark" aria-label="На главную">
+        <Link to="/" className="brand-mark font-chalk" aria-label="На главную">
           <span className="brand-symbol">IV</span>
           <span>
             <strong>Менторство Валенского</strong>
