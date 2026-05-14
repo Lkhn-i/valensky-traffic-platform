@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.playwright-cli/
+output/
+.DS_Store
+.env
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+server/data/session-store.json
+server/data/payment-orders.json
+server/data/access-outbox.json
+server/data/app.sqlite*
+server/data/backups/
